@@ -31,40 +31,42 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
-      <div className="w-full max-w-md rounded-2xl border border-zinc-200 p-6 shadow-sm">
-        <h1 className="mb-6 text-2xl font-semibold">เข้าสู่ระบบ</h1>
-        <form onSubmit={onSubmit} className="space-y-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#F5EFE6] p-6">
+      <div className="w-full max-w-md rounded-lg bg-[#4A2C1B] p-8 shadow-lg">
+        <h1 className="mb-8 text-3xl font-bold text-[#F5EFE6] text-center">Log in</h1>
+        <form onSubmit={onSubmit} className="space-y-5">
           <div>
-            <label className="mb-1 block text-sm">Username</label>
+            <label className="mb-2 block text-sm text-[#F5EFE6]">Username</label>
             <input
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username"
               required
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm">Password</label>
+            <label className="mb-2 block text-sm text-[#F5EFE6]">Password</label>
             <input
               type="password"
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
               required
             />
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-black px-4 py-2 text-white disabled:opacity-60"
+            className="w-full rounded-md bg-black px-4 py-3 text-[#F5EFE6] font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
           >
-            {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+            {loading ? "กำลังเข้าสู่ระบบ..." : "Log in"}
           </button>
         </form>
-        <p className="mt-4 text-sm">
-          ยังไม่มีบัญชี? <Link className="underline" href="/register">สมัครสมาชิก</Link>
+        <p className="mt-6 text-sm text-center text-[#F5EFE6]">
+          ยังไม่มีบัญชี? <Link className="underline hover:opacity-80" href="/register">สมัครสมาชิก</Link>
         </p>
       </div>
     </div>
