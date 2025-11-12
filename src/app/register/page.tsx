@@ -41,6 +41,8 @@ export default function RegisterPage() {
       if (res.data?.token) {
         localStorage.setItem("auth_token", res.data.token);
         localStorage.setItem("auth_user", JSON.stringify(res.data.user));
+        // Dispatch event to notify other components about login
+        window.dispatchEvent(new Event("authStateChanged"));
       }
       router.push("/");
     } catch (err: any) {
@@ -55,6 +57,16 @@ export default function RegisterPage() {
       <div className="w-full max-w-md rounded-lg bg-[#4A2C1B] p-8 shadow-lg">
         <h1 className="mb-8 text-3xl font-bold text-[#F5EFE6] text-center">Sign up</h1>
         <form onSubmit={onSubmit} className="space-y-5">
+          <div>
+            <label className="mb-2 block text-sm text-[#F5EFE6]">Username</label>
+            <input
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
+              value={form.username}
+              onChange={(e) => update("username", e.target.value)}
+              placeholder="Enter your username"
+              required
+            />
+          </div>
           <div>
             <label className="mb-2 block text-sm text-[#F5EFE6]">Email</label>
             <input

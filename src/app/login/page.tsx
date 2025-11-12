@@ -21,8 +21,16 @@ export default function LoginPage() {
       if (res.data?.token) {
         localStorage.setItem("auth_token", res.data.token);
         localStorage.setItem("auth_user", JSON.stringify(res.data.user));
+        // Dispatch event to notify other components about login
+        window.dispatchEvent(new Event("authStateChanged"));
+        
+        // Redirect based on user role
+        if (res.data.user?.role === "ADMIN") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/menu");
+        }
       }
-      router.push("/");
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {
