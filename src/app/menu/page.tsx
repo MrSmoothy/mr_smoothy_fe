@@ -1,31 +1,46 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getFruits, getDrinks, getCupSizes, addToCart, type Fruit, type PredefinedDrink, type CupSize } from "@/lib/api";
+import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
 
 export default function MenuPage() {
-  const router = useRouter();
   const [fruits, setFruits] = useState<Fruit[]>([]);
   const [drinks, setDrinks] = useState<PredefinedDrink[]>([]);
   const [cupSizes, setCupSizes] = useState<CupSize[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDrink, setSelectedDrink] = useState<PredefinedDrink | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [selectedCupSize, setSelectedCupSize] = useState<CupSize | null>(null);
-  const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
-  const [selectedFruits, setSelectedFruits] = useState<Map<number, number>>(new Map());
+
+  function loadUser() {
+    try {
+      const stored = localStorage.getItem("auth_user");
+      setUser(stored ? JSON.parse(stored) : null);
+    } catch {}
+  }
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
+    loadUser();
+    
+    const handleAuthChange = () => {
+      loadUser();
+    };
+    
+    window.addEventListener("authStateChanged", handleAuthChange);
+    window.addEventListener("focus", handleAuthChange);
+    
+    return () => {
+      window.removeEventListener("authStateChanged", handleAuthChange);
+      window.removeEventListener("focus", handleAuthChange);
+    };
+  }, []);
+
+  useEffect(() => {
     loadData();
-  }, [router]);
+  }, []);
 
   async function loadData() {
     try {
@@ -67,6 +82,7 @@ export default function MenuPage() {
       setDrinks(filteredDrinks);
       setCupSizes(filteredCupSizes);
       
+      // Set default cup size
       if (filteredCupSizes.length > 0) {
         setSelectedCupSize(filteredCupSizes[0]);
       }
@@ -82,61 +98,76 @@ export default function MenuPage() {
     }
   }
 
-  function toggleFruitSelection(fruitId: number) {
-    setSelectedFruits(prev => {
-      const newMap = new Map(prev);
-      if (newMap.has(fruitId)) {
-        const currentQty = newMap.get(fruitId) || 0;
-        if (currentQty <= 1) {
-          newMap.delete(fruitId);
+  async function handleAddToCart(drinkId: number) {
+    if (!selectedCupSize && cupSizes.length > 0) {
+      setSelectedCupSize(cupSizes[0]);
+    }
+    
+    const cupSize = selectedCupSize || (cupSizes.length > 0 ? cupSizes[0] : null);
+    if (!cupSize) {
+      alert("กรุณารอสักครู่เพื่อโหลดข้อมูลขนาดแก้ว");
+      return;
+    }
+
+    // ถ้าเป็น guest user ให้เก็บใน localStorage
+    if (!user) {
+      try {
+        setAddingToCart(true);
+        const drink = drinks.find(d => d.id === drinkId);
+        if (!drink) return;
+
+        // คำนวณราคาจาก ingredients
+        let basePrice = 0;
+        if (drink.ingredients && drink.ingredients.length > 0) {
+          basePrice = drink.ingredients.reduce((sum, ing) => {
+            const fruit = fruits.find(f => f.id === ing.fruitId);
+            if (fruit) {
+              return sum + (Number(fruit.pricePerUnit) * ing.quantity);
+            }
+            return sum;
+          }, 0);
         } else {
-          newMap.set(fruitId, currentQty - 1);
+          basePrice = 100; // ราคาพื้นฐานถ้าไม่มี ingredients
         }
-      } else {
-        newMap.set(fruitId, 1);
+
+        const cupSizePrice = cupSize.priceExtra || 0;
+        const unitPrice = basePrice + cupSizePrice;
+        const totalPrice = unitPrice;
+
+        const guestItem = {
+          type: "PREDEFINED" as const,
+          cupSizeId: cupSize.id,
+          cupSizeName: cupSize.name,
+          quantity: 1,
+          predefinedDrinkId: drinkId,
+          predefinedDrinkName: drink.name,
+          unitPrice,
+          totalPrice,
+        };
+
+        addToGuestCart(guestItem);
+        window.dispatchEvent(new Event("cartUpdated"));
+        alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉");
+      } catch (err: any) {
+        console.error("Error adding to guest cart:", err);
+        alert("ไม่สามารถเพิ่มลงตะกร้าได้");
+      } finally {
+        setAddingToCart(false);
       }
-      return newMap;
-    });
-  }
-
-  function increaseFruitQuantity(fruitId: number) {
-    setSelectedFruits(prev => {
-      const newMap = new Map(prev);
-      newMap.set(fruitId, (newMap.get(fruitId) || 0) + 1);
-      return newMap;
-    });
-  }
-
-  async function handleAddToCart(type: "PREDEFINED" | "CUSTOM", drinkId?: number) {
-    if (!selectedCupSize) {
-      alert("กรุณาเลือกขนาดแก้ว");
       return;
     }
 
-    if (type === "CUSTOM" && selectedFruits.size === 0) {
-      alert("กรุณาเลือกผลไม้/ผักอย่างน้อย 1 ชนิด");
-      return;
-    }
-
+    // Logged in user
     try {
       setAddingToCart(true);
-      const ingredients = type === "CUSTOM" 
-        ? Array.from(selectedFruits.entries()).map(([fruitId, qty]) => ({ fruitId, quantity: qty }))
-        : undefined;
-      
       await addToCart({
-        type,
-        cupSizeId: selectedCupSize.id,
-        quantity,
+        type: "PREDEFINED",
+        cupSizeId: cupSize.id,
+        quantity: 1,
         predefinedDrinkId: drinkId,
-        ingredients,
       });
-      // Notify header to refresh cart count
       window.dispatchEvent(new Event("cartUpdated"));
-      alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว!");
-      setQuantity(1);
-      setSelectedDrink(null);
-      setSelectedFruits(new Map());
+      alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉");
     } catch (err: any) {
       alert(err.message || "ไม่สามารถเพิ่มลงตะกร้าได้");
     } finally {
@@ -144,259 +175,103 @@ export default function MenuPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
-        <div className="text-[#4A2C1B] text-xl">กำลังโหลด...</div>
-      </div>
-    );
-  }
-
-  // Group drinks by category (คุณสามารถเพิ่ม category field ใน backend ได้)
-  // สำหรับตอนนี้เราจะใช้การจัดกลุ่มแบบง่ายๆ
-  const signatureDrinks = drinks.slice(0, 4);
-  const classicDrinks = drinks.slice(4, 8);
-  const greenBoosterDrinks = drinks.slice(8, 12);
-  const highProteinDrinks = drinks.slice(12, 16);
-  const superfruitsDrinks = drinks.slice(16, 20);
 
   function renderDrinkCard(drink: PredefinedDrink) {
-    const price = 25; // ราคาพื้นฐาน
+    // คำนวณราคาจาก ingredients
+    let price = 100; // ราคาพื้นฐาน
+    if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
+      const basePrice = drink.ingredients.reduce((sum, ing) => {
+        const fruit = fruits.find(f => f.id === ing.fruitId);
+        if (fruit) {
+          return sum + (Number(fruit.pricePerUnit) * ing.quantity);
+        }
+        return sum;
+      }, 0);
+      // Add base cup size price (assuming smallest cup)
+      const cupPrice = cupSizes.length > 0 ? (cupSizes[0]?.priceExtra || 0) : 0;
+      price = basePrice + cupPrice;
+      // If prices seem too high, they might be in cents - divide by 100
+      if (price > 1000) {
+        price = price / 100;
+      }
+    }
+    
     return (
-      <Link
-        href={`/drinks/${drink.id}`}
+      <div
         key={drink.id}
-        className="bg-[#F5EFE6] rounded-lg border border-[#4A2C1B]/20 p-4 hover:shadow-lg transition-all relative group"
+        className="bg-white rounded-lg border border-[#4A3728]/20 p-4 hover:shadow-lg transition-all relative group"
       >
-        {drink.imageUrl ? (
-          <img
-            src={getImageUrl(drink.imageUrl)}
-            alt={drink.name}
-            className="w-full h-48 object-cover rounded-lg mb-3"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-              (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden");
-            }}
-          />
-        ) : null}
-        <div className={`w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-400 ${drink.imageUrl ? "hidden" : ""}`}>
-          ไม่มีรูปภาพ
-        </div>
-        <h4 className="font-semibold text-[#4A2C1B] mb-1">{drink.name}</h4>
-        {drink.description && (
-          <p className="text-[#4A2C1B]/70 text-xs mb-2 line-clamp-2">{drink.description}</p>
-        )}
-        <p className="text-[#4A2C1B] font-bold mb-3">{price} บาท</p>
+        <Link href={`/drinks/${drink.id}`} className="block">
+          {drink.imageUrl ? (
+            <img
+              src={getImageUrl(drink.imageUrl)}
+              alt={drink.name}
+              className="w-full h-48 object-cover rounded-lg mb-3"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+                (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden");
+              }}
+            />
+          ) : null}
+          <div className={`w-full h-48 bg-[#D4C5B0] rounded-lg mb-3 flex items-center justify-center text-gray-400 ${drink.imageUrl ? "hidden" : ""}`}>
+            <span className="text-4xl">🥤</span>
+          </div>
+          <h4 className="font-semibold text-[#4A3728] mb-1 font-sans">{drink.name}</h4>
+          {drink.description && (
+            <p className="text-[#4A3728]/70 text-xs mb-2 line-clamp-2 font-sans">{drink.description}</p>
+          )}
+          <p className="text-[#4A3728] font-bold mb-3 font-sans">{price.toFixed(2)} บาท</p>
+        </Link>
         <button
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (selectedCupSize) {
-              handleAddToCart("PREDEFINED", drink.id);
-            }
+            handleAddToCart(drink.id);
           }}
-          className="absolute bottom-4 right-4 bg-[#4A2C1B] text-[#F5EFE6] w-8 h-8 rounded flex items-center justify-center hover:bg-[#5A3C2B] transition-colors"
+          disabled={addingToCart || cupSizes.length === 0}
+          className="absolute bottom-4 right-4 bg-[#4A3728] text-[#E8DDCB] w-8 h-8 rounded flex items-center justify-center hover:bg-[#5A3C2B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           +
         </button>
-      </Link>
+      </div>
     );
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
+    <div className="bg-[#E8DDCB] min-h-screen py-12">
       <div className="mx-auto max-w-7xl px-6">
-        <h1 className="text-4xl font-bold text-[#4A2C1B] mb-8">เมนูน้ำปั่น</h1>
+        <h1 className="text-4xl font-bold text-[#4A3728] mb-8 font-serif">Ready Menu</h1>
 
-        {/* Signature Drinks */}
+        {/* All Drinks */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-[#4A2C1B] mb-6">Signature</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {signatureDrinks.length > 0 ? (
-              signatureDrinks.map(renderDrinkCard)
-            ) : (
-              <div className="col-span-4 text-center text-[#4A2C1B]/60 py-8">
-                ยังไม่มีเมนูในหมวดนี้
-              </div>
-            )}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-[#4A3728] mb-2 font-serif">All Smoothies</h2>
+            <p className="text-lg text-[#4A3728]/80 font-sans">Browse our complete menu</p>
           </div>
+          {loading ? (
+            <div className="text-center text-[#4A3728]/60 py-8">กำลังโหลด...</div>
+          ) : drinks.length === 0 ? (
+            <div className="text-center text-[#4A3728]/60 py-8">ยังไม่มีเมนูน้ำปั่น</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {drinks.map(renderDrinkCard)}
+            </div>
+          )}
         </section>
 
-        {/* Classic Drinks */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-[#4A2C1B] mb-6">Classic</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {classicDrinks.length > 0 ? (
-              classicDrinks.map(renderDrinkCard)
-            ) : (
-              <div className="col-span-4 text-center text-[#4A2C1B]/60 py-8">
-                ยังไม่มีเมนูในหมวดนี้
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Green Booster */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-[#4A2C1B] mb-6">Green Booster</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {greenBoosterDrinks.length > 0 ? (
-              greenBoosterDrinks.map(renderDrinkCard)
-            ) : (
-              <div className="col-span-4 text-center text-[#4A2C1B]/60 py-8">
-                ยังไม่มีเมนูในหมวดนี้
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* High-Protein Smoothies */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-[#4A2C1B] mb-6">High-Protein Smoothies</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {highProteinDrinks.length > 0 ? (
-              highProteinDrinks.map(renderDrinkCard)
-            ) : (
-              <div className="col-span-4 text-center text-[#4A2C1B]/60 py-8">
-                ยังไม่มีเมนูในหมวดนี้
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Superfruits */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-[#4A2C1B] mb-6">Superfruits</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {superfruitsDrinks.length > 0 ? (
-              superfruitsDrinks.map(renderDrinkCard)
-            ) : (
-              <div className="col-span-4 text-center text-[#4A2C1B]/60 py-8">
-                ยังไม่มีเมนูในหมวดนี้
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Custom Drink Builder */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold text-[#4A2C1B] mb-6">สร้างเมนูของคุณเอง</h2>
+        {/* Custom Drink Builder - เปลี่ยนเป็นลิงก์ไปหน้า build */}
+        <section className="mb-12 text-center">
           <div className="bg-white rounded-lg shadow-md p-8">
-            <div className="mb-6">
-              <label className="block text-[#4A2C1B] font-semibold mb-3">เลือกผลไม้/ผัก</label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {fruits.map((fruit) => {
-                  const quantity = selectedFruits.get(fruit.id) || 0;
-                  const isSelected = quantity > 0;
-                  return (
-                    <div
-                      key={fruit.id}
-                      className={`border rounded-lg p-4 transition-all cursor-pointer ${
-                        isSelected 
-                          ? "border-[#4A2C1B] bg-[#C9A78B]/30" 
-                          : "border-[#4A2C1B]/20 hover:border-[#4A2C1B]"
-                      }`}
-                      onClick={() => toggleFruitSelection(fruit.id)}
-                    >
-                      {fruit.imageUrl ? (
-                        <img
-                          src={getImageUrl(fruit.imageUrl)}
-                          alt={fruit.name}
-                          className="w-full h-32 object-cover rounded-lg mb-2"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                            (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden");
-                          }}
-                        />
-                      ) : null}
-                      <div className={`w-full h-32 bg-gray-200 rounded-lg mb-2 flex items-center justify-center text-gray-400 text-sm ${fruit.imageUrl ? "hidden" : ""}`}>
-                        ไม่มีรูปภาพ
-                      </div>
-                      <p className="font-semibold text-[#4A2C1B] text-sm mb-1">{fruit.name}</p>
-                      {fruit.description && (
-                        <p className="text-[#4A2C1B]/70 text-xs mb-1 line-clamp-1">{fruit.description}</p>
-                      )}
-                      <p className="text-[#4A2C1B]/70 text-xs mb-2">{Number(fruit.pricePerUnit).toFixed(2)} บาท</p>
-                      {isSelected && (
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleFruitSelection(fruit.id);
-                            }}
-                            className="bg-[#4A2C1B] text-[#F5EFE6] w-6 h-6 rounded flex items-center justify-center text-xs"
-                          >
-                            -
-                          </button>
-                          <span className="text-[#4A2C1B] font-bold">{quantity}</span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              increaseFruitQuantity(fruit.id);
-                            }}
-                            className="bg-[#4A2C1B] text-[#F5EFE6] w-6 h-6 rounded flex items-center justify-center text-xs"
-                          >
-                            +
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              {selectedFruits.size > 0 && (
-                <div className="mt-4 p-3 bg-[#C9A78B]/30 rounded-lg">
-                  <p className="text-sm text-[#4A2C1B] font-medium mb-2">สินค้าที่เลือก:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {Array.from(selectedFruits.entries()).map(([fruitId, qty]) => {
-                      const fruit = fruits.find(f => f.id === fruitId);
-                      return fruit ? (
-                        <span
-                          key={fruitId}
-                          className="bg-[#4A2C1B] text-[#F5EFE6] px-3 py-1 rounded-full text-sm"
-                        >
-                          {fruit.name} x{qty}
-                        </span>
-                      ) : null;
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="mb-6">
-              <label className="block text-[#4A2C1B] font-semibold mb-3">เลือกขนาดแก้ว</label>
-              <select
-                className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none"
-                value={selectedCupSize?.id}
-                onChange={(e) => {
-                  const size = cupSizes.find(c => c.id === Number(e.target.value));
-                  if (size) setSelectedCupSize(size);
-                }}
-              >
-                {cupSizes.map((size) => (
-                  <option key={size.id} value={size.id}>
-                    {size.name} ({size.volumeMl}ml) - เพิ่ม {size.priceExtra.toFixed(2)} บาท
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-6">
-              <label className="block text-[#4A2C1B] font-semibold mb-3">จำนวน</label>
-              <input
-                type="number"
-                min="1"
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none"
-              />
-            </div>
-            <button
-              onClick={() => handleAddToCart("CUSTOM")}
-              disabled={addingToCart || selectedFruits.size === 0}
-              className="w-full bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+            <h2 className="text-3xl font-bold text-[#4A3728] mb-4 font-serif">Want to Create Your Own?</h2>
+            <p className="text-lg text-[#4A3728]/70 mb-6 font-sans">
+              Customize your perfect smoothie with our build tool
+            </p>
+            <Link
+              href="/build"
+              className="inline-block bg-[#4A3728] text-[#E8DDCB] px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
             >
-              {addingToCart ? "กำลังเพิ่ม..." : "เพิ่มลงตะกร้า"}
-            </button>
+              Build Your Own Smoothie
+            </Link>
           </div>
         </section>
       </div>

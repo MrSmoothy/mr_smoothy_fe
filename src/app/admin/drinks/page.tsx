@@ -12,6 +12,7 @@ import {
   uploadDrinkImage,
   type PredefinedDrink,
   type PredefinedDrinkCreateRequest,
+  type PredefinedDrinkUpdateRequest,
   type Fruit,
 } from "@/lib/api";
 import { getImageUrl } from "@/lib/image";
@@ -71,14 +72,21 @@ export default function AdminDrinksPage() {
 
   function openModal(drink?: PredefinedDrink) {
     if (drink) {
+      console.log("Opening modal for drink:", drink);
+      console.log("Drink description:", drink.description, "Type:", typeof drink.description);
       setEditingDrink(drink);
+      // Always set description, even if it's null or undefined
+      const descriptionValue = drink.description !== null && drink.description !== undefined 
+        ? String(drink.description) 
+        : "";
       setFormData({
         name: drink.name,
-        description: drink.description || "",
+        description: descriptionValue,
         imageUrl: drink.imageUrl || "",
         active: drink.active,
         ingredients: drink.ingredients.map(i => ({ fruitId: i.fruitId, quantity: i.quantity })),
       });
+      console.log("Form data set:", { description: descriptionValue });
     } else {
       setEditingDrink(null);
       setFormData({
@@ -137,19 +145,31 @@ export default function AdminDrinksPage() {
       return;
     }
     try {
-      const data: PredefinedDrinkCreateRequest = {
-        name: formData.name,
-        description: formData.description,
-        imageUrl: formData.imageUrl || undefined,
-        active: formData.active,
-        ingredients: formData.ingredients,
-      };
-
       if (editingDrink) {
-        await adminUpdateDrink(editingDrink.id, data);
+        // Use PredefinedDrinkUpdateRequest for update
+        // Always send description field (even if empty string) to ensure it gets updated
+        const trimmedDescription = formData.description.trim();
+        const updateData: PredefinedDrinkUpdateRequest = {
+          name: formData.name.trim(),
+          description: trimmedDescription, // Always send description (empty string is valid)
+          imageUrl: formData.imageUrl?.trim() || undefined,
+          active: formData.active,
+          ingredients: formData.ingredients,
+        };
+        console.log("Updating drink:", editingDrink.id, "with data:", JSON.stringify(updateData, null, 2));
+        const response = await adminUpdateDrink(editingDrink.id, updateData);
+        console.log("Update response:", response.data);
         alert("อัปเดตข้อมูลสำเร็จ");
       } else {
-        await adminCreateDrink(data);
+        // Use PredefinedDrinkCreateRequest for create
+        const createData: PredefinedDrinkCreateRequest = {
+          name: formData.name.trim(),
+          description: formData.description.trim(),
+          imageUrl: formData.imageUrl?.trim() || undefined,
+          active: formData.active,
+          ingredients: formData.ingredients,
+        };
+        await adminCreateDrink(createData);
         alert("เพิ่มข้อมูลสำเร็จ");
       }
 

@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { ShoppingCart, User } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getCart } from "@/lib/api";
 import { getGuestCartCount } from "@/lib/guestCart";
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [cartCount, setCartCount] = useState(0);
 
@@ -91,64 +92,74 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-[#4A2C1B] w-full sticky top-0 z-50 shadow-md">
+    <header className="bg-[#4A3728] w-full sticky top-0 z-50 shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-2xl font-bold text-[#F5EFE6] hover:opacity-90 transition-opacity">
-          Mr. Smoothy
+        <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+          <div className="w-12 h-12 rounded-full bg-[#E8DDCB] flex items-center justify-center flex-shrink-0">
+            <span className="text-[#4A3728] font-bold text-lg">MS</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-2xl font-bold text-[#E8DDCB] leading-tight font-serif">Mr.Smoothy</span>
+            <span className="text-xs text-[#E8DDCB] leading-tight font-sans">Healthy Living Since 2024</span>
+          </div>
         </Link>
         <nav className="flex items-center gap-4">
+          <Link
+            href="/"
+            className={`px-3 py-2 rounded transition-opacity font-medium ${
+              pathname === '/' 
+                ? 'bg-[#E8DDCB] text-[#4A3728]' 
+                : 'text-[#E8DDCB] hover:opacity-80'
+            }`}
+          >
+            Home
+          </Link>
+          <Link
+            href="/menu"
+            className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+          >
+            Ready Menu
+          </Link>
+          <Link
+            href="/build"
+            className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+          >
+            Custom Menu
+          </Link>
+          <Link
+            href="#"
+            className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+          >
+            Packaging
+          </Link>
+          <Link
+            href="/cart"
+            className="relative text-[#E8DDCB] hover:opacity-80 transition-opacity px-3 py-2"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
           {user ? (
             <>
               {user.role === "ADMIN" && (
                 <Link
                   href="/admin/dashboard"
-                  className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
+                  className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
                 >
                   Admin
                 </Link>
               )}
-              <Link
-                href="/fruits"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                ผลไม้
-              </Link>
-              <Link
-                href="/build"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                สร้าง Smoothy
-              </Link>
-              <Link
-                href="/menu"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                เมนู
-              </Link>
-              <Link
-                href="/cart"
-                className="relative text-[#F5EFE6] hover:opacity-80 transition-opacity"
-              >
-                <ShoppingCart className="w-6 h-6" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                href="/orders"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                คำสั่งซื้อ
-              </Link>
-              <div className="flex items-center gap-2">
-                <User className="w-5 h-5 text-[#F5EFE6]" />
-                <span className="text-[#F5EFE6] text-sm">{user.fullName || user.username}</span>
+              <div className="flex items-center gap-2 px-3 py-2">
+                <User className="w-5 h-5 text-[#E8DDCB]" />
+                <span className="text-[#E8DDCB] text-sm">{user.fullName || user.username}</span>
               </div>
               <button
                 onClick={handleLogout}
-                className="rounded-md bg-black px-6 py-2 text-[#F5EFE6] font-medium hover:opacity-90 transition-opacity"
+                className="rounded-md bg-black px-6 py-2 text-[#E8DDCB] font-medium hover:opacity-90 transition-opacity"
               >
                 ออกจากระบบ
               </button>
@@ -156,51 +167,16 @@ export default function Header() {
           ) : (
             <>
               <Link
-                href="/fruits"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                ผลไม้
-              </Link>
-              <Link
-                href="/build"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                สร้าง Smoothy
-              </Link>
-              <Link
-                href="/menu"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                เมนู
-              </Link>
-              <Link
-                href="/cart"
-                className="relative text-[#F5EFE6] hover:opacity-80 transition-opacity"
-              >
-                <ShoppingCart className="w-6 h-6" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                href="/orders"
-                className="text-[#F5EFE6] hover:opacity-80 transition-opacity font-medium"
-              >
-                คำสั่งซื้อ
-              </Link>
-              <Link
                 href="/login"
-                className="rounded-md bg-black px-6 py-2 text-[#F5EFE6] font-medium hover:opacity-90 transition-opacity"
+                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
               >
-                Log in
+                Login
               </Link>
               <Link
                 href="/register"
-                className="rounded-md bg-[#F5EFE6] px-6 py-2 text-[#4A2C1B] font-medium hover:opacity-90 transition-opacity"
+                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
               >
-                Sign up
+                Register
               </Link>
             </>
           )}

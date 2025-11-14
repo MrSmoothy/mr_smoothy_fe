@@ -11,6 +11,7 @@ import {
   uploadFruitImage,
   type Fruit,
   type FruitCreateRequest,
+  type FruitUpdateRequest,
 } from "@/lib/api";
 import { getImageUrl } from "@/lib/image";
 
@@ -64,14 +65,21 @@ export default function AdminFruitsPage() {
 
   function openModal(fruit?: Fruit) {
     if (fruit) {
+      console.log("Opening modal for fruit:", fruit);
+      console.log("Fruit description:", fruit.description, "Type:", typeof fruit.description);
       setEditingFruit(fruit);
+      // Always set description, even if it's null or undefined
+      const descriptionValue = fruit.description !== null && fruit.description !== undefined 
+        ? String(fruit.description) 
+        : "";
       setFormData({
         name: fruit.name,
-        description: fruit.description || "",
+        description: descriptionValue,
         pricePerUnit: fruit.pricePerUnit.toString(),
         imageUrl: fruit.imageUrl || "",
         active: fruit.active,
       });
+      console.log("Form data set:", { description: descriptionValue });
     } else {
       setEditingFruit(null);
       setFormData({
@@ -106,19 +114,31 @@ export default function AdminFruitsPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      const data: FruitCreateRequest = {
-        name: formData.name,
-        description: formData.description,
-        pricePerUnit: parseFloat(formData.pricePerUnit),
-        imageUrl: formData.imageUrl || undefined,
-        active: formData.active,
-      };
-
       if (editingFruit) {
-        await adminUpdateFruit(editingFruit.id, data);
+        // Use FruitUpdateRequest for update
+        // Always send description field (even if empty string) to ensure it gets updated
+        const trimmedDescription = formData.description.trim();
+        const updateData: FruitUpdateRequest = {
+          name: formData.name.trim(),
+          description: trimmedDescription, // Always send description (empty string is valid)
+          pricePerUnit: parseFloat(formData.pricePerUnit),
+          imageUrl: formData.imageUrl?.trim() || undefined,
+          active: formData.active,
+        };
+        console.log("Updating fruit:", editingFruit.id, "with data:", JSON.stringify(updateData, null, 2));
+        const response = await adminUpdateFruit(editingFruit.id, updateData);
+        console.log("Update response:", response.data);
         alert("อัปเดตข้อมูลสำเร็จ");
       } else {
-        await adminCreateFruit(data);
+        // Use FruitCreateRequest for create
+        const createData: FruitCreateRequest = {
+          name: formData.name.trim(),
+          description: formData.description.trim(),
+          pricePerUnit: parseFloat(formData.pricePerUnit),
+          imageUrl: formData.imageUrl?.trim() || undefined,
+          active: formData.active,
+        };
+        await adminCreateFruit(createData);
         alert("เพิ่มข้อมูลสำเร็จ");
       }
 

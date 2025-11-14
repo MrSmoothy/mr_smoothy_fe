@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCart, removeFromCart, clearCart, type Cart } from "@/lib/api";
 import { getGuestCart, removeFromGuestCart, clearGuestCart, type GuestCart } from "@/lib/guestCart";
-import { Trash2, ShoppingBag, AlertCircle } from "lucide-react";
+import { Trash2, ShoppingBag, AlertCircle, RefreshCw } from "lucide-react";
 
 export default function CartPage() {
   const router = useRouter();
@@ -14,27 +14,112 @@ export default function CartPage() {
   const [removing, setRemoving] = useState<number | string | null>(null);
   const [user, setUser] = useState<any>(null);
 
-  useEffect(() => {
+  function loadUser() {
     try {
       const stored = localStorage.getItem("auth_user");
       setUser(stored ? JSON.parse(stored) : null);
     } catch {}
+  }
+
+  useEffect(() => {
+    loadUser();
     
+    const handleAuthChange = () => {
+      loadUser();
+    };
+    
+    window.addEventListener("authStateChanged", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+    window.addEventListener("focus", handleAuthChange);
+    
+    return () => {
+      window.removeEventListener("authStateChanged", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+      window.removeEventListener("focus", handleAuthChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Load cart when user state changes
     if (user) {
+      console.log("User logged in, loading cart...");
       loadCart();
     } else {
+      console.log("User not logged in, loading guest cart...");
       loadGuestCart();
     }
-  }, [router]);
+  }, [user]);
+
+  useEffect(() => {
+    // Listen for cart updates
+    const handleCartUpdate = () => {
+      console.log("Cart updated event received, user:", user);
+      // Delay to ensure API has processed the update
+      setTimeout(() => {
+        if (user) {
+          console.log("Reloading cart after update...");
+          loadCart();
+        } else {
+          console.log("Reloading guest cart after update...");
+          loadGuestCart();
+        }
+      }, 800);
+    };
+    
+    // Also reload when page gains focus (user might have added items in another tab)
+    const handleFocus = () => {
+      console.log("Page focused, reloading cart...");
+      if (user) {
+        loadCart();
+      } else {
+        loadGuestCart();
+      }
+    };
+    
+    window.addEventListener("cartUpdated", handleCartUpdate);
+    window.addEventListener("focus", handleFocus);
+    
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [user]);
 
   async function loadCart() {
     try {
       setLoading(true);
+      console.log("Loading cart for logged in user...");
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        console.log("No auth token found");
+        setCart({ cartId: 0, items: [], totalPrice: 0 });
+        return;
+      }
       const res = await getCart();
-      setCart(res.data || null);
-    } catch (err) {
+      console.log("Cart API response:", res);
+      console.log("Cart data:", res.data);
+      if (res.data) {
+        // Ensure items array exists
+        if (res.data.items && Array.isArray(res.data.items)) {
+          console.log("Cart items:", res.data.items.length, res.data.items);
+          setCart(res.data);
+        } else {
+          console.log("Cart has no items array, setting empty cart");
+          setCart({ 
+            cartId: res.data.cartId || 0, 
+            items: [], 
+            totalPrice: res.data.totalPrice || 0 
+          });
+        }
+      } else {
+        console.log("No cart data in response");
+        setCart({ cartId: 0, items: [], totalPrice: 0 });
+      }
+    } catch (err: any) {
       console.error("Failed to load cart:", err);
-      setCart(null);
+      console.error("Error details:", err.message, err.stack);
+      // If cart is empty or error, set empty cart
+      setCart({ cartId: 0, items: [], totalPrice: 0 });
     } finally {
       setLoading(false);
     }
@@ -44,10 +129,11 @@ export default function CartPage() {
     try {
       setLoading(true);
       const cart = getGuestCart();
+      console.log("Guest cart loaded:", cart);
       setGuestCart(cart);
     } catch (err) {
       console.error("Failed to load guest cart:", err);
-      setGuestCart(null);
+      setGuestCart({ items: [], totalPrice: 0 });
     } finally {
       setLoading(false);
     }
@@ -102,7 +188,9 @@ export default function CartPage() {
     ? (cart?.items || []) 
     : (guestCart?.items || []);
 
-  if (!displayCart || items.length === 0) {
+  console.log("Cart Page Render:", { user, cart, guestCart, items: items.length });
+
+  if (!loading && items.length === 0) {
     return (
       <div className="bg-[#F5EFE6] min-h-screen py-12">
         <div className="mx-auto max-w-4xl px-6">
@@ -144,19 +232,35 @@ export default function CartPage() {
       <div className="mx-auto max-w-4xl px-6">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold text-[#4A2C1B]">ตะกร้าสินค้า</h1>
-          {!user && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm text-yellow-800">
-              💡 Guest User - เข้าสู่ระบบเพื่อรับแต้ม
-            </div>
-          )}
-          {items.length > 0 && (
+          <div className="flex items-center gap-4">
+            {!user && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm text-yellow-800">
+                💡 Guest User - เข้าสู่ระบบเพื่อรับแต้ม
+              </div>
+            )}
             <button
-              onClick={handleClearCart}
-              className="text-red-600 hover:text-red-700 font-medium"
+              onClick={() => {
+                if (user) {
+                  loadCart();
+                } else {
+                  loadGuestCart();
+                }
+              }}
+              disabled={loading}
+              className="text-[#4A2C1B] hover:text-[#5A3C2B] font-medium flex items-center gap-2 disabled:opacity-50"
             >
-              ล้างตะกร้า
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              รีเฟรช
             </button>
-          )}
+            {items.length > 0 && (
+              <button
+                onClick={handleClearCart}
+                className="text-red-600 hover:text-red-700 font-medium"
+              >
+                ล้างตะกร้า
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
