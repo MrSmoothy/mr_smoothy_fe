@@ -12,6 +12,7 @@ import {
   type Fruit,
   type FruitCreateRequest,
   type FruitUpdateRequest,
+  type FruitCategory,
 } from "@/lib/api";
 import { getImageUrl } from "@/lib/image";
 
@@ -21,12 +22,14 @@ export default function AdminFruitsPage() {
   const [fruits, setFruits] = useState<Fruit[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<FruitCategory | "ALL">("ALL");
   const [editingFruit, setEditingFruit] = useState<Fruit | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     pricePerUnit: "",
     imageUrl: "",
+    category: "FRUIT" as FruitCategory,
     active: true,
   });
   const [uploading, setUploading] = useState(false);
@@ -55,7 +58,14 @@ export default function AdminFruitsPage() {
     try {
       setLoading(true);
       const res = await adminGetFruits();
-      setFruits(res.data || []);
+      const fruitsData = res.data || [];
+      // Ensure all fruits have category field
+      const fruitsWithCategory = fruitsData.map(f => ({
+        ...f,
+        category: f.category || "FRUIT" as FruitCategory
+      }));
+      setFruits(fruitsWithCategory);
+      console.log("Loaded fruits with categories:", fruitsWithCategory.map(f => ({ name: f.name, category: f.category })));
     } catch (err: any) {
       alert(err.message || "ไม่สามารถโหลดข้อมูลได้");
     } finally {
@@ -77,6 +87,7 @@ export default function AdminFruitsPage() {
         description: descriptionValue,
         pricePerUnit: fruit.pricePerUnit.toString(),
         imageUrl: fruit.imageUrl || "",
+        category: fruit.category || "FRUIT",
         active: fruit.active,
       });
       console.log("Form data set:", { description: descriptionValue });
@@ -87,6 +98,7 @@ export default function AdminFruitsPage() {
         description: "",
         pricePerUnit: "",
         imageUrl: "",
+        category: "FRUIT" as FruitCategory,
         active: true,
       });
     }
@@ -123,6 +135,7 @@ export default function AdminFruitsPage() {
           description: trimmedDescription, // Always send description (empty string is valid)
           pricePerUnit: parseFloat(formData.pricePerUnit),
           imageUrl: formData.imageUrl?.trim() || undefined,
+          category: formData.category,
           active: formData.active,
         };
         console.log("Updating fruit:", editingFruit.id, "with data:", JSON.stringify(updateData, null, 2));
@@ -136,6 +149,7 @@ export default function AdminFruitsPage() {
           description: formData.description.trim(),
           pricePerUnit: parseFloat(formData.pricePerUnit),
           imageUrl: formData.imageUrl?.trim() || undefined,
+          category: formData.category,
           active: formData.active,
         };
         await adminCreateFruit(createData);
@@ -150,7 +164,7 @@ export default function AdminFruitsPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm("คุณต้องการลบผลไม้นี้หรือไม่?")) return;
+    if (!confirm("คุณต้องการลบวัถุดิบนี้หรือไม่?")) return;
     try {
       await adminDeleteFruit(id);
       alert("ลบข้อมูลสำเร็จ");
@@ -171,66 +185,138 @@ export default function AdminFruitsPage() {
   return (
     <div className="bg-[#F5EFE6] min-h-screen py-12">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-4xl font-bold text-[#4A2C1B] mb-2">จัดการผลไม้</h1>
-            <p className="text-[#4A2C1B]/70">เพิ่ม แก้ไข หรือลบผลไม้และผัก</p>
+            <h1 className="text-3xl font-bold text-[#4A2C1B] mb-1">จัดการวัถุดิบ</h1>
+            <p className="text-[#4A2C1B]/70 text-sm">เพิ่ม แก้ไข หรือลบวัถุดิบ (ผลไม้ ผัก และส่วนเสริม)</p>
           </div>
           <button
             onClick={() => openModal()}
-            className="bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center gap-2"
+            className="bg-[#4A2C1B] text-[#F5EFE6] px-4 py-2 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 text-sm"
           >
-            <Plus className="w-5 h-5" />
-            เพิ่มผลไม้
+            <Plus className="w-4 h-4" />
+            เพิ่มวัถุดิบ
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {fruits.map((fruit) => (
+        {/* Category Filter */}
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory("ALL")}
+              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
+                selectedCategory === "ALL"
+                  ? "bg-[#4A2C1B] text-white shadow-md"
+                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+              }`}
+            >
+              ทั้งหมด
+            </button>
+            <button
+              onClick={() => setSelectedCategory("FRUIT")}
+              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
+                selectedCategory === "FRUIT"
+                  ? "bg-[#4A2C1B] text-white shadow-md"
+                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+              }`}
+            >
+              🍎 ผลไม้
+            </button>
+            <button
+              onClick={() => setSelectedCategory("VEGETABLE")}
+              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
+                selectedCategory === "VEGETABLE"
+                  ? "bg-[#4A2C1B] text-white shadow-md"
+                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+              }`}
+            >
+              🥬 ผัก
+            </button>
+            <button
+              onClick={() => setSelectedCategory("ADDON")}
+              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
+                selectedCategory === "ADDON"
+                  ? "bg-[#4A2C1B] text-white shadow-md"
+                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+              }`}
+            >
+              🥛 ส่วนเสริม
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {(() => {
+            const filteredFruits = selectedCategory === "ALL" 
+              ? fruits 
+              : fruits.filter(f => {
+                  const fruitCategory = f.category || "FRUIT";
+                  const matches = fruitCategory === selectedCategory;
+                  if (!matches && selectedCategory !== "ALL") {
+                    console.log(`Fruit ${f.name} (category: ${fruitCategory}) does not match ${selectedCategory}`);
+                  }
+                  return matches;
+                });
+            console.log(`Filtering: ${selectedCategory}, Total: ${fruits.length}, Filtered: ${filteredFruits.length}`);
+            return filteredFruits;
+          })().map((fruit) => (
             <div
               key={fruit.id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              className="bg-white rounded-lg shadow-sm p-3 hover:shadow-md transition-shadow border border-[#4A2C1B]/10"
             >
               {fruit.imageUrl ? (
                 <img
                   src={getImageUrl(fruit.imageUrl)}
                   alt={fruit.name}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
+                  className="w-full h-24 object-cover rounded-md mb-2"
                 />
               ) : (
-                <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center text-gray-400">
-                  ไม่มีรูปภาพ
+                <div className="w-full h-24 bg-gray-100 rounded-md mb-2 flex items-center justify-center text-gray-400 text-xs">
+                  ไม่มีรูป
                 </div>
               )}
-              <h3 className="text-xl font-semibold text-[#4A2C1B] mb-2">{fruit.name}</h3>
-              <p className="text-[#4A2C1B]/70 text-sm mb-3 line-clamp-2">{fruit.description}</p>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-lg font-bold text-[#4A2C1B]">
-                  {Number(fruit.pricePerUnit).toFixed(2)} บาท
-                </span>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    fruit.active
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {fruit.active ? "ใช้งาน" : "ไม่ใช้งาน"}
-                </span>
+              <div className="mb-2">
+                <h3 className="text-sm font-semibold text-[#4A2C1B] mb-1 line-clamp-1">{fruit.name}</h3>
+                <p className="text-[#4A2C1B]/70 text-xs mb-1.5 line-clamp-1">{fruit.description}</p>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-[#4A2C1B]">
+                    {Number(fruit.pricePerUnit).toFixed(2)} ฿
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      fruit.active
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {fruit.active ? "✓" : "✗"}
+                  </span>
+                </div>
+                <div className="mb-2">
+                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                    fruit.category === "FRUIT" ? "bg-yellow-100 text-yellow-700" :
+                    fruit.category === "VEGETABLE" ? "bg-green-100 text-green-700" :
+                    "bg-blue-100 text-blue-700"
+                  }`}>
+                    {fruit.category === "FRUIT" ? "🍎 ผลไม้" :
+                     fruit.category === "VEGETABLE" ? "🥬 ผัก" :
+                     "🥛 ส่วนเสริม"}
+                  </span>
+                </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 <button
                   onClick={() => openModal(fruit)}
-                  className="flex-1 bg-[#C9A78B] text-[#4A2C1B] px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                  className="flex-1 bg-[#C9A78B] text-[#4A2C1B] px-2 py-1.5 rounded text-xs font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
                 >
-                  <Edit className="w-4 h-4" />
+                  <Edit className="w-3 h-3" />
                   แก้ไข
                 </button>
                 <button
                   onClick={() => handleDelete(fruit.id)}
-                  className="flex-1 bg-red-500 text-white px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                  className="flex-1 bg-red-500 text-white px-2 py-1.5 rounded text-xs font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3 h-3" />
                   ลบ
                 </button>
               </div>
@@ -243,7 +329,7 @@ export default function AdminFruitsPage() {
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-[#4A2C1B]">
-                  {editingFruit ? "แก้ไขผลไม้" : "เพิ่มผลไม้ใหม่"}
+                  {editingFruit ? "แก้ไขวัถุดิบ" : "เพิ่มวัถุดิบใหม่"}
                 </h2>
                 <button
                   onClick={closeModal}
@@ -255,7 +341,7 @@ export default function AdminFruitsPage() {
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-[#4A2C1B] font-semibold mb-2">ชื่อผลไม้ *</label>
+                  <label className="block text-[#4A2C1B] font-semibold mb-2">ชื่อวัถุดิบ *</label>
                   <input
                     type="text"
                     value={formData.name}
@@ -287,6 +373,22 @@ export default function AdminFruitsPage() {
                     className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
                     required
                   />
+                </div>
+
+                <div>
+                  <label className="block text-[#4A2C1B] font-semibold mb-2">
+                    หมวดหมู่ *
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as FruitCategory })}
+                    className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                    required
+                  >
+                    <option value="FRUIT">🍎 ผลไม้</option>
+                    <option value="VEGETABLE">🥬 ผัก</option>
+                    <option value="ADDON">🥛 ส่วนเสริม (โยเกิร์ต, น้ำผึ้ง, นม, ฯลฯ)</option>
+                  </select>
                 </div>
 
                 <div>

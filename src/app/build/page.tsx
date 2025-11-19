@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getFruits, getCupSizes, addToCart, type Fruit, type CupSize } from "@/lib/api";
+import { getFruits, getCupSizes, addToCart, type Fruit, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart, getGuestCartCount } from "@/lib/guestCart";
 import SmoothyCup from "@/app/components/SmoothyCup";
 import FruitSelector from "@/app/components/FruitSelector";
@@ -21,6 +21,7 @@ export default function BuildPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [selectedFruits, setSelectedFruits] = useState<Map<number, { fruit: Fruit; quantity: number }>>(new Map());
   const [user, setUser] = useState<any>(null);
+  const [selectedCategory, setSelectedCategory] = useState<FruitCategory | "ALL">("ALL");
 
   function loadUser() {
     try {
@@ -71,7 +72,13 @@ export default function BuildPage() {
       console.log("📦 Cup sizes response:", cupSizesRes);
 
       const filteredFruits = Array.isArray(fruitsRes.data) 
-        ? fruitsRes.data.filter(f => f && f.active) 
+        ? fruitsRes.data
+            .filter(f => f && f.active)
+            .map(f => ({
+              ...f,
+              // ถ้าไม่มี category ให้ตั้งเป็น FRUIT (default)
+              category: (f.category || "FRUIT") as FruitCategory
+            }))
         : [];
       const filteredCupSizes = Array.isArray(cupSizesRes.data) 
         ? cupSizesRes.data.filter(c => c && c.active) 
@@ -79,6 +86,7 @@ export default function BuildPage() {
       
       console.log("✅ Loaded fruits:", filteredFruits.length);
       console.log("✅ Loaded cup sizes:", filteredCupSizes.length);
+      console.log("✅ Sample fruit with category:", filteredFruits[0]);
       
       setFruits(filteredFruits);
       setCupSizes(filteredCupSizes);
@@ -297,7 +305,7 @@ export default function BuildPage() {
             <Sparkles className="w-8 h-8 text-[#4A2C1B]" />
           </div>
           <p className="text-[#4A2C1B]/70 text-lg">
-            เลือกผลไม้ที่คุณชื่นชอบ สูงสุด {MAX_FRUITS} อย่าง
+            เลือกส่วนผสมที่คุณชื่นชอบ สูงสุด {MAX_FRUITS} อย่าง (ผลไม้ ผัก และส่วนเสริม)
           </p>
           {!user && (
             <div className="mt-4 inline-block bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm text-yellow-800">
@@ -425,9 +433,67 @@ export default function BuildPage() {
           {/* Right Column - Fruit Selector */}
           <div className="lg:col-span-2">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-8 border border-[#4A2C1B]/10 animate-slideIn">
+              {/* Category Filter */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
+                  <div className="text-sm text-[#4A2C1B]/70">
+                    {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setSelectedCategory("ALL")}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                      selectedCategory === "ALL"
+                        ? "bg-[#4A2C1B] text-white shadow-md"
+                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                    }`}
+                  >
+                    ทั้งหมด
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("FRUIT")}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                      selectedCategory === "FRUIT"
+                        ? "bg-[#4A2C1B] text-white shadow-md"
+                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                    }`}
+                  >
+                    🍎 ผลไม้
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("VEGETABLE")}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                      selectedCategory === "VEGETABLE"
+                        ? "bg-[#4A2C1B] text-white shadow-md"
+                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                    }`}
+                  >
+                    🥬 ผัก
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("ADDON")}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                      selectedCategory === "ADDON"
+                        ? "bg-[#4A2C1B] text-white shadow-md"
+                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                    }`}
+                  >
+                    🥛 ส่วนเสริม
+                  </button>
+                </div>
+              </div>
+              
               {fruits.length > 0 ? (
                 <FruitSelector
-                  fruits={fruits}
+                  fruits={selectedCategory === "ALL" 
+                    ? fruits 
+                    : fruits.filter(f => {
+                        // ถ้าไม่มี category ให้ถือว่าเป็น FRUIT (สำหรับข้อมูลเก่า)
+                        const fruitCategory = f.category || "FRUIT";
+                        return fruitCategory === selectedCategory;
+                      })}
                   selectedFruits={selectedFruits}
                   maxFruits={MAX_FRUITS}
                   onFruitChange={handleFruitChange}

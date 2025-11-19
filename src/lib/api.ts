@@ -17,12 +17,15 @@ export type AuthResponse = {
   message: string;
 };
 
+export type FruitCategory = "FRUIT" | "VEGETABLE" | "ADDON";
+
 export type Fruit = {
   id: number;
   name: string;
   description?: string;
   pricePerUnit: number;
   imageUrl?: string;
+  category?: FruitCategory; // Optional เพื่อรองรับข้อมูลเก่าที่อาจจะไม่มี category
   active: boolean;
 };
 
@@ -355,6 +358,7 @@ export type FruitCreateRequest = {
   description: string;
   pricePerUnit: number;
   imageUrl?: string;
+  category?: FruitCategory;
   active?: boolean;
 };
 
@@ -363,6 +367,7 @@ export type FruitUpdateRequest = {
   description?: string;
   pricePerUnit?: number;
   imageUrl?: string;
+  category?: FruitCategory;
   active?: boolean;
 };
 
