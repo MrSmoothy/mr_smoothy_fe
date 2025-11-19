@@ -8,6 +8,7 @@ export type GuestCartItem = {
   quantity: number;
   predefinedDrinkId?: number;
   predefinedDrinkName?: string;
+  predefinedDrinkImageUrl?: string;
   fruits?: {
     fruitId: number;
     fruitName: string;

@@ -1,124 +1,186 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Package, Coffee, Ruler, Image as ImageIcon } from "lucide-react";
-import { adminGetFruits, adminGetDrinks, adminGetCupSizes } from "@/lib/api";
+import { adminGetDashboardStats, type DashboardStats } from "@/lib/api";
+import { TrendingUp, Users, ShoppingCart, DollarSign, Package, TrendingDown } from "lucide-react";
 
 export default function AdminDashboard() {
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [stats, setStats] = useState({
-    fruits: 0,
-    drinks: 0,
-    cupSizes: 0,
-  });
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"Order" | "Popular Smoothie" | "Analyze">("Order");
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("auth_user");
-      const userData = stored ? JSON.parse(stored) : null;
-      
-      if (!userData) {
-        router.push("/login");
-        return;
-      }
-
-      if (userData.role !== "ADMIN") {
-        alert("Access denied. Admin role required.");
-        router.push("/");
-        return;
-      }
-
-      setUser(userData);
-      loadStats();
-    } catch (err) {
-      router.push("/login");
-    }
-  }, [router]);
+    loadStats();
+  }, []);
 
   async function loadStats() {
     try {
-      const [fruitsRes, drinksRes, cupSizesRes] = await Promise.all([
-        adminGetFruits(),
-        adminGetDrinks(),
-        adminGetCupSizes(),
-      ]);
-      setStats({
-        fruits: fruitsRes.data?.length || 0,
-        drinks: drinksRes.data?.length || 0,
-        cupSizes: cupSizesRes.data?.length || 0,
-      });
-    } catch (err) {
-      console.error("Failed to load stats:", err);
+      setLoading(true);
+      const res = await adminGetDashboardStats();
+      if (res.data) {
+        setStats(res.data);
+      }
+    } catch (err: any) {
+      console.error("Failed to load dashboard stats:", err);
+      alert(err.message || "ไม่สามารถโหลดข้อมูลได้");
+    } finally {
+      setLoading(false);
     }
   }
 
-  if (!user) {
+  function formatCurrency(amount: number): string {
+    if (amount >= 1000000) {
+      return `฿${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `฿${(amount / 1000).toFixed(0)}k`;
+    }
+    return `฿${amount.toFixed(0)}`;
+  }
+
+  function formatNumber(num: number): string {
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(1)}M`;
+    } else if (num >= 1000) {
+      return `${(num / 1000).toFixed(0)}k`;
+    }
+    return num.toString();
+  }
+
+  if (loading) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
-        <div className="text-[#4A2C1B] text-xl">กำลังโหลด...</div>
+      <div className="p-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3728] mx-auto mb-4"></div>
+            <div className="text-[#4A3728] text-xl">กำลังโหลดข้อมูล...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="p-8">
+        <div className="text-center text-red-600">ไม่สามารถโหลดข้อมูลได้</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
-      <div className="mx-auto max-w-7xl px-6">
+    <div className="p-8 bg-[#E8DDCB] min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[#4A2C1B] mb-2">Admin Dashboard</h1>
-          <p className="text-[#4A2C1B]/70">จัดการข้อมูลระบบ Mr. Smoothy</p>
+          <h1 className="text-3xl font-bold text-[#4A3728] mb-2 font-serif">Dashboard</h1>
+          <p className="text-[#4A3728]/70 font-sans">ภาพรวมการขายและข้อมูลระบบ</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Link
-            href="/admin/fruits"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-          >
+        {/* Key Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Total Orders */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-[#4A3728]/10">
             <div className="flex items-center justify-between mb-4">
-              <Package className="w-12 h-12 text-[#4A2C1B]" />
-              <span className="text-3xl font-bold text-[#4A2C1B]">{stats.fruits}</span>
+              <h3 className="text-[#4A3728]/70 font-semibold font-sans">Total Orders</h3>
+              <ShoppingCart className="w-5 h-5 text-[#4A3728]" />
             </div>
-            <h3 className="text-xl font-semibold text-[#4A2C1B] mb-2">จัดการผลไม้</h3>
-            <p className="text-[#4A2C1B]/70 text-sm">เพิ่ม แก้ไข ลบผลไม้และผัก</p>
-          </Link>
+            <div className="text-4xl font-bold text-[#4A3728] mb-2 font-serif">
+              {formatNumber(stats.totalOrders)}
+            </div>
+            <div className="flex items-center gap-1 text-green-600 text-sm font-sans">
+              <TrendingUp className="w-4 h-4" />
+              <span>{stats.ordersChangePercent} from last month</span>
+            </div>
+          </div>
 
-          <Link
-            href="/admin/drinks"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-          >
+          {/* Revenue */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-[#4A3728]/10">
             <div className="flex items-center justify-between mb-4">
-              <Coffee className="w-12 h-12 text-[#4A2C1B]" />
-              <span className="text-3xl font-bold text-[#4A2C1B]">{stats.drinks}</span>
+              <h3 className="text-[#4A3728]/70 font-semibold font-sans">Revenue</h3>
+              <DollarSign className="w-5 h-5 text-[#4A3728]" />
             </div>
-            <h3 className="text-xl font-semibold text-[#4A2C1B] mb-2">จัดการเมนู</h3>
-            <p className="text-[#4A2C1B]/70 text-sm">เพิ่ม แก้ไข ลบเมนูน้ำปั่น</p>
-          </Link>
+            <div className="text-4xl font-bold text-[#4A3728] mb-2 font-serif">
+              {formatCurrency(stats.revenue)}
+            </div>
+            <div className="flex items-center gap-1 text-green-600 text-sm font-sans">
+              <TrendingUp className="w-4 h-4" />
+              <span>{stats.revenueChangePercent} from last month</span>
+            </div>
+          </div>
 
-          <Link
-            href="/admin/cup-sizes"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-          >
+          {/* Best-Sell */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-[#4A3728]/10">
             <div className="flex items-center justify-between mb-4">
-              <Ruler className="w-12 h-12 text-[#4A2C1B]" />
-              <span className="text-3xl font-bold text-[#4A2C1B]">{stats.cupSizes}</span>
+              <h3 className="text-[#4A3728]/70 font-semibold font-sans">Best-Sell</h3>
+              <Package className="w-5 h-5 text-[#4A3728]" />
             </div>
-            <h3 className="text-xl font-semibold text-[#4A2C1B] mb-2">จัดการขนาดแก้ว</h3>
-            <p className="text-[#4A2C1B]/70 text-sm">เพิ่ม แก้ไข ลบขนาดแก้ว</p>
-          </Link>
+            <div className="text-4xl font-bold text-[#4A3728] mb-2 font-serif">
+              {stats.bestSellingDrink || "N/A"}
+            </div>
+            <div className="flex items-center gap-1 text-green-600 text-sm font-sans">
+              <TrendingUp className="w-4 h-4" />
+              <span>{stats.bestSellChangePercent} from last month</span>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-[#4A2C1B] mb-4">คำแนะนำ</h2>
-          <div className="space-y-2 text-[#4A2C1B]/70">
-            <p>• ใช้เมนูด้านบนเพื่อจัดการข้อมูลแต่ละหมวดหมู่</p>
-            <p>• สามารถอัปโหลดรูปภาพได้ในแต่ละหน้าจัดการ</p>
-            <p>• ข้อมูลที่ "active" จะแสดงให้ลูกค้าเห็น</p>
+        {/* Additional Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-lg shadow-md p-4 border border-[#4A3728]/10">
+            <div className="text-sm text-[#4A3728]/70 mb-1 font-sans">Total Users</div>
+            <div className="text-2xl font-bold text-[#4A3728] font-serif">{stats.totalUsers}</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-4 border border-[#4A3728]/10">
+            <div className="text-sm text-[#4A3728]/70 mb-1 font-sans">Active Users</div>
+            <div className="text-2xl font-bold text-[#4A3728] font-serif">{stats.activeUsers}</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-4 border border-[#4A3728]/10">
+            <div className="text-sm text-[#4A3728]/70 mb-1 font-sans">Total Cost</div>
+            <div className="text-2xl font-bold text-[#4A3728] font-serif">
+              {formatCurrency(stats.totalCost)}
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-4 border border-[#4A3728]/10">
+            <div className="text-sm text-[#4A3728]/70 mb-1 font-sans">Profit</div>
+            <div className={`text-2xl font-bold font-serif ${
+              stats.profit >= 0 ? "text-green-600" : "text-red-600"
+            }`}>
+              {formatCurrency(stats.profit)}
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow-md p-6 border border-[#4A3728]/10 mb-6">
+          <div className="flex gap-4 border-b border-[#4A3728]/20 mb-6">
+            {(["Order", "Popular Smoothie", "Analyze"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 font-semibold font-sans transition-colors ${
+                  activeTab === tab
+                    ? "text-[#4A3728] border-b-2 border-[#4A3728]"
+                    : "text-[#4A3728]/50 hover:text-[#4A3728]"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <div className="text-[#4A3728]/70 font-sans">
+            {activeTab === "Order" && (
+              <p>ข้อมูลคำสั่งซื้อจะแสดงที่นี่ (ดูรายละเอียดในหน้า Order)</p>
+            )}
+            {activeTab === "Popular Smoothie" && (
+              <p>ข้อมูลเมนูยอดนิยมจะแสดงที่นี่</p>
+            )}
+            {activeTab === "Analyze" && (
+              <p>การวิเคราะห์ข้อมูลจะแสดงที่นี่</p>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 }
-

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ShoppingCart, User, ChevronDown, LogOut, UserCircle } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { getCart } from "@/lib/api";
 import { getGuestCartCount } from "@/lib/guestCart";
@@ -12,6 +12,8 @@ export default function Header() {
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   function loadUser() {
     try {
@@ -26,6 +28,7 @@ export default function Header() {
     // Listen for auth state changes (login/logout)
     const handleAuthChange = () => {
       loadUser();
+      setShowUserMenu(false);
     };
     
     window.addEventListener("authStateChanged", handleAuthChange);
@@ -38,6 +41,23 @@ export default function Header() {
       window.removeEventListener("focus", handleAuthChange);
     };
   }, []);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    }
+
+    if (showUserMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   useEffect(() => {
     // Load cart for logged in users
@@ -104,65 +124,105 @@ export default function Header() {
           </div>
         </Link>
         <nav className="flex items-center gap-4">
-          <Link
-            href="/"
-            className={`px-3 py-2 rounded transition-opacity font-medium ${
-              pathname === '/' 
-                ? 'bg-[#E8DDCB] text-[#4A3728]' 
-                : 'text-[#E8DDCB] hover:opacity-80'
-            }`}
-          >
-            Home
-          </Link>
-          <Link
-            href="/menu"
-            className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
-          >
-            Ready Menu
-          </Link>
-          <Link
-            href="/build"
-            className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
-          >
-            Custom Menu
-          </Link>
-          <Link
-            href="#"
-            className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
-          >
-            Packaging
-          </Link>
-          <Link
-            href="/cart"
-            className="relative text-[#E8DDCB] hover:opacity-80 transition-opacity px-3 py-2"
-          >
-            <ShoppingCart className="w-6 h-6" />
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </Link>
+          {/* Hide navigation links and cart for admin */}
+          {user?.role !== "ADMIN" && (
+            <>
+              <Link
+                href="/"
+                className={`px-3 py-2 rounded transition-opacity font-medium ${
+                  pathname === '/' 
+                    ? 'bg-[#E8DDCB] text-[#4A3728]' 
+                    : 'text-[#E8DDCB] hover:opacity-80'
+                }`}
+              >
+                Home
+              </Link>
+              <Link
+                href="/menu"
+                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+              >
+                Ready Menu
+              </Link>
+              <Link
+                href="/build"
+                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+              >
+                Custom Menu
+              </Link>
+              <Link
+                href="#"
+                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+              >
+                Packaging
+              </Link>
+              <Link
+                href="/cart"
+                className="relative text-[#E8DDCB] hover:opacity-80 transition-opacity px-3 py-2"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </>
+          )}
           {user ? (
             <>
-              {user.role === "ADMIN" && (
-                <Link
-                  href="/admin/dashboard"
-                  className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+              {/* User Menu Dropdown */}
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E8DDCB]/10 hover:bg-[#E8DDCB]/20 transition-colors"
                 >
-                  Admin
-                </Link>
-              )}
-              <div className="flex items-center gap-2 px-3 py-2">
-                <User className="w-5 h-5 text-[#E8DDCB]" />
-                <span className="text-[#E8DDCB] text-sm">{user.fullName || user.username}</span>
+                  <div className="w-8 h-8 rounded-full bg-[#E8DDCB] flex items-center justify-center">
+                    <UserCircle className="w-5 h-5 text-[#4A3728]" />
+                  </div>
+                  <span className="text-[#E8DDCB] font-medium font-sans">{user.fullName || user.username}</span>
+                  <ChevronDown className={`w-4 h-4 text-[#E8DDCB] transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-[#4A3728]/20 overflow-hidden z-50">
+                    <div className="p-4 border-b border-[#4A3728]/10">
+                      <p className="font-semibold text-[#4A3728] font-sans">{user.fullName || user.username}</p>
+                      <p className="text-sm text-[#4A3728]/70 font-sans">{user.email}</p>
+                    </div>
+                    <div className="py-1">
+                      <Link
+                        href="/profile"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-[#4A3728] hover:bg-[#E8DDCB]/50 transition-colors font-sans"
+                      >
+                        <UserCircle className="w-5 h-5" />
+                        <span>โปรไฟล์ของฉัน</span>
+                      </Link>
+                      {user.role === "ADMIN" && (
+                        <Link
+                          href="/admin/dashboard"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-[#4A3728] hover:bg-[#E8DDCB]/50 transition-colors font-sans"
+                        >
+                          <User className="w-5 h-5" />
+                          <span>แดชบอร์ด Admin</span>
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors font-sans"
+                      >
+                        <LogOut className="w-5 h-5" />
+                        <span>ออกจากระบบ</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-              <button
-                onClick={handleLogout}
-                className="rounded-md bg-black px-6 py-2 text-[#E8DDCB] font-medium hover:opacity-90 transition-opacity"
-              >
-                ออกจากระบบ
-              </button>
             </>
           ) : (
             <>

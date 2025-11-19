@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCart, removeFromCart, clearCart, type Cart } from "@/lib/api";
 import { getGuestCart, removeFromGuestCart, clearGuestCart, type GuestCart } from "@/lib/guestCart";
+import { getImageUrl } from "@/lib/image";
 import { Trash2, ShoppingBag, AlertCircle, RefreshCw } from "lucide-react";
 
 export default function CartPage() {
@@ -268,38 +269,64 @@ export default function CartPage() {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+                className="border-b border-[#4A3728]/20 pb-6 last:border-b-0 last:pb-0"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-[#4A2C1B] mb-2">
+                <div className="flex items-start gap-4">
+                  {/* Product Image */}
+                  <div className="flex-shrink-0">
+                    {item.type === "PREDEFINED" && item.predefinedDrinkImageUrl ? (
+                      <img
+                        src={getImageUrl(item.predefinedDrinkImageUrl)}
+                        alt={item.predefinedDrinkName || "น้ำปั่น"}
+                        className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg border border-[#4A3728]/20 shadow-sm"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                          const fallback = target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.classList.remove("hidden");
+                        }}
+                      />
+                    ) : null}
+                    <div className={`w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-[#E8DDCB] to-[#D4C5B0] rounded-lg border border-[#4A3728]/20 flex items-center justify-center shadow-sm ${item.type === "PREDEFINED" && item.predefinedDrinkImageUrl ? "hidden" : ""}`}>
+                      <span className="text-4xl">🥤</span>
+                    </div>
+                  </div>
+
+                  {/* Product Details */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-semibold text-[#4A3728] mb-2 font-serif">
                       {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
                     </h3>
-                    <p className="text-[#4A2C1B]/70 mb-2">ขนาด: {item.cupSizeName}</p>
-                    <p className="text-[#4A2C1B]/70 mb-2">จำนวน: {item.quantity}</p>
-                    {item.fruits && item.fruits.length > 0 && (
-                      <div className="mb-2">
-                        <p className="text-sm text-[#4A2C1B]/60 mb-1">ส่วนผสม:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {item.fruits.map((fruit, idx) => (
-                            <span
-                              key={idx}
-                              className="bg-[#C9A78B] text-[#4A2C1B] px-2 py-1 rounded text-xs"
-                            >
-                              {fruit.fruitName} x{fruit.quantity}
-                            </span>
-                          ))}
+                    <div className="space-y-1 mb-3">
+                      <p className="text-[#4A3728]/70 font-sans">ขนาด: {item.cupSizeName}</p>
+                      <p className="text-[#4A3728]/70 font-sans">จำนวน: {item.quantity} แก้ว</p>
+                      {item.fruits && item.fruits.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-sm text-[#4A3728]/60 mb-1 font-sans">ส่วนผสม:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {item.fruits.map((fruit, idx) => (
+                              <span
+                                key={idx}
+                                className="bg-[#E8DDCB] text-[#4A3728] px-2 py-1 rounded text-xs font-sans"
+                              >
+                                {fruit.fruitName} x{fruit.quantity}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    <p className="text-lg font-bold text-[#4A2C1B]">
+                      )}
+                    </div>
+                    <p className="text-xl font-bold text-[#4A3728] font-serif">
                       {Number(item.totalPrice).toFixed(2)} บาท
                     </p>
                   </div>
+
+                  {/* Remove Button */}
                   <button
                     onClick={() => handleRemoveItem(item.id)}
                     disabled={removing === item.id}
-                    className="ml-4 text-red-600 hover:text-red-700 disabled:opacity-50"
+                    className="flex-shrink-0 text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors p-2 hover:bg-red-50 rounded-lg"
+                    title="ลบสินค้า"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>

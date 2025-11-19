@@ -17,6 +17,22 @@ export type AuthResponse = {
   message: string;
 };
 
+export type UserProfile = {
+  id: number;
+  username: string;
+  email: string;
+  fullName?: string;
+  role?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UserUpdateRequest = {
+  fullName?: string;
+  email?: string;
+  password?: string;
+};
+
 export type FruitCategory = "FRUIT" | "VEGETABLE" | "ADDON";
 
 export type Fruit = {
@@ -58,6 +74,7 @@ export type CartItem = {
   quantity: number;
   predefinedDrinkId?: number;
   predefinedDrinkName?: string;
+  predefinedDrinkImageUrl?: string;
   fruits?: {
     fruitId: number;
     fruitName: string;
@@ -201,6 +218,18 @@ export async function registerAccount(params: {
   });
 }
 
+// User Profile APIs
+export async function getCurrentUser() {
+  return request<UserProfile>("/api/users/me");
+}
+
+export async function updateUserProfile(data: UserUpdateRequest) {
+  return request<UserProfile>("/api/users/me", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
 // Public Catalog APIs
 export async function getFruits() {
   return request<Fruit[]>("/api/public/fruits");
@@ -329,6 +358,32 @@ export type Order = {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+};
+
+export type OrderResponse = {
+  orderId: number;
+  items: {
+    id: number;
+    type: string;
+    cupSizeName: string;
+    quantity: number;
+    predefinedDrinkName?: string;
+    fruits?: {
+      fruitId: number;
+      fruitName: string;
+      quantity: number;
+      pricePerUnit: number;
+    }[];
+    unitPrice: number;
+    totalPrice: number;
+  }[];
+  totalPrice: number;
+  status: string;
+  pickupTime?: string;
+  phoneNumber: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type OrderCreateRequest = {
@@ -490,6 +545,41 @@ export async function adminUpdateDrink(id: number, data: PredefinedDrinkUpdateRe
 export async function adminDeleteDrink(id: number) {
   return request<string>("/api/admin/drinks/" + id, {
     method: "DELETE",
+  });
+}
+
+// Admin Dashboard APIs
+export type DashboardStats = {
+  totalOrders: number;
+  revenue: number;
+  bestSellingDrink: string;
+  totalUsers: number;
+  activeUsers: number;
+  totalSales: number;
+  totalCost: number;
+  profit: number;
+  revenueChangePercent: string;
+  ordersChangePercent: string;
+  bestSellChangePercent: string;
+};
+
+export async function adminGetDashboardStats() {
+  return request<DashboardStats>("/api/admin/dashboard/stats");
+}
+
+// Admin Order APIs
+export async function adminGetAllOrders() {
+  return request<OrderResponse[]>("/api/admin/orders");
+}
+
+export async function adminGetOrder(orderId: number) {
+  return request<OrderResponse>("/api/admin/orders/" + orderId);
+}
+
+export async function adminUpdateOrderStatus(orderId: number, status: string) {
+  return request<OrderResponse>("/api/admin/orders/" + orderId + "/status", {
+    method: "PUT",
+    body: JSON.stringify({ status }),
   });
 }
 

@@ -143,6 +143,7 @@ export default function Home() {
           quantity: 1,
           predefinedDrinkId: drinkId,
           predefinedDrinkName: drink.name,
+          predefinedDrinkImageUrl: drink.imageUrl,
           unitPrice,
           totalPrice,
         };
