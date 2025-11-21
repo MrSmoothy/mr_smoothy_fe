@@ -15,7 +15,7 @@ export default function AdminSidebar() {
     <div className="w-64 bg-[#4A3728] min-h-screen flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-[#5A4A3A]">
-        <h1 className="text-2xl font-bold text-[#E8DDCB] font-serif">Mr. Smoothy</h1>
+        <h1 className="text-2xl font-bold text-[#E8DDCB] font-serif">Admin Dashboard</h1>
       </div>
 
       {/* Navigation */}

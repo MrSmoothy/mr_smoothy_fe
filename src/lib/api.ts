@@ -43,6 +43,7 @@ export type Fruit = {
   imageUrl?: string;
   category?: FruitCategory; // Optional เพื่อรองรับข้อมูลเก่าที่อาจจะไม่มี category
   active: boolean;
+  seasonal?: boolean; // วัตถุดิบตามฤดูกาล
 };
 
 export type CupSize = {
@@ -243,6 +244,10 @@ export async function getDrinks() {
   return request<PredefinedDrink[]>("/api/public/drinks");
 }
 
+export async function getSeasonalIngredients() {
+  return request<Fruit[]>("/api/public/seasonal-ingredients");
+}
+
 // Cart APIs
 export async function getCart() {
   return request<Cart>("/api/cart");
@@ -415,6 +420,7 @@ export type FruitCreateRequest = {
   imageUrl?: string;
   category?: FruitCategory;
   active?: boolean;
+  seasonal?: boolean;
 };
 
 export type FruitUpdateRequest = {
@@ -424,6 +430,7 @@ export type FruitUpdateRequest = {
   imageUrl?: string;
   category?: FruitCategory;
   active?: boolean;
+  seasonal?: boolean;
 };
 
 export async function adminGetFruits() {

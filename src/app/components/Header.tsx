@@ -129,35 +129,41 @@ export default function Header() {
             <>
               <Link
                 href="/"
-                className={`px-3 py-2 rounded transition-opacity font-medium ${
+                className={`px-3 py-2 rounded transition-all font-medium ${
                   pathname === '/' 
-                    ? 'bg-[#E8DDCB] text-[#4A3728]' 
-                    : 'text-[#E8DDCB] hover:opacity-80'
+                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
                 }`}
               >
                 Home
               </Link>
               <Link
                 href="/menu"
-                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+                className={`px-3 py-2 rounded transition-all font-medium ${
+                  pathname === '/menu' || pathname?.startsWith('/menu/')
+                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
+                }`}
               >
                 Ready Menu
               </Link>
               <Link
                 href="/build"
-                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+                className={`px-3 py-2 rounded transition-all font-medium ${
+                  pathname === '/build' || pathname?.startsWith('/build/')
+                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
+                }`}
               >
                 Custom Menu
               </Link>
               <Link
-                href="#"
-                className="text-[#E8DDCB] hover:opacity-80 transition-opacity font-medium px-3 py-2"
-              >
-                Packaging
-              </Link>
-              <Link
                 href="/cart"
-                className="relative text-[#E8DDCB] hover:opacity-80 transition-opacity px-3 py-2"
+                className={`relative px-3 py-2 rounded transition-all ${
+                  pathname === '/cart' || pathname?.startsWith('/cart/')
+                    ? 'bg-[#E8DDCB] text-[#4A3728]' 
+                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20'
+                }`}
               >
                 <ShoppingCart className="w-6 h-6" />
                 {cartCount > 0 && (

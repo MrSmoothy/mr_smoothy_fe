@@ -31,6 +31,7 @@ export default function AdminFruitsPage() {
     imageUrl: "",
     category: "FRUIT" as FruitCategory,
     active: true,
+    seasonal: false,
   });
   const [uploading, setUploading] = useState(false);
 
@@ -88,7 +89,8 @@ export default function AdminFruitsPage() {
         pricePerUnit: fruit.pricePerUnit.toString(),
         imageUrl: fruit.imageUrl || "",
         category: fruit.category || "FRUIT",
-        active: fruit.active,
+        active: fruit.active !== undefined ? fruit.active : true,
+        seasonal: fruit.seasonal !== undefined ? fruit.seasonal : false,
       });
       console.log("Form data set:", { description: descriptionValue });
     } else {
@@ -100,6 +102,7 @@ export default function AdminFruitsPage() {
         imageUrl: "",
         category: "FRUIT" as FruitCategory,
         active: true,
+        seasonal: false,
       });
     }
     setShowModal(true);
@@ -137,6 +140,7 @@ export default function AdminFruitsPage() {
           imageUrl: formData.imageUrl?.trim() || undefined,
           category: formData.category,
           active: formData.active,
+          seasonal: formData.seasonal,
         };
         console.log("Updating fruit:", editingFruit.id, "with data:", JSON.stringify(updateData, null, 2));
         const response = await adminUpdateFruit(editingFruit.id, updateData);
@@ -151,6 +155,7 @@ export default function AdminFruitsPage() {
           imageUrl: formData.imageUrl?.trim() || undefined,
           category: formData.category,
           active: formData.active,
+          seasonal: formData.seasonal,
         };
         await adminCreateFruit(createData);
         alert("เพิ่มข้อมูลสำเร็จ");
@@ -429,17 +434,32 @@ export default function AdminFruitsPage() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="active"
-                    checked={formData.active}
-                    onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                    className="w-5 h-5"
-                  />
-                  <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
-                    แสดงให้ลูกค้าเห็น
-                  </label>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="active"
+                      checked={formData.active}
+                      onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                      className="w-5 h-5"
+                    />
+                    <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
+                      แสดงให้ลูกค้าเห็น
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="seasonal"
+                      checked={formData.seasonal}
+                      onChange={(e) => setFormData({ ...formData, seasonal: e.target.checked })}
+                      className="w-5 h-5"
+                    />
+                    <label htmlFor="seasonal" className="text-[#4A2C1B] font-semibold">
+                      วัตถุดิบตามฤดูกาล
+                    </label>
+                  </div>
                 </div>
 
                 <div className="flex gap-4 pt-4">

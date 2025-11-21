@@ -209,30 +209,95 @@ export default function MenuPage() {
         price = price / 100;
       }
     }
+
+    // Get ingredients with images for hover display
+    const drinkIngredients = drink.ingredients
+      ? drink.ingredients
+          .map(ing => {
+            const fruit = fruits.find(f => f.id === ing.fruitId);
+            return fruit ? {
+              id: fruit.id,
+              name: fruit.name,
+              imageUrl: fruit.imageUrl,
+              quantity: ing.quantity,
+              category: fruit.category
+            } : null;
+          })
+          .filter(Boolean)
+          .slice(0, 6) // Show max 6 ingredients
+      : [];
     
     return (
       <div
         key={drink.id}
-        className="bg-white rounded-lg border border-[#4A3728]/20 p-4 hover:shadow-lg transition-all relative group"
+        className="bg-white rounded-lg border border-[#4A3728]/20 p-4 hover:shadow-xl transition-all duration-300 relative group"
       >
         <div 
           onClick={() => openModal(drink)}
           className="cursor-pointer"
         >
-          {drink.imageUrl ? (
-            <img
-              src={getImageUrl(drink.imageUrl)}
-              alt={drink.name}
-              className="w-full h-48 object-cover rounded-lg mb-3"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-                (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden");
-              }}
-            />
-          ) : null}
-          <div className={`w-full h-48 bg-[#D4C5B0] rounded-lg mb-3 flex items-center justify-center text-gray-400 ${drink.imageUrl ? "hidden" : ""}`}>
-            <span className="text-4xl">🥤</span>
+          {/* Image Container with Hover Overlay */}
+          <div className="relative w-full h-48 rounded-lg mb-3 overflow-hidden">
+            {drink.imageUrl ? (
+              <img
+                src={getImageUrl(drink.imageUrl)}
+                alt={drink.name}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                  const parent = (e.target as HTMLImageElement).parentElement;
+                  if (parent) {
+                    const fallback = parent.querySelector('.fallback-image');
+                    if (fallback) (fallback as HTMLElement).classList.remove("hidden");
+                  }
+                }}
+              />
+            ) : null}
+            <div className={`w-full h-full bg-[#D4C5B0] rounded-lg flex items-center justify-center text-gray-400 ${drink.imageUrl ? "hidden fallback-image" : ""}`}>
+              <span className="text-4xl">🥤</span>
+            </div>
+            
+            {/* Ingredients Overlay on Hover */}
+            {drinkIngredients.length > 0 && (
+              <div className="absolute inset-0 bg-[#4A3728]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3 rounded-lg">
+                <p className="text-white text-xs font-semibold mb-2 font-sans">ส่วนผสม</p>
+                <div className="grid grid-cols-3 gap-2 w-full max-h-32 overflow-y-auto">
+                  {drinkIngredients.map((ing: any) => (
+                    <div
+                      key={ing.id}
+                      className="flex flex-col items-center bg-white/10 rounded-lg p-1.5 backdrop-blur-sm"
+                      title={`${ing.name} x${ing.quantity}`}
+                    >
+                      {ing.imageUrl ? (
+                        <img
+                          src={getImageUrl(ing.imageUrl)}
+                          alt={ing.name}
+                          className="w-10 h-10 object-cover rounded-full border-2 border-white/30"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                            const fallback = (e.target as HTMLImageElement).nextElementSibling;
+                            if (fallback) (fallback as HTMLElement).classList.remove("hidden");
+                          }}
+                        />
+                      ) : null}
+                      <div className={`w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/30 ${ing.imageUrl ? "hidden" : ""}`}>
+                        <span className="text-lg">
+                          {ing.category === "FRUIT" ? "🍎" : ing.category === "VEGETABLE" ? "🥬" : "🥛"}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-white font-medium mt-1 text-center line-clamp-1 font-sans">
+                        {ing.name}
+                      </span>
+                      {ing.quantity > 1 && (
+                        <span className="text-[9px] text-white/80 font-sans">x{ing.quantity}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+          
           <h4 className="font-semibold text-[#4A3728] mb-1 font-sans">{drink.name}</h4>
           {drink.description && (
             <p className="text-[#4A3728]/70 text-xs mb-2 line-clamp-2 font-sans">{drink.description}</p>
@@ -245,7 +310,7 @@ export default function MenuPage() {
             e.stopPropagation();
             openModal(drink);
           }}
-          className="absolute bottom-4 right-4 bg-[#4A3728] text-[#E8DDCB] w-8 h-8 rounded flex items-center justify-center hover:bg-[#5A3C2B] transition-colors"
+          className="absolute bottom-4 right-4 bg-[#4A3728] text-[#E8DDCB] w-8 h-8 rounded flex items-center justify-center hover:bg-[#5A3C2B] transition-colors z-10"
           title="ดูรายละเอียด"
         >
           +
