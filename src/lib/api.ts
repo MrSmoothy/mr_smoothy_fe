@@ -387,6 +387,8 @@ export type OrderResponse = {
   pickupTime?: string;
   phoneNumber: string;
   notes?: string;
+  customerName?: string;
+  customerEmail?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -397,10 +399,91 @@ export type OrderCreateRequest = {
   notes?: string;
 };
 
+export type GuestOrderItemRequest = {
+  type: "PREDEFINED" | "CUSTOM";
+  cupSizeId: number;
+  quantity: number;
+  predefinedDrinkId?: number;
+  fruits?: {
+    fruitId: number;
+    quantity: number;
+  }[];
+  unitPrice: number;
+  totalPrice: number;
+};
+
+export type GuestOrderCreateRequest = {
+  pickupTime: string;
+  phoneNumber: string;
+  customerName: string;
+  customerEmail?: string;
+  notes?: string;
+  items: GuestOrderItemRequest[];
+};
+
 export async function createOrder(orderRequest: OrderCreateRequest) {
+  // แปลง pickupTime ให้แน่ใจว่าเป็น format ที่ถูกต้อง (yyyy-MM-ddTHH:mm:ss)
+  const formattedRequest = {
+    ...orderRequest,
+    pickupTime: orderRequest.pickupTime ? (() => {
+      let time = orderRequest.pickupTime;
+      // ถ้าเป็น ISO string (มี Z หรือ timezone) ให้แปลงเป็น LocalDateTime
+      if (time.includes('Z') || time.includes('+') || (time.includes('-') && time.length > 19)) {
+        const date = new Date(time);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+      }
+      // ลบ milliseconds ถ้ามี
+      time = time.replace(/\.\d{3}$/, '');
+      // เพิ่ม seconds ถ้ายังไม่มี
+      if (!time.match(/:\d{2}$/)) {
+        time = `${time}:00`;
+      }
+      return time;
+    })() : orderRequest.pickupTime,
+  };
+  
   return request<Order>("/api/orders", {
     method: "POST",
-    body: JSON.stringify(orderRequest),
+    body: JSON.stringify(formattedRequest),
+  });
+}
+
+export async function createGuestOrder(orderRequest: GuestOrderCreateRequest) {
+  // แปลง pickupTime ให้แน่ใจว่าเป็น format ที่ถูกต้อง (yyyy-MM-ddTHH:mm:ss)
+  const formattedRequest = {
+    ...orderRequest,
+    pickupTime: orderRequest.pickupTime ? (() => {
+      let time = orderRequest.pickupTime;
+      // ถ้าเป็น ISO string (มี Z หรือ timezone) ให้แปลงเป็น LocalDateTime
+      if (time.includes('Z') || time.includes('+') || (time.includes('-') && time.length > 19)) {
+        const date = new Date(time);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+      }
+      // ลบ milliseconds ถ้ามี
+      time = time.replace(/\.\d{3}$/, '');
+      // เพิ่ม seconds ถ้ายังไม่มี
+      if (!time.match(/:\d{2}$/)) {
+        time = `${time}:00`;
+      }
+      return time;
+    })() : orderRequest.pickupTime,
+  };
+  
+  return request<Order>("/api/public/guest-orders", {
+    method: "POST",
+    body: JSON.stringify(formattedRequest),
   });
 }
 
@@ -410,6 +493,15 @@ export async function getMyOrders() {
 
 export async function getOrderById(orderId: number) {
   return request<Order>("/api/orders/" + orderId);
+}
+
+// Public APIs for guest orders
+export async function getGuestOrdersByPhoneNumber(phoneNumber: string) {
+  return request<Order[]>("/api/public/guest-orders?phoneNumber=" + encodeURIComponent(phoneNumber));
+}
+
+export async function getGuestOrderById(orderId: number) {
+  return request<Order>("/api/public/guest-orders/" + orderId);
 }
 
 // Admin APIs - Fruits

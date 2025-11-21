@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getGuestCart, addGuestOrder, clearGuestCart, type GuestCart, type GuestOrder } from "@/lib/guestCart";
-import { CreditCard, CheckCircle, AlertCircle, Lock, Shield, Clock } from "lucide-react";
+import { getGuestCart, clearGuestCart, type GuestCart } from "@/lib/guestCart";
+import { createGuestOrder, type GuestOrderCreateRequest } from "@/lib/api";
+import { CreditCard, CheckCircle, AlertCircle, Lock, Shield, Clock, Package, XCircle, Eye } from "lucide-react";
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function PaymentPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [orderResponse, setOrderResponse] = useState<any>(null);
   const [formData, setFormData] = useState({
     pickupTime: "",
     pickupTimeDisplay: "",
@@ -54,34 +56,62 @@ export default function PaymentPage() {
       return;
     }
 
+    if (!guestCart || !guestCart.items || guestCart.items.length === 0) {
+      alert("ตะกร้าสินค้าว่าง");
+      return;
+    }
+
     try {
       setSubmitting(true);
 
-      // สร้าง guest order
-      const guestOrder: GuestOrder = {
-        id: `guest_order_${Date.now()}`,
-        items: guestCart?.items || [],
-        totalPrice: guestCart?.totalPrice || 0,
-        customerName: formData.customerName,
-        phoneNumber: formData.phoneNumber,
-        email: formData.email || undefined,
+      // แปลง guest cart items เป็น API request format
+      const orderItems: GuestOrderCreateRequest["items"] = guestCart.items.map(item => ({
+        type: item.type,
+        cupSizeId: item.cupSizeId,
+        quantity: item.quantity,
+        predefinedDrinkId: item.predefinedDrinkId,
+        fruits: item.fruits?.map(f => ({
+          fruitId: f.fruitId,
+          quantity: f.quantity,
+        })),
+        unitPrice: item.unitPrice,
+        totalPrice: item.totalPrice,
+      }));
+
+      // สร้าง guest order request
+      // pickupTime จะถูกแปลง format ใน createGuestOrder function
+      const orderRequest: GuestOrderCreateRequest = {
         pickupTime: formData.pickupTime,
-        pickupTimeDisplay: formData.pickupTimeDisplay,
+        phoneNumber: formData.phoneNumber,
+        customerName: formData.customerName,
+        customerEmail: formData.email || undefined,
         notes: formData.notes || undefined,
-        paymentMethod: formData.paymentMethod,
-        status: "PENDING",
-        createdAt: new Date().toISOString(),
+        items: orderItems,
       };
 
-      // เก็บ order
-      addGuestOrder(guestOrder);
+      // ส่ง order ไปยัง backend
+      const response = await createGuestOrder(orderRequest);
+      
+      // เก็บ order response
+      if (response.data) {
+        setOrderResponse(response.data);
+        
+        // เก็บ order ID และ phone number ไว้ใน localStorage สำหรับ guest users
+        const guestOrderIds = JSON.parse(localStorage.getItem("guest_order_ids") || "[]");
+        if (response.data.orderId && !guestOrderIds.includes(response.data.orderId)) {
+          guestOrderIds.push(response.data.orderId);
+          localStorage.setItem("guest_order_ids", JSON.stringify(guestOrderIds));
+        }
+        // เก็บ phone number เพื่อใช้ดึง orders จาก API
+        if (formData.phoneNumber) {
+          localStorage.setItem("guest_phone_number", formData.phoneNumber);
+        }
+      }
 
       // ล้าง guest cart
       clearGuestCart();
       window.dispatchEvent(new Event("cartUpdated"));
-
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      window.dispatchEvent(new Event("orderUpdated"));
 
       setPaymentSuccess(true);
     } catch (err: any) {
@@ -114,6 +144,37 @@ export default function PaymentPage() {
           </p>
           
           <div className="bg-[#C9A78B]/20 rounded-lg p-4 mb-6 text-left space-y-2">
+            {orderResponse?.orderId && (
+              <div>
+                <p className="text-sm text-[#4A2C1B]/70">หมายเลขคำสั่งซื้อ:</p>
+                <p className="font-semibold text-[#4A2C1B]">#{String(orderResponse.orderId).padStart(3, "0")}</p>
+              </div>
+            )}
+            <div>
+              <p className="text-sm text-[#4A2C1B]/70">สถานะคำสั่งซื้อ:</p>
+              <div className="flex items-center gap-2 mt-1">
+                {orderResponse?.status ? (
+                  <>
+                    {orderResponse.status === "PENDING" && <Clock className="w-5 h-5 text-yellow-500" />}
+                    {orderResponse.status === "CONFIRMED" && <Package className="w-5 h-5 text-blue-500" />}
+                    {orderResponse.status === "PREPARING" && <Package className="w-5 h-5 text-blue-500" />}
+                    {orderResponse.status === "READY" && <CheckCircle className="w-5 h-5 text-green-500" />}
+                    {orderResponse.status === "COMPLETED" && <CheckCircle className="w-5 h-5 text-green-600" />}
+                    {orderResponse.status === "CANCELLED" && <XCircle className="w-5 h-5 text-red-500" />}
+                    <span className="font-semibold text-[#4A2C1B]">
+                      {orderResponse.status === "PENDING" ? "รอการยืนยัน" :
+                       orderResponse.status === "CONFIRMED" ? "ยืนยันแล้ว" :
+                       orderResponse.status === "PREPARING" ? "กำลังเตรียม" :
+                       orderResponse.status === "READY" ? "พร้อมรับ" :
+                       orderResponse.status === "COMPLETED" ? "รับแล้ว" :
+                       orderResponse.status === "CANCELLED" ? "ยกเลิก" : orderResponse.status}
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-semibold text-[#4A2C1B]">รอการยืนยัน</span>
+                )}
+              </div>
+            </div>
             <div>
               <p className="text-sm text-[#4A2C1B]/70">ชื่อลูกค้า:</p>
               <p className="font-semibold text-[#4A2C1B]">{formData.customerName}</p>
@@ -129,7 +190,7 @@ export default function PaymentPage() {
             <div>
               <p className="text-sm text-[#4A2C1B]/70">ยอดรวม:</p>
               <p className="font-semibold text-[#4A2C1B] text-lg">
-                {Number(guestCart?.totalPrice || 0).toFixed(2)} บาท
+                {Number(orderResponse?.totalPrice || guestCart?.totalPrice || 0).toFixed(2)} บาท
               </p>
             </div>
           </div>
@@ -151,19 +212,28 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="space-y-3">
             <button
-              onClick={() => router.push("/login?redirect=/")}
-              className="flex-1 bg-[#4A2C1B] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              onClick={() => router.push("/orders")}
+              className="w-full bg-[#4A2C1B] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
-              เข้าสู่ระบบ
+              <Eye className="w-5 h-5" />
+              ดูสถานะคำสั่งซื้อ
             </button>
-            <button
-              onClick={() => router.push("/")}
-              className="flex-1 bg-[#C9A78B] text-[#4A2C1B] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-            >
-              กลับหน้าหลัก
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => router.push("/login?redirect=/orders")}
+                className="flex-1 bg-[#C9A78B] text-[#4A2C1B] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              >
+                เข้าสู่ระบบ
+              </button>
+              <button
+                onClick={() => router.push("/")}
+                className="flex-1 bg-[#C9A78B] text-[#4A2C1B] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              >
+                กลับหน้าหลัก
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -266,10 +336,12 @@ export default function PaymentPage() {
                     value={formData.pickupTimeDisplay}
                     onChange={(e) => {
                       const value = e.target.value;
-                      const isoString = value ? new Date(value).toISOString() : "";
+                      // Convert datetime-local format (yyyy-MM-ddTHH:mm) to LocalDateTime format (yyyy-MM-ddTHH:mm:ss)
+                      // datetime-local returns format like "2025-11-21T14:35" without seconds
+                      const localDateTimeString = value ? `${value}:00` : "";
                       setFormData({ 
                         ...formData, 
-                        pickupTime: isoString,
+                        pickupTime: localDateTimeString,
                         pickupTimeDisplay: value
                       });
                     }}

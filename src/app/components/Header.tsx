@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, User, ChevronDown, LogOut, UserCircle } from "lucide-react";
+import { ShoppingCart, User, ChevronDown, LogOut, UserCircle, Package } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { getCart } from "@/lib/api";
+import { getCart, getMyOrders, getGuestOrdersByPhoneNumber, type Order } from "@/lib/api";
 import { getGuestCartCount } from "@/lib/guestCart";
 
 export default function Header() {
@@ -12,6 +12,7 @@ export default function Header() {
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -60,28 +61,34 @@ export default function Header() {
   }, [showUserMenu]);
 
   useEffect(() => {
-    // Load cart for logged in users
+    // Load cart and orders for logged in users
     if (user) {
       loadCart();
+      loadPendingOrders();
     } else {
-      // Load guest cart count
+      // Load guest cart count and orders
       updateGuestCartCount();
+      loadGuestPendingOrders();
     }
     
-    // Listen for cart updates
+    // Listen for cart and order updates
     const handleCartUpdate = () => {
       if (user) {
         loadCart();
+        loadPendingOrders();
       } else {
         updateGuestCartCount();
+        loadGuestPendingOrders();
       }
     };
     
     window.addEventListener("cartUpdated", handleCartUpdate);
+    window.addEventListener("orderUpdated", handleCartUpdate);
     window.addEventListener("focus", handleCartUpdate);
     
     return () => {
       window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("orderUpdated", handleCartUpdate);
       window.removeEventListener("focus", handleCartUpdate);
     };
   }, [user]);
@@ -99,6 +106,35 @@ export default function Header() {
     } catch (err) {
       // Cart might be empty or not accessible
       setCartCount(0);
+    }
+  }
+
+  async function loadPendingOrders() {
+    try {
+      const res = await getMyOrders();
+      const pendingOrders = (res.data || []).filter(
+        (order: Order) => order.status && order.status !== "COMPLETED" && order.status !== "CANCELLED"
+      );
+      setPendingOrdersCount(pendingOrders.length);
+    } catch (err) {
+      setPendingOrdersCount(0);
+    }
+  }
+
+  async function loadGuestPendingOrders() {
+    try {
+      const phoneNumber = localStorage.getItem("guest_phone_number");
+      if (phoneNumber) {
+        const res = await getGuestOrdersByPhoneNumber(phoneNumber);
+        const pendingOrders = (res.data || []).filter(
+          (order: Order) => order.status && order.status !== "COMPLETED" && order.status !== "CANCELLED"
+        );
+        setPendingOrdersCount(pendingOrders.length);
+      } else {
+        setPendingOrdersCount(0);
+      }
+    } catch (err) {
+      setPendingOrdersCount(0);
     }
   }
 
@@ -157,21 +193,39 @@ export default function Header() {
               >
                 Custom Menu
               </Link>
-              <Link
-                href="/cart"
-                className={`relative px-3 py-2 rounded transition-all ${
-                  pathname === '/cart' || pathname?.startsWith('/cart/')
-                    ? 'bg-[#E8DDCB] text-[#4A3728]' 
-                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20'
-                }`}
-              >
-                <ShoppingCart className="w-6 h-6" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
+              <div className="relative">
+                <Link
+                  href="/cart"
+                  className={`relative px-3 py-2 rounded transition-all inline-flex items-center justify-center ${
+                    pathname === '/cart' || pathname?.startsWith('/cart/')
+                      ? 'bg-[#E8DDCB]' 
+                      : 'hover:bg-[#E8DDCB]/20'
+                  }`}
+                >
+                  {pathname === '/cart' || pathname?.startsWith('/cart/') ? (
+                    <ShoppingCart 
+                      className="w-6 h-6 text-[#4A3728] flex-shrink-0"
+                      strokeWidth={2}
+                    />
+                  ) : (
+                    <ShoppingCart 
+                      className="w-6 h-6 text-[#E8DDCB] flex-shrink-0"
+                      strokeWidth={2}
+                    />
+                  )}
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold z-10">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+                {pendingOrdersCount > 0 && (
+                  <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                    <Package className="w-3 h-3" />
+                    <span>{pendingOrdersCount}</span>
+                  </div>
                 )}
-              </Link>
+              </div>
             </>
           )}
           {user ? (

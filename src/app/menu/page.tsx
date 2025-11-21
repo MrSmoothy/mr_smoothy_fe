@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getFruits, getDrinks, getCupSizes, addToCart, type Fruit, type PredefinedDrink, type CupSize } from "@/lib/api";
+import { getFruits, getDrinks, getCupSizes, addToCart, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
 
@@ -17,6 +17,7 @@ export default function MenuPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedDrink, setSelectedDrink] = useState<PredefinedDrink | null>(null);
   const [modalCupSize, setModalCupSize] = useState<CupSize | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "FRUIT" | "VEGETABLE" | "MIXED" | "PROTEIN">("ALL");
 
   function loadUser() {
     try {
@@ -81,7 +82,13 @@ export default function MenuPage() {
       console.log("Loaded drinks:", filteredDrinks.length, filteredDrinks);
       console.log("Loaded cup sizes:", filteredCupSizes.length, filteredCupSizes);
       
-      setFruits(filteredFruits);
+      // Ensure all fruits have category field
+      const fruitsWithCategory = filteredFruits.map(f => ({
+        ...f,
+        category: (f.category || "FRUIT") as FruitCategory
+      }));
+      
+      setFruits(fruitsWithCategory);
       setDrinks(filteredDrinks);
       setCupSizes(filteredCupSizes);
       
@@ -189,6 +196,65 @@ export default function MenuPage() {
     }
   }
 
+  // Filter drinks by category
+  function getDrinksByCategory(category: "ALL" | "FRUIT" | "VEGETABLE" | "MIXED" | "PROTEIN"): PredefinedDrink[] {
+    if (category === "ALL") {
+      return drinks;
+    }
+
+    if (fruits.length === 0) {
+      console.warn("No fruits loaded, cannot filter by category");
+      return drinks;
+    }
+
+    const filtered = drinks.filter(drink => {
+      if (!drink.ingredients || drink.ingredients.length === 0) {
+        // ถ้าไม่มี ingredients ให้เป็น MIXED
+        return category === "MIXED";
+      }
+
+      // ตรวจสอบว่า ingredients เป็นผลไม้หรือผัก
+      const ingredientCategories: FruitCategory[] = drink.ingredients.map(ing => {
+        const fruit = fruits.find(f => f.id === ing.fruitId);
+        if (!fruit) {
+          console.warn(`Fruit not found for ingredient ${ing.fruitId} in drink ${drink.name}`);
+          return "FRUIT" as FruitCategory;
+        }
+        // ใช้ category จาก fruit หรือ default เป็น FRUIT
+        const fruitCategory: FruitCategory = (fruit.category || "FRUIT") as FruitCategory;
+        return fruitCategory;
+      });
+
+      // ตรวจสอบว่ามีประเภทอะไรบ้าง
+      const hasFruit = ingredientCategories.some(cat => cat === "FRUIT");
+      const hasVegetable = ingredientCategories.some(cat => cat === "VEGETABLE");
+      const hasAddon = ingredientCategories.some(cat => cat === "ADDON");
+      const uniqueCategories = new Set(ingredientCategories);
+
+      let matches = false;
+
+      if (category === "FRUIT") {
+        // น้ำผลไม้ล้วน: มีเฉพาะผลไม้เท่านั้น (ไม่มีผักและส่วนเสริม)
+        matches = hasFruit && !hasVegetable && !hasAddon && uniqueCategories.size === 1 && uniqueCategories.has("FRUIT");
+      } else if (category === "VEGETABLE") {
+        // น้ำผัก: มีเฉพาะผักเท่านั้น (ไม่มีผลไม้และส่วนเสริม)
+        matches = hasVegetable && !hasFruit && !hasAddon && uniqueCategories.size === 1 && uniqueCategories.has("VEGETABLE");
+      } else if (category === "MIXED") {
+        // น้ำผสม: มีทั้งผลไม้และผัก หรือมีหลายประเภท
+        matches = (hasFruit && hasVegetable) || (uniqueCategories.size > 1 && !hasAddon);
+      } else if (category === "PROTEIN") {
+        // น้ำโปรตีน: มีส่วนเสริม (ADDON) เช่น whey protein, โยเกิร์ต ฯลฯ
+        matches = hasAddon;
+      }
+
+      return matches;
+    });
+
+    return filtered;
+  }
+
+  // Get filtered drinks based on selected category
+  const filteredDrinks = getDrinksByCategory(selectedCategory);
 
   function renderDrinkCard(drink: PredefinedDrink) {
     // คำนวณราคาจาก ingredients
@@ -324,19 +390,96 @@ export default function MenuPage() {
       <div className="mx-auto max-w-7xl px-6">
         <h1 className="text-4xl font-bold text-[#4A3728] mb-8 font-serif">Ready Menu</h1>
 
+        {/* Category Filter */}
+        <section className="mb-8">
+          <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+            <h2 className="text-lg font-semibold text-[#4A3728] mb-4 font-sans">เลือกหมวดหมู่</h2>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setSelectedCategory("ALL")}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                  selectedCategory === "ALL"
+                    ? "bg-[#4A3728] text-[#E8DDCB]"
+                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                }`}
+              >
+                ทั้งหมด
+              </button>
+              <button
+                onClick={() => setSelectedCategory("FRUIT")}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                  selectedCategory === "FRUIT"
+                    ? "bg-[#4A3728] text-[#E8DDCB]"
+                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                }`}
+              >
+                🍎 น้ำผลไม้ล้วน
+              </button>
+              <button
+                onClick={() => setSelectedCategory("VEGETABLE")}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                  selectedCategory === "VEGETABLE"
+                    ? "bg-[#4A3728] text-[#E8DDCB]"
+                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                }`}
+              >
+                🥬 น้ำผัก
+              </button>
+              <button
+                onClick={() => setSelectedCategory("MIXED")}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                  selectedCategory === "MIXED"
+                    ? "bg-[#4A3728] text-[#E8DDCB]"
+                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                }`}
+              >
+                🍹 ผสมผักผลไม้
+              </button>
+              <button
+                onClick={() => setSelectedCategory("PROTEIN")}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                  selectedCategory === "PROTEIN"
+                    ? "bg-[#4A3728] text-[#E8DDCB]"
+                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                }`}
+              >
+                💪 โปรตีน/ส่วนเสริม
+              </button>
+            </div>
+          </div>
+        </section>
+
         {/* All Drinks */}
         <section className="mb-12">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-[#4A3728] mb-2 font-serif">All Smoothies</h2>
-            <p className="text-lg text-[#4A3728]/80 font-sans">Browse our complete menu</p>
+            <h2 className="text-3xl font-bold text-[#4A3728] mb-2 font-serif">
+              {selectedCategory === "ALL" && "All Smoothies"}
+              {selectedCategory === "FRUIT" && "น้ำผลไม้ล้วน"}
+              {selectedCategory === "VEGETABLE" && "น้ำผัก"}
+              {selectedCategory === "MIXED" && "น้ำผสมผักผลไม้"}
+              {selectedCategory === "PROTEIN" && "น้ำโปรตีน/ส่วนเสริม"}
+            </h2>
+            <p className="text-lg text-[#4A3728]/80 font-sans">
+              {filteredDrinks.length > 0 
+                ? `พบ ${filteredDrinks.length} รายการ` 
+                : "ยังไม่มีเมนูในหมวดหมู่นี้"}
+            </p>
           </div>
           {loading ? (
             <div className="text-center text-[#4A3728]/60 py-8">กำลังโหลด...</div>
-          ) : drinks.length === 0 ? (
-            <div className="text-center text-[#4A3728]/60 py-8">ยังไม่มีเมนูน้ำปั่น</div>
+          ) : filteredDrinks.length === 0 ? (
+            <div className="text-center text-[#4A3728]/60 py-8 bg-white rounded-lg shadow-md p-12">
+              <p className="text-xl mb-4">ยังไม่มีเมนูในหมวดหมู่นี้</p>
+              <button
+                onClick={() => setSelectedCategory("ALL")}
+                className="bg-[#4A3728] text-[#E8DDCB] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              >
+                ดูเมนูทั้งหมด
+              </button>
+            </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {drinks.map(renderDrinkCard)}
+              {filteredDrinks.map(renderDrinkCard)}
             </div>
           )}
         </section>

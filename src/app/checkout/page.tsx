@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCart, createOrder, type Cart, type OrderCreateRequest } from "@/lib/api";
-import { CreditCard, MapPin, Clock, CheckCircle } from "lucide-react";
+import { CreditCard, MapPin, Clock, CheckCircle, Package, XCircle, Eye } from "lucide-react";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -11,6 +11,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderResponse, setOrderResponse] = useState<any>(null);
   const [formData, setFormData] = useState({
     pickupTime: "",
     pickupTimeDisplay: "", // สำหรับแสดงใน input datetime-local
@@ -57,14 +58,24 @@ export default function CheckoutPage() {
 
     try {
       setSubmitting(true);
+      
+      // สร้าง order request
+      // pickupTime จะถูกแปลง format ใน createOrder function
       const orderRequest: OrderCreateRequest = {
         pickupTime: formData.pickupTime,
         phoneNumber: formData.phoneNumber,
         notes: formData.notes || undefined,
       };
       
-      await createOrder(orderRequest);
+      const response = await createOrder(orderRequest);
+      
+      // เก็บ order response
+      if (response.data) {
+        setOrderResponse(response.data);
+      }
+      
       window.dispatchEvent(new Event("cartUpdated"));
+      window.dispatchEvent(new Event("orderUpdated"));
       
       setOrderPlaced(true);
     } catch (err: any) {
@@ -91,18 +102,70 @@ export default function CheckoutPage() {
           <p className="text-[#4A2C1B]/70 mb-6">
             คำสั่งซื้อของคุณได้รับการยืนยันแล้ว กรุณามารับสินค้าที่ร้านตามเวลาที่กำหนด
           </p>
-          <div className="bg-[#C9A78B]/30 rounded-lg p-4 mb-6 text-left">
-            <p className="text-sm text-[#4A2C1B]/70 mb-2">เวลารับสินค้า:</p>
-            <p className="font-semibold text-[#4A2C1B]">{formData.pickupTime}</p>
-            <p className="text-sm text-[#4A2C1B]/70 mt-4 mb-2">เบอร์โทรติดต่อ:</p>
-            <p className="font-semibold text-[#4A2C1B]">{formData.phoneNumber}</p>
+          <div className="bg-[#C9A78B]/30 rounded-lg p-4 mb-6 text-left space-y-3">
+            {orderResponse?.orderId && (
+              <div>
+                <p className="text-sm text-[#4A2C1B]/70 mb-1">หมายเลขคำสั่งซื้อ:</p>
+                <p className="font-semibold text-[#4A2C1B]">#{String(orderResponse.orderId).padStart(3, "0")}</p>
+              </div>
+            )}
+            <div>
+              <p className="text-sm text-[#4A2C1B]/70 mb-1">สถานะคำสั่งซื้อ:</p>
+              <div className="flex items-center gap-2">
+                {orderResponse?.status ? (
+                  <>
+                    {orderResponse.status === "PENDING" && <Clock className="w-5 h-5 text-yellow-500" />}
+                    {orderResponse.status === "CONFIRMED" && <Package className="w-5 h-5 text-blue-500" />}
+                    {orderResponse.status === "PREPARING" && <Package className="w-5 h-5 text-blue-500" />}
+                    {orderResponse.status === "READY" && <CheckCircle className="w-5 h-5 text-green-500" />}
+                    {orderResponse.status === "COMPLETED" && <CheckCircle className="w-5 h-5 text-green-600" />}
+                    {orderResponse.status === "CANCELLED" && <XCircle className="w-5 h-5 text-red-500" />}
+                    <span className="font-semibold text-[#4A2C1B]">
+                      {orderResponse.status === "PENDING" ? "รอการยืนยัน" :
+                       orderResponse.status === "CONFIRMED" ? "ยืนยันแล้ว" :
+                       orderResponse.status === "PREPARING" ? "กำลังเตรียม" :
+                       orderResponse.status === "READY" ? "พร้อมรับ" :
+                       orderResponse.status === "COMPLETED" ? "รับแล้ว" :
+                       orderResponse.status === "CANCELLED" ? "ยกเลิก" : orderResponse.status}
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-semibold text-[#4A2C1B]">รอการยืนยัน</span>
+                )}
+              </div>
+            </div>
+            <div>
+              <p className="text-sm text-[#4A2C1B]/70 mb-1">เวลารับสินค้า:</p>
+              <p className="font-semibold text-[#4A2C1B]">{formData.pickupTimeDisplay || formData.pickupTime}</p>
+            </div>
+            <div>
+              <p className="text-sm text-[#4A2C1B]/70 mb-1">เบอร์โทรติดต่อ:</p>
+              <p className="font-semibold text-[#4A2C1B]">{formData.phoneNumber}</p>
+            </div>
+            {orderResponse?.totalPrice && (
+              <div>
+                <p className="text-sm text-[#4A2C1B]/70 mb-1">ยอดรวม:</p>
+                <p className="font-semibold text-[#4A2C1B] text-lg">
+                  {Number(orderResponse.totalPrice).toFixed(2)} บาท
+                </p>
+              </div>
+            )}
           </div>
-          <button
-            onClick={() => router.push("/menu")}
-            className="w-full bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
-          >
-            กลับไปหน้าเมนู
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={() => router.push("/orders")}
+              className="w-full bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            >
+              <Eye className="w-5 h-5" />
+              ดูสถานะคำสั่งซื้อทั้งหมด
+            </button>
+            <button
+              onClick={() => router.push("/menu")}
+              className="w-full bg-[#C9A78B] text-[#4A2C1B] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+            >
+              กลับไปหน้าเมนู
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -191,11 +254,12 @@ export default function CheckoutPage() {
                     value={formData.pickupTimeDisplay}
                     onChange={(e) => {
                       const value = e.target.value;
-                      // Convert to ISO string format for API (backend expects ISO format)
-                      const isoString = value ? new Date(value).toISOString() : "";
+                      // Convert datetime-local format (yyyy-MM-ddTHH:mm) to LocalDateTime format (yyyy-MM-ddTHH:mm:ss)
+                      // datetime-local returns format like "2025-11-21T14:35" without seconds
+                      const localDateTimeString = value ? `${value}:00` : "";
                       setFormData({ 
                         ...formData, 
-                        pickupTime: isoString,
+                        pickupTime: localDateTimeString,
                         pickupTimeDisplay: value
                       });
                     }}

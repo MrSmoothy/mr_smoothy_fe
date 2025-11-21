@@ -1,26 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getMyOrders, type Order } from "@/lib/api";
+import { useEffect, useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getMyOrders, getGuestOrdersByPhoneNumber, getOrderById, getGuestOrderById, type Order } from "@/lib/api";
 import { getGuestOrders, type GuestOrder } from "@/lib/guestCart";
 import { Package, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
 export default function OrdersPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const orderIdParam = searchParams?.get("orderId");
   const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [guestOrders, setGuestOrders] = useState<GuestOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const loadingRef = useRef(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem("auth_user");
       setUser(stored ? JSON.parse(stored) : null);
     } catch {}
-
-    loadOrders();
   }, []);
+
+  useEffect(() => {
+    if (loadingRef.current) return; // Prevent multiple simultaneous calls
+    
+    // Load user first
+    const stored = localStorage.getItem("auth_user");
+    const currentUser = stored ? JSON.parse(stored) : null;
+    setUser(currentUser);
+
+    // Then load order/orders based on orderIdParam
+    if (orderIdParam) {
+      const orderId = Number(orderIdParam);
+      if (!isNaN(orderId) && orderId > 0) {
+        loadSingleOrder(orderId);
+      }
+    } else {
+      loadOrders();
+    }
+    
+    // Cleanup function to reset loading flag when orderIdParam changes
+    return () => {
+      loadingRef.current = false;
+    };
+  }, [orderIdParam]);
+
+  async function loadSingleOrder(orderId: number) {
+    if (loadingRef.current) return; // Prevent multiple simultaneous calls
+    
+    try {
+      loadingRef.current = true;
+      setLoading(true);
+      
+      // Get user state from localStorage directly to avoid stale closure
+      const stored = localStorage.getItem("auth_user");
+      const currentUser = stored ? JSON.parse(stored) : null;
+      
+      if (currentUser) {
+        const res = await getOrderById(orderId);
+        setSelectedOrder(res.data || null);
+      } else {
+        const res = await getGuestOrderById(orderId);
+        setSelectedOrder(res.data || null);
+      }
+    } catch (err) {
+      console.error("Failed to load order:", err);
+      setSelectedOrder(null);
+    } finally {
+      setLoading(false);
+      loadingRef.current = false;
+    }
+  }
 
   async function loadOrders() {
     try {
@@ -30,9 +83,68 @@ export default function OrdersPage() {
         setOrders(res.data || []);
         setGuestOrders([]);
       } else {
-        const guest = getGuestOrders();
-        setGuestOrders(guest);
-        setOrders([]);
+        // สำหรับ guest users: ลองดึงจาก localStorage ก่อน (order IDs)
+        const guestOrderIds = JSON.parse(localStorage.getItem("guest_order_ids") || "[]");
+        const phoneNumber = localStorage.getItem("guest_phone_number");
+        
+        if (phoneNumber && guestOrderIds.length > 0) {
+          try {
+            // ดึง orders จาก API โดยใช้ phone number
+            const res = await getGuestOrdersByPhoneNumber(phoneNumber);
+            if (res.data && res.data.length > 0) {
+              // แปลง Order เป็น GuestOrder format
+              const guestOrders: GuestOrder[] = res.data.map(order => ({
+                id: String(order.orderId || ""),
+                items: order.items?.map(item => ({
+                  id: String(item.id || ""),
+                  type: item.type as "PREDEFINED" | "CUSTOM",
+                  cupSizeId: 0, // ไม่มีใน response
+                  cupSizeName: item.cupSizeName || "",
+                  quantity: item.quantity || 0,
+                  predefinedDrinkId: undefined,
+                  predefinedDrinkName: item.predefinedDrinkName,
+                  fruits: item.fruits?.map(f => ({
+                    fruitId: f.fruitId || 0,
+                    fruitName: f.fruitName || "",
+                    quantity: f.quantity || 0,
+                    pricePerUnit: Number(f.pricePerUnit || 0),
+                  })),
+                  unitPrice: Number(item.unitPrice || 0),
+                  totalPrice: Number(item.totalPrice || 0),
+                  createdAt: new Date().toISOString(),
+                })) || [],
+                totalPrice: Number(order.totalPrice || 0),
+                customerName: order.customerName || "",
+                phoneNumber: order.phoneNumber || "",
+                email: order.customerEmail,
+                pickupTime: order.pickupTime || "",
+                pickupTimeDisplay: order.pickupTime ? new Date(order.pickupTime).toLocaleString("th-TH") : "",
+                notes: order.notes,
+                paymentMethod: "cash" as const,
+                status: order.status || "PENDING",
+                createdAt: order.createdAt || new Date().toISOString(),
+              }));
+              setGuestOrders(guestOrders);
+              setOrders([]);
+            } else {
+              // Fallback to localStorage
+              const guest = getGuestOrders();
+              setGuestOrders(guest);
+              setOrders([]);
+            }
+          } catch (apiErr) {
+            console.error("Failed to load guest orders from API:", apiErr);
+            // Fallback to localStorage
+            const guest = getGuestOrders();
+            setGuestOrders(guest);
+            setOrders([]);
+          }
+        } else {
+          // Fallback to localStorage
+          const guest = getGuestOrders();
+          setGuestOrders(guest);
+          setOrders([]);
+        }
       }
     } catch (err) {
       console.error("Failed to load orders:", err);
@@ -86,6 +198,162 @@ export default function OrdersPage() {
     );
   }
 
+  // ถ้ามี orderId parameter และมี selectedOrder ให้แสดงรายละเอียด order เดียว
+  if (orderIdParam && selectedOrder) {
+    return (
+      <div className="bg-[#F5EFE6] min-h-screen py-12">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <button
+              onClick={() => router.push("/orders")}
+              className="mb-4 text-[#4A2C1B] hover:text-[#5A3C2B] font-medium flex items-center gap-2 transition-colors"
+            >
+              ← กลับไปรายการคำสั่งซื้อทั้งหมด
+            </button>
+            <h1 className="text-4xl font-bold text-[#4A2C1B] mb-2">รายละเอียดคำสั่งซื้อ</h1>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            {/* Order Header */}
+            <div className="border-b border-[#4A2C1B]/20 pb-6 mb-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h2 className="text-2xl font-bold text-[#4A2C1B]">
+                      คำสั่งซื้อ #{String(selectedOrder.orderId).padStart(3, "0")}
+                    </h2>
+                    {getStatusIcon(selectedOrder.status || "PENDING")}
+                  </div>
+                  <p className="text-sm text-[#4A2C1B]/70">
+                    วันที่สั่ง: {new Date(selectedOrder.createdAt).toLocaleString("th-TH", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                    selectedOrder.status === "PENDING" ? "bg-yellow-100 text-yellow-800" :
+                    selectedOrder.status === "CONFIRMED" || selectedOrder.status === "PREPARING" ? "bg-blue-100 text-blue-800" :
+                    selectedOrder.status === "READY" ? "bg-green-100 text-green-800" :
+                    selectedOrder.status === "COMPLETED" ? "bg-green-200 text-green-900" :
+                    "bg-red-100 text-red-800"
+                  }`}>
+                    {getStatusText(selectedOrder.status || "PENDING")}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Order Items */}
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-[#4A2C1B] mb-4">รายการสินค้า</h3>
+              <div className="space-y-4">
+                {selectedOrder.items?.map((item) => (
+                  <div key={item.id} className="border border-[#4A2C1B]/10 rounded-lg p-4 bg-[#F5EFE6]/50">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-[#4A2C1B] text-lg">
+                          {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
+                        </h4>
+                        <p className="text-sm text-[#4A2C1B]/70 mt-1">
+                          ขนาด: {item.cupSizeName} | จำนวน: {item.quantity} แก้ว
+                        </p>
+                        {item.fruits && item.fruits.length > 0 && (
+                          <div className="mt-3">
+                            <p className="text-sm font-medium text-[#4A2C1B] mb-2">ส่วนผสม:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {item.fruits.map((fruit, idx) => (
+                                <span
+                                  key={idx}
+                                  className="bg-[#E8DDCB] text-[#4A2C1B] px-3 py-1 rounded-md text-sm font-medium"
+                                >
+                                  {fruit.fruitName} x{fruit.quantity}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-right ml-4">
+                        <p className="text-sm text-[#4A2C1B]/70">ราคาต่อหน่วย</p>
+                        <p className="font-semibold text-[#4A2C1B]">
+                          ฿{Number(item.unitPrice).toFixed(2)}
+                        </p>
+                        <p className="text-lg font-bold text-[#4A2C1B] mt-2">
+                          ฿{Number(item.totalPrice).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="border-t border-[#4A2C1B]/20 pt-6">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-lg">
+                  <span className="text-[#4A2C1B]/70">ยอดรวมทั้งสิ้น:</span>
+                  <span className="text-2xl font-bold text-[#4A2C1B]">
+                    ฿{Number(selectedOrder.totalPrice).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Customer Information */}
+            <div className="border-t border-[#4A2C1B]/20 pt-6 mt-6">
+              <h3 className="text-xl font-semibold text-[#4A2C1B] mb-4">ข้อมูลการติดต่อ</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-[#4A2C1B]/70 mb-1">เบอร์โทรติดต่อ:</p>
+                  <p className="font-semibold text-[#4A2C1B]">{selectedOrder.phoneNumber}</p>
+                </div>
+                {(selectedOrder as any).customerName && (
+                  <div>
+                    <p className="text-sm text-[#4A2C1B]/70 mb-1">ชื่อลูกค้า:</p>
+                    <p className="font-semibold text-[#4A2C1B]">{(selectedOrder as any).customerName}</p>
+                  </div>
+                )}
+                {(selectedOrder as any).customerEmail && (
+                  <div>
+                    <p className="text-sm text-[#4A2C1B]/70 mb-1">อีเมล:</p>
+                    <p className="font-semibold text-[#4A2C1B]">{(selectedOrder as any).customerEmail}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-[#4A2C1B]/70 mb-1">เวลารับสินค้า:</p>
+                  <p className="font-semibold text-[#4A2C1B]">
+                    {new Date(selectedOrder.pickupTime).toLocaleString("th-TH", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                {selectedOrder.notes && (
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-[#4A2C1B]/70 mb-1">หมายเหตุ:</p>
+                    <p className="font-semibold text-[#4A2C1B] bg-[#E8DDCB]/50 p-3 rounded-lg">
+                      {selectedOrder.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ถ้าไม่มี orderId parameter หรือ selectedOrder ยังโหลดไม่ได้ ให้แสดงรายการทั้งหมด
   const displayOrders = user ? orders : guestOrders;
   const allOrders = user 
     ? orders 
@@ -117,6 +385,162 @@ export default function OrdersPage() {
         updatedAt: go.createdAt,
       }));
 
+  // ถ้ามี orderId parameter ให้แสดงรายละเอียด order เดียว
+  if (orderIdParam && !loading && selectedOrder) {
+    return (
+      <div className="bg-[#F5EFE6] min-h-screen py-12">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <button
+              onClick={() => router.push("/orders")}
+              className="mb-4 text-[#4A2C1B] hover:text-[#5A3C2B] font-medium flex items-center gap-2 transition-colors"
+            >
+              ← กลับไปรายการคำสั่งซื้อทั้งหมด
+            </button>
+            <h1 className="text-4xl font-bold text-[#4A2C1B] mb-2">รายละเอียดคำสั่งซื้อ</h1>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            {/* Order Header */}
+            <div className="border-b border-[#4A2C1B]/20 pb-6 mb-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h2 className="text-2xl font-bold text-[#4A2C1B]">
+                      คำสั่งซื้อ #{String(selectedOrder.orderId).padStart(3, "0")}
+                    </h2>
+                    {getStatusIcon(selectedOrder.status || "PENDING")}
+                  </div>
+                  <p className="text-sm text-[#4A2C1B]/70">
+                    วันที่สั่ง: {new Date(selectedOrder.createdAt).toLocaleString("th-TH", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                    selectedOrder.status === "PENDING" ? "bg-yellow-100 text-yellow-800" :
+                    selectedOrder.status === "CONFIRMED" || selectedOrder.status === "PREPARING" ? "bg-blue-100 text-blue-800" :
+                    selectedOrder.status === "READY" ? "bg-green-100 text-green-800" :
+                    selectedOrder.status === "COMPLETED" ? "bg-green-200 text-green-900" :
+                    "bg-red-100 text-red-800"
+                  }`}>
+                    {getStatusText(selectedOrder.status || "PENDING")}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Order Items */}
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-[#4A2C1B] mb-4">รายการสินค้า</h3>
+              <div className="space-y-4">
+                {selectedOrder.items?.map((item) => (
+                  <div key={item.id} className="border border-[#4A2C1B]/10 rounded-lg p-4 bg-[#F5EFE6]/50">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-[#4A2C1B] text-lg">
+                          {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
+                        </h4>
+                        <p className="text-sm text-[#4A2C1B]/70 mt-1">
+                          ขนาด: {item.cupSizeName} | จำนวน: {item.quantity} แก้ว
+                        </p>
+                        {item.fruits && item.fruits.length > 0 && (
+                          <div className="mt-3">
+                            <p className="text-sm font-medium text-[#4A2C1B] mb-2">ส่วนผสม:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {item.fruits.map((fruit, idx) => (
+                                <span
+                                  key={idx}
+                                  className="bg-[#E8DDCB] text-[#4A2C1B] px-3 py-1 rounded-md text-sm font-medium"
+                                >
+                                  {fruit.fruitName} x{fruit.quantity}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-right ml-4">
+                        <p className="text-sm text-[#4A2C1B]/70">ราคาต่อหน่วย</p>
+                        <p className="font-semibold text-[#4A2C1B]">
+                          ฿{Number(item.unitPrice).toFixed(2)}
+                        </p>
+                        <p className="text-lg font-bold text-[#4A2C1B] mt-2">
+                          ฿{Number(item.totalPrice).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="border-t border-[#4A2C1B]/20 pt-6">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-lg">
+                  <span className="text-[#4A2C1B]/70">ยอดรวมทั้งสิ้น:</span>
+                  <span className="text-2xl font-bold text-[#4A2C1B]">
+                    ฿{Number(selectedOrder.totalPrice).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Customer Information */}
+            <div className="border-t border-[#4A2C1B]/20 pt-6 mt-6">
+              <h3 className="text-xl font-semibold text-[#4A2C1B] mb-4">ข้อมูลการติดต่อ</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-[#4A2C1B]/70 mb-1">เบอร์โทรติดต่อ:</p>
+                  <p className="font-semibold text-[#4A2C1B]">{selectedOrder.phoneNumber}</p>
+                </div>
+                {selectedOrder.customerName && (
+                  <div>
+                    <p className="text-sm text-[#4A2C1B]/70 mb-1">ชื่อลูกค้า:</p>
+                    <p className="font-semibold text-[#4A2C1B]">{selectedOrder.customerName}</p>
+                  </div>
+                )}
+                {selectedOrder.customerEmail && (
+                  <div>
+                    <p className="text-sm text-[#4A2C1B]/70 mb-1">อีเมล:</p>
+                    <p className="font-semibold text-[#4A2C1B]">{selectedOrder.customerEmail}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-[#4A2C1B]/70 mb-1">เวลารับสินค้า:</p>
+                  <p className="font-semibold text-[#4A2C1B]">
+                    {new Date(selectedOrder.pickupTime).toLocaleString("th-TH", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                {selectedOrder.notes && (
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-[#4A2C1B]/70 mb-1">หมายเหตุ:</p>
+                    <p className="font-semibold text-[#4A2C1B] bg-[#E8DDCB]/50 p-3 rounded-lg">
+                      {selectedOrder.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ถ้าไม่มี orderId parameter ให้แสดงรายการทั้งหมด
   return (
     <div className="bg-[#F5EFE6] min-h-screen py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
