@@ -50,32 +50,6 @@ export default function Home() {
     loadData();
   }, []);
 
-  // Debug: Log when category or data changes
-  useEffect(() => {
-    if (drinks.length > 0 && fruits.length > 0) {
-      console.log("🔍 Category Filter Debug:", {
-        selectedCategory,
-        totalDrinks: drinks.length,
-        totalFruits: fruits.length,
-        fruitsWithCategory: fruits.filter(f => f.category).length,
-        sampleFruit: fruits[0] ? { 
-          id: fruits[0].id, 
-          name: fruits[0].name, 
-          category: fruits[0].category 
-        } : null,
-        sampleDrink: drinks[0] ? {
-          id: drinks[0].id,
-          name: drinks[0].name,
-          ingredientsCount: drinks[0].ingredients?.length || 0,
-          ingredients: drinks[0].ingredients?.slice(0, 3).map(ing => ({
-            fruitId: ing.fruitId,
-            fruitName: ing.fruitName,
-            fruitCategory: fruits.find(f => f.id === ing.fruitId)?.category || "NOT_FOUND"
-          }))
-        } : null
-      });
-    }
-  }, [selectedCategory, drinks, fruits]);
 
   async function loadData() {
     try {
@@ -239,7 +213,6 @@ export default function Home() {
     }
 
     if (fruits.length === 0) {
-      console.warn("No fruits loaded, cannot filter by category");
       return drinks;
     }
 
@@ -253,7 +226,6 @@ export default function Home() {
       const ingredientCategories: FruitCategory[] = drink.ingredients.map(ing => {
         const fruit = fruits.find(f => f.id === ing.fruitId);
         if (!fruit) {
-          console.warn(`Fruit not found for ingredient ${ing.fruitId} in drink ${drink.name}`);
           return "FRUIT" as FruitCategory;
         }
         // ใช้ category จาก fruit หรือ default เป็น FRUIT
@@ -280,20 +252,9 @@ export default function Home() {
         matches = (hasFruit && hasVegetable) || hasAddon || uniqueCategories.size > 1;
       }
 
-      if (matches) {
-        console.log(`Drink "${drink.name}" matches category "${category}":`, {
-          ingredientCategories: Array.from(uniqueCategories),
-          hasFruit,
-          hasVegetable,
-          hasAddon,
-          uniqueCount: uniqueCategories.size
-        });
-      }
-
       return matches;
     });
 
-    console.log(`Category "${category}": Found ${filtered.length} drinks out of ${drinks.length} total`);
     return filtered;
   }
 

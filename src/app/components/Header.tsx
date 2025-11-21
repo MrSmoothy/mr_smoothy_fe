@@ -193,9 +193,19 @@ export default function Header() {
               >
                 Custom Menu
               </Link>
+              <Link
+                href="/contact"
+                className={`px-3 py-2 rounded transition-all font-medium ${
+                  pathname === '/contact' || pathname?.startsWith('/contact/')
+                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
+                }`}
+              >
+                Contact
+              </Link>
               <div className="relative">
-                <Link
-                  href="/cart"
+              <Link
+                href="/cart"
                   className={`relative px-3 py-2 rounded transition-all inline-flex items-center justify-center ${
                     pathname === '/cart' || pathname?.startsWith('/cart/')
                       ? 'bg-[#E8DDCB]' 
@@ -213,12 +223,12 @@ export default function Header() {
                       strokeWidth={2}
                     />
                   )}
-                  {cartCount > 0 && (
+                {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold z-10">
-                      {cartCount}
-                    </span>
-                  )}
-                </Link>
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
                 {pendingOrdersCount > 0 && (
                   <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
                     <Package className="w-3 h-3" />
@@ -260,14 +270,14 @@ export default function Header() {
                         <span>โปรไฟล์ของฉัน</span>
                       </Link>
                       {user.role === "ADMIN" && (
-                        <Link
+              <Link
                           href="/admin/dashboard"
                           onClick={() => setShowUserMenu(false)}
                           className="flex items-center gap-3 px-4 py-3 text-[#4A3728] hover:bg-[#E8DDCB]/50 transition-colors font-sans"
-                        >
+              >
                           <User className="w-5 h-5" />
                           <span>แดชบอร์ด Admin</span>
-                        </Link>
+              </Link>
                       )}
                       <button
                         onClick={() => {

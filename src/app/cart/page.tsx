@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getCart, removeFromCart, clearCart, getMyOrders, getGuestOrdersByPhoneNumber, type Cart, type Order } from "@/lib/api";
@@ -45,32 +45,34 @@ export default function CartPage() {
   useEffect(() => {
     // Load cart and orders when user state changes
     if (user) {
-      console.log("User logged in, loading cart...");
       loadCart();
       loadPendingOrders();
     } else {
-      console.log("User not logged in, loading guest cart...");
       loadGuestCart();
       loadGuestPendingOrders();
     }
   }, [user]);
 
+  const reloadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     // Listen for cart and order updates
     const handleCartUpdate = () => {
-      console.log("Cart updated event received, user:", user);
+      // Clear existing timeout to prevent multiple calls
+      if (reloadTimeoutRef.current) {
+        clearTimeout(reloadTimeoutRef.current);
+      }
+      
       // Delay to ensure API has processed the update
-      setTimeout(() => {
+      reloadTimeoutRef.current = setTimeout(() => {
         if (user) {
-          console.log("Reloading cart after update...");
           loadCart();
           loadPendingOrders();
         } else {
-          console.log("Reloading guest cart after update...");
           loadGuestCart();
           loadGuestPendingOrders();
         }
-      }, 800);
+      }, 500);
     };
     
     const handleOrderUpdate = () => {
@@ -81,47 +83,32 @@ export default function CartPage() {
       }
     };
     
-    // Also reload when page gains focus (user might have added items in another tab)
-    const handleFocus = () => {
-      console.log("Page focused, reloading cart...");
-      if (user) {
-        loadCart();
-        loadPendingOrders();
-      } else {
-        loadGuestCart();
-        loadGuestPendingOrders();
-      }
-    };
-    
     window.addEventListener("cartUpdated", handleCartUpdate);
-    window.addEventListener("focus", handleFocus);
+    window.addEventListener("orderUpdated", handleOrderUpdate);
     
     return () => {
+      if (reloadTimeoutRef.current) {
+        clearTimeout(reloadTimeoutRef.current);
+      }
       window.removeEventListener("cartUpdated", handleCartUpdate);
-      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("orderUpdated", handleOrderUpdate);
     };
   }, [user]);
 
   async function loadCart() {
     try {
       setLoading(true);
-      console.log("Loading cart for logged in user...");
       const token = localStorage.getItem("auth_token");
       if (!token) {
-        console.log("No auth token found");
         setCart({ cartId: 0, items: [], totalPrice: 0 });
         return;
       }
       const res = await getCart();
-      console.log("Cart API response:", res);
-      console.log("Cart data:", res.data);
       if (res.data) {
         // Ensure items array exists
         if (res.data.items && Array.isArray(res.data.items)) {
-          console.log("Cart items:", res.data.items.length, res.data.items);
           setCart(res.data);
         } else {
-          console.log("Cart has no items array, setting empty cart");
           setCart({ 
             cartId: res.data.cartId || 0, 
             items: [], 
@@ -129,12 +116,9 @@ export default function CartPage() {
           });
         }
       } else {
-        console.log("No cart data in response");
         setCart({ cartId: 0, items: [], totalPrice: 0 });
       }
     } catch (err: any) {
-      console.error("Failed to load cart:", err);
-      console.error("Error details:", err.message, err.stack);
       // If cart is empty or error, set empty cart
       setCart({ cartId: 0, items: [], totalPrice: 0 });
     } finally {
@@ -146,10 +130,8 @@ export default function CartPage() {
     try {
       setLoading(true);
       const cart = getGuestCart();
-      console.log("Guest cart loaded:", cart);
       setGuestCart(cart);
     } catch (err) {
-      console.error("Failed to load guest cart:", err);
       setGuestCart({ items: [], totalPrice: 0 });
     } finally {
       setLoading(false);
@@ -182,7 +164,6 @@ export default function CartPage() {
         setPendingOrders([]);
       }
     } catch (err) {
-      console.error("Failed to load guest pending orders:", err);
       setPendingOrders([]);
     }
   }
@@ -236,7 +217,6 @@ export default function CartPage() {
     ? (cart?.items || []) 
     : (guestCart?.items || []);
 
-  console.log("Cart Page Render:", { user, cart, guestCart, items: items.length });
 
   function getStatusIcon(status: string) {
     switch (status?.toUpperCase()) {

@@ -286,14 +286,14 @@ export default function AdminFruitsPage() {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-bold text-[#4A2C1B]">
                     {Number(fruit.pricePerUnit).toFixed(2)} ฿
-                  </span>
-                  <span
+                </span>
+                <span
                     className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      fruit.active
+                    fruit.active
                         ? "bg-green-100 text-green-700"
                         : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
+                  }`}
+                >
                     {fruit.active ? "✓" : "✗"}
                   </span>
                 </div>
@@ -306,7 +306,7 @@ export default function AdminFruitsPage() {
                     {fruit.category === "FRUIT" ? "🍎 ผลไม้" :
                      fruit.category === "VEGETABLE" ? "🥬 ผัก" :
                      "🥛 ส่วนเสริม"}
-                  </span>
+                </span>
                 </div>
               </div>
               <div className="flex gap-1.5">
@@ -435,17 +435,17 @@ export default function AdminFruitsPage() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="active"
-                      checked={formData.active}
-                      onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                      className="w-5 h-5"
-                    />
-                    <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
-                      แสดงให้ลูกค้าเห็น
-                    </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="active"
+                    checked={formData.active}
+                    onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                    className="w-5 h-5"
+                  />
+                  <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
+                    แสดงให้ลูกค้าเห็น
+                  </label>
                   </div>
                   
                   <div className="flex items-center gap-2">

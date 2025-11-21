@@ -22,6 +22,8 @@ export type UserProfile = {
   username: string;
   email: string;
   fullName?: string;
+  phoneNumber?: string;
+  dateOfBirth?: string;
   role?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -30,6 +32,8 @@ export type UserProfile = {
 export type UserUpdateRequest = {
   fullName?: string;
   email?: string;
+  phoneNumber?: string;
+  dateOfBirth?: string;
   password?: string;
 };
 
@@ -154,7 +158,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<ApiR
         errorMessage = "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง";
       }
       
-      console.error("API Error:", errorMessage, json);
+      // ไม่ log error สำหรับ /api/users/me ถ้าเป็น 400 (อาจเป็น non-critical)
+      if (!(path.includes("/api/users/me") && res.status === 400)) {
+        console.error("API Error:", errorMessage, json);
+      }
       throw new Error(errorMessage);
     }
 
@@ -169,7 +176,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<ApiR
         errorMessage = "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง";
       }
       
-      console.error("API returned success=false:", errorMessage, json);
+      // ไม่ log error สำหรับ /api/users/me ถ้าเป็น non-critical error
+      if (!(path.includes("/api/users/me") && errorMessage.includes("เกิดข้อผิดพลาดในการเชื่อมต่อ"))) {
+        console.error("API returned success=false:", errorMessage, json);
+      }
       throw new Error(errorMessage);
   }
 
@@ -177,7 +187,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<ApiR
   return json;
   } catch (error: any) {
     if (error.message) {
-      console.error("Fetch error:", error.message);
+      // ไม่ log error สำหรับ /api/users/me (silent fail)
+      if (!path.includes("/api/users/me")) {
+        console.error("Fetch error:", error.message);
+      }
       
       // กรอง technical error messages
       let userMessage = error.message;
@@ -194,7 +207,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<ApiR
       
       throw new Error(userMessage);
     }
-    console.error("Unknown fetch error:", error);
+    // ไม่ log error สำหรับ /api/users/me
+    if (!path.includes("/api/users/me")) {
+      console.error("Unknown fetch error:", error);
+    }
     throw new Error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
   }
 }
@@ -387,8 +403,11 @@ export type OrderResponse = {
   pickupTime?: string;
   phoneNumber: string;
   notes?: string;
-  customerName?: string;
-  customerEmail?: string;
+  customerName?: string; // สำหรับ guest orders
+  customerEmail?: string; // สำหรับ guest orders
+  username?: string; // สำหรับ logged-in users
+  userEmail?: string; // สำหรับ logged-in users
+  userFullName?: string; // สำหรับ logged-in users
   createdAt?: string;
   updatedAt?: string;
 };

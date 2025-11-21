@@ -55,21 +55,14 @@ export default function BuildPage() {
     try {
       setLoading(true);
       setError(null);
-      console.log("🔄 กำลังโหลดข้อมูล...");
-      
       const [fruitsRes, cupSizesRes] = await Promise.all([
         getFruits().catch(err => {
-          console.error("❌ Error loading fruits:", err);
           return { data: [], success: false, message: err.message };
         }),
         getCupSizes().catch(err => {
-          console.error("❌ Error loading cup sizes:", err);
           return { data: [], success: false, message: err.message };
         }),
       ]);
-
-      console.log("📦 Fruits response:", fruitsRes);
-      console.log("📦 Cup sizes response:", cupSizesRes);
 
       const filteredFruits = Array.isArray(fruitsRes.data) 
         ? fruitsRes.data
@@ -84,9 +77,6 @@ export default function BuildPage() {
         ? cupSizesRes.data.filter(c => c && c.active) 
         : [];
       
-      console.log("✅ Loaded fruits:", filteredFruits.length);
-      console.log("✅ Loaded cup sizes:", filteredCupSizes.length);
-      console.log("✅ Sample fruit with category:", filteredFruits[0]);
       
       setFruits(filteredFruits);
       setCupSizes(filteredCupSizes);
@@ -126,7 +116,6 @@ export default function BuildPage() {
       
       // ตรวจสอบว่าไม่เกิน limit
       if (delta > 0 && remainingSlots <= 0) {
-        console.log("⚠️ Cannot add more fruits, limit reached");
         return newMap; // ไม่สามารถเพิ่มได้
       }
 
@@ -136,7 +125,6 @@ export default function BuildPage() {
         newMap.set(fruitId, { fruit, quantity: newQty });
       }
       
-      console.log("🍎 Fruit changed:", fruit.name, "qty:", newQty, "total:", Array.from(newMap.values()).reduce((sum, item) => sum + item.quantity, 0));
       return newMap;
     });
   }
@@ -211,7 +199,6 @@ export default function BuildPage() {
         quantity,
       }));
       
-      console.log("🛒 Adding to cart:", { ingredients, cupSizeId: selectedCupSize.id, quantity });
       
       await addToCart({
         type: "CUSTOM",

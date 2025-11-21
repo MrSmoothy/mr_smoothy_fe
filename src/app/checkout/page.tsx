@@ -55,6 +55,12 @@ export default function CheckoutPage() {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
+    
+    // ตรวจสอบเบอร์โทรต้องครบ 10 หลัก
+    if (formData.phoneNumber.length !== 10) {
+      alert("กรุณากรอกเบอร์โทรให้ครบ 10 หลัก");
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -153,7 +159,7 @@ export default function CheckoutPage() {
           </div>
           <div className="space-y-3">
             <button
-              onClick={() => router.push("/orders")}
+              onClick={() => router.push("/cart")}
               className="w-full bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
               <Eye className="w-5 h-5" />
@@ -265,10 +271,19 @@ export default function CheckoutPage() {
                     }}
                     className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
                     required
-                    min={new Date().toISOString().slice(0, 16)}
+                    min={(() => {
+                      const now = new Date();
+                      now.setMinutes(now.getMinutes() + 30); // ขั้นต่ำ 30 นาทีจากปัจจุบัน
+                      return now.toISOString().slice(0, 16);
+                    })()}
+                    max={(() => {
+                      const maxDate = new Date();
+                      maxDate.setDate(maxDate.getDate() + 3); // ไม่เกิน 3 วัน
+                      return maxDate.toISOString().slice(0, 16);
+                    })()}
                   />
                   <p className="text-sm text-[#4A2C1B]/60 mt-1">
-                    กรุณาเลือกเวลาที่ต้องการมารับสินค้า (ขั้นต่ำ 30 นาทีจากปัจจุบัน)
+                    กรุณาเลือกเวลาที่ต้องการมารับสินค้า (ขั้นต่ำ 30 นาทีจากปัจจุบัน และไม่เกิน 3 วัน)
                   </p>
                 </div>
 
@@ -279,11 +294,22 @@ export default function CheckoutPage() {
                   <input
                     type="tel"
                     value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    onChange={(e) => {
+                      // จำกัดให้กรอกได้แค่ตัวเลขและไม่เกิน 10 ตัว
+                      const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                      setFormData({ ...formData, phoneNumber: value });
+                    }}
                     placeholder="08X-XXX-XXXX"
                     className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
                     required
+                    maxLength={10}
+                    pattern="[0-9]{10}"
                   />
+                  {formData.phoneNumber && formData.phoneNumber.length !== 10 && (
+                    <p className="text-sm text-red-500 mt-1">
+                      กรุณากรอกเบอร์โทรให้ครบ 10 หลัก
+                    </p>
+                  )}
                 </div>
 
                 <div>

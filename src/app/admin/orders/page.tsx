@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { adminGetAllOrders, adminUpdateOrderStatus, type OrderResponse } from "@/lib/api";
-import { RefreshCw, CheckCircle, XCircle, Clock, Package } from "lucide-react";
+import { RefreshCw, CheckCircle, XCircle, Clock, Package, ChevronDown, ChevronUp, User } from "lucide-react";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<number | null>(null);
+  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
 
   useEffect(() => {
     loadOrders();
@@ -145,55 +146,226 @@ export default function AdminOrdersPage() {
                   </tr>
                 ) : (
                   orders.map((order) => (
-                    <tr key={order.orderId} className="hover:bg-[#E8DDCB]/30">
-                      <td className="px-6 py-4">
-                        <span className="text-blue-600 font-semibold font-sans">
-                          #{String(order.orderId).padStart(3, "0")}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="space-y-1">
-                          {order.items?.map((item, idx) => (
-                            <div key={idx} className="text-[#4A3728] font-sans">
-                              {item.predefinedDrinkName || "Custom"}
+                    <>
+                      <tr key={order.orderId} className="hover:bg-[#E8DDCB]/30">
+                        <td className="px-6 py-4">
+                          <span className="text-blue-600 font-semibold font-sans">
+                            #{String(order.orderId).padStart(3, "0")}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="space-y-1">
+                            {order.items && order.items.length > 0 ? (
+                              <>
+                                <div className="text-[#4A3728] font-sans font-semibold">
+                                  {order.items[0].predefinedDrinkName || "Custom"} ({order.items[0].quantity} แก้ว)
+                                </div>
+                                {order.items.length > 1 && (
+                                  <button
+                                    onClick={() => setExpandedOrderId(expandedOrderId === order.orderId ? null : order.orderId!)}
+                                    className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center gap-1 font-sans"
+                                  >
+                                    {expandedOrderId === order.orderId ? (
+                                      <>
+                                        <ChevronUp className="w-3 h-3" />
+                                        ซ่อนเมนู ({order.items.length - 1} รายการ)
+                                      </>
+                                    ) : (
+                                      <>
+                                        <ChevronDown className="w-3 h-3" />
+                                        ดูเมนูทั้งหมด ({order.items.length} รายการ)
+                                      </>
+                                    )}
+                                  </button>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-[#4A3728]/50 font-sans">ไม่มีรายการ</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-[#4A3728] font-sans">
+                          {order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
+                        </td>
+                        <td className="px-6 py-4 text-green-600 font-semibold font-sans">
+                          ฿{Number(order.totalPrice).toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold font-sans ${getStatusColor(
+                              order.status || "PENDING"
+                            )}`}
+                          >
+                            {getStatusLabel(order.status || "PENDING")}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-[#4A3728]/70 text-sm font-sans">
+                          {formatDate(order.createdAt)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            <select
+                              value={order.status || "PENDING"}
+                              onChange={(e) => handleUpdateStatus(order.orderId!, e.target.value)}
+                              disabled={updating === order.orderId}
+                              className="px-3 py-1 border border-[#4A3728]/30 rounded text-sm font-sans disabled:opacity-50"
+                            >
+                              <option value="PENDING">Pending</option>
+                              <option value="CONFIRMED">Confirmed</option>
+                              <option value="PREPARING">Preparing</option>
+                              <option value="READY">Ready</option>
+                              <option value="COMPLETED">Completed</option>
+                              <option value="CANCELLED">Cancelled</option>
+                            </select>
+                            <button
+                              onClick={() => setExpandedOrderId(expandedOrderId === order.orderId ? null : order.orderId!)}
+                              className="px-3 py-1 bg-[#4A3728] text-[#E8DDCB] rounded text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1 font-sans"
+                            >
+                              {expandedOrderId === order.orderId ? (
+                                <>
+                                  <ChevronUp className="w-3 h-3" />
+                                  ซ่อนรายละเอียด
+                                </>
+                              ) : (
+                                <>
+                                  <ChevronDown className="w-3 h-3" />
+                                  ดูรายละเอียด
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      {/* Expanded Row with Order Details */}
+                      {expandedOrderId === order.orderId && (
+                        <tr className="bg-[#F5EFE6]">
+                          <td colSpan={7} className="px-6 py-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              {/* Customer/User Information */}
+                              <div className="bg-white rounded-lg p-4 border border-[#4A3728]/20">
+                                <h3 className="text-lg font-bold text-[#4A3728] mb-4 flex items-center gap-2 font-sans">
+                                  <User className="w-5 h-5" />
+                                  ข้อมูลผู้สั่งซื้อ
+                                </h3>
+                                <div className="space-y-2">
+                                  {/* Logged-in User */}
+                                  {order.username && (
+                                    <>
+                                      <div>
+                                        <p className="text-xs text-[#4A3728]/70 font-sans">ชื่อผู้ใช้:</p>
+                                        <p className="font-semibold text-[#4A3728] font-sans">{order.username}</p>
+                                      </div>
+                                      {order.userFullName && (
+                                        <div>
+                                          <p className="text-xs text-[#4A3728]/70 font-sans">ชื่อ-นามสกุล:</p>
+                                          <p className="font-semibold text-[#4A3728] font-sans">{order.userFullName}</p>
+                                        </div>
+                                      )}
+                                      {order.userEmail && (
+                                        <div>
+                                          <p className="text-xs text-[#4A3728]/70 font-sans">อีเมล:</p>
+                                          <p className="font-semibold text-[#4A3728] font-sans">{order.userEmail}</p>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                  {/* Guest User */}
+                                  {order.customerName && !order.username && (
+                                    <>
+                                      <div>
+                                        <p className="text-xs text-[#4A3728]/70 font-sans">ชื่อลูกค้า (Guest):</p>
+                                        <p className="font-semibold text-[#4A3728] font-sans">{order.customerName}</p>
+                                      </div>
+                                      {order.customerEmail && (
+                                        <div>
+                                          <p className="text-xs text-[#4A3728]/70 font-sans">อีเมล:</p>
+                                          <p className="font-semibold text-[#4A3728] font-sans">{order.customerEmail}</p>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                  <div>
+                                    <p className="text-xs text-[#4A3728]/70 font-sans">เบอร์โทรติดต่อ:</p>
+                                    <p className="font-semibold text-[#4A3728] font-sans">{order.phoneNumber}</p>
+                                  </div>
+                                  {order.pickupTime && (
+                                    <div>
+                                      <p className="text-xs text-[#4A3728]/70 font-sans">เวลารับสินค้า:</p>
+                                      <p className="font-semibold text-[#4A3728] font-sans">
+                                        {formatDate(order.pickupTime)}
+                                      </p>
+                                    </div>
+                                  )}
+                                  {order.notes && (
+                                    <div>
+                                      <p className="text-xs text-[#4A3728]/70 font-sans">หมายเหตุ:</p>
+                                      <p className="font-semibold text-[#4A3728] font-sans">{order.notes}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Order Items Details */}
+                              <div className="bg-white rounded-lg p-4 border border-[#4A3728]/20">
+                                <h3 className="text-lg font-bold text-[#4A3728] mb-4 font-sans">รายการเมนูทั้งหมด</h3>
+                                <div className="space-y-3 max-h-64 overflow-y-auto">
+                                  {order.items && order.items.length > 0 ? (
+                                    order.items.map((item, idx) => (
+                                      <div key={idx} className="border-b border-[#4A3728]/10 pb-3 last:border-b-0 last:pb-0">
+                                        <div className="flex justify-between items-start mb-2">
+                                          <div className="flex-1">
+                                            <p className="font-semibold text-[#4A3728] font-sans">
+                                              {item.predefinedDrinkName || "น้ำปั่นแบบกำหนดเอง"}
+                                            </p>
+                                            <p className="text-sm text-[#4A3728]/70 font-sans">
+                                              ขนาด: {item.cupSizeName} | จำนวน: {item.quantity} แก้ว
+                                            </p>
+                                            {item.fruits && item.fruits.length > 0 && (
+                                              <div className="mt-2">
+                                                <p className="text-xs text-[#4A3728]/60 font-sans mb-1">ส่วนผสม:</p>
+                                                <div className="flex flex-wrap gap-1">
+                                                  {item.fruits.map((fruit, fruitIdx) => (
+                                                    <span
+                                                      key={fruitIdx}
+                                                      className="bg-[#E8DDCB] text-[#4A3728] px-2 py-0.5 rounded text-xs font-sans"
+                                                    >
+                                                      {fruit.fruitName} x{fruit.quantity}
+                                                    </span>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="text-right ml-4">
+                                            <p className="text-sm text-[#4A3728]/70 font-sans">ราคาต่อหน่วย</p>
+                                            <p className="font-semibold text-[#4A3728] font-sans">
+                                              ฿{Number(item.unitPrice).toFixed(2)}
+                                            </p>
+                                            <p className="text-lg font-bold text-green-600 font-sans mt-1">
+                                              ฿{Number(item.totalPrice).toFixed(2)}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-[#4A3728]/50 font-sans">ไม่มีรายการ</p>
+                                  )}
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-[#4A3728]/20">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-lg font-semibold text-[#4A3728] font-sans">ยอดรวม:</span>
+                                    <span className="text-xl font-bold text-green-600 font-sans">
+                                      ฿{Number(order.totalPrice).toFixed(2)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[#4A3728] font-sans">
-                        {order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
-                      </td>
-                      <td className="px-6 py-4 text-green-600 font-semibold font-sans">
-                        ฿{Number(order.totalPrice).toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold font-sans ${getStatusColor(
-                            order.status || "PENDING"
-                          )}`}
-                        >
-                          {getStatusLabel(order.status || "PENDING")}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-[#4A3728]/70 text-sm font-sans">
-                        {formatDate(order.createdAt)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <select
-                          value={order.status || "PENDING"}
-                          onChange={(e) => handleUpdateStatus(order.orderId!, e.target.value)}
-                          disabled={updating === order.orderId}
-                          className="px-3 py-1 border border-[#4A3728]/30 rounded text-sm font-sans disabled:opacity-50"
-                        >
-                          <option value="PENDING">Pending</option>
-                          <option value="CONFIRMED">Confirmed</option>
-                          <option value="PREPARING">Preparing</option>
-                          <option value="READY">Ready</option>
-                          <option value="COMPLETED">Completed</option>
-                          <option value="CANCELLED">Cancelled</option>
-                        </select>
-                      </td>
-                    </tr>
+                          </td>
+                        </tr>
+                      )}
+                    </>
                   ))
                 )}
               </tbody>

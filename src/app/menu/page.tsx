@@ -34,11 +34,9 @@ export default function MenuPage() {
     };
     
     window.addEventListener("authStateChanged", handleAuthChange);
-    window.addEventListener("focus", handleAuthChange);
     
     return () => {
       window.removeEventListener("authStateChanged", handleAuthChange);
-      window.removeEventListener("focus", handleAuthChange);
     };
   }, []);
 
@@ -49,24 +47,18 @@ export default function MenuPage() {
   async function loadData() {
     try {
       setLoading(true);
-      console.log("Starting to load menu data...");
       
       const [fruitsRes, drinksRes, cupSizesRes] = await Promise.all([
         getFruits().catch(err => {
-          console.error("Error loading fruits:", err);
           return { data: [], success: false, message: err.message };
         }),
         getDrinks().catch(err => {
-          console.error("Error loading drinks:", err);
           return { data: [], success: false, message: err.message };
         }),
         getCupSizes().catch(err => {
-          console.error("Error loading cup sizes:", err);
           return { data: [], success: false, message: err.message };
         }),
       ]);
-
-      console.log("Raw responses:", { fruitsRes, drinksRes, cupSizesRes });
 
       const filteredFruits = Array.isArray(fruitsRes.data) 
         ? fruitsRes.data.filter(f => f && f.active) 
@@ -77,10 +69,6 @@ export default function MenuPage() {
       const filteredCupSizes = Array.isArray(cupSizesRes.data) 
         ? cupSizesRes.data.filter(c => c && c.active) 
         : [];
-      
-      console.log("Loaded fruits:", filteredFruits.length, filteredFruits);
-      console.log("Loaded drinks:", filteredDrinks.length, filteredDrinks);
-      console.log("Loaded cup sizes:", filteredCupSizes.length, filteredCupSizes);
       
       // Ensure all fruits have category field
       const fruitsWithCategory = filteredFruits.map(f => ({
@@ -217,7 +205,6 @@ export default function MenuPage() {
       const ingredientCategories: FruitCategory[] = drink.ingredients.map(ing => {
         const fruit = fruits.find(f => f.id === ing.fruitId);
         if (!fruit) {
-          console.warn(`Fruit not found for ingredient ${ing.fruitId} in drink ${drink.name}`);
           return "FRUIT" as FruitCategory;
         }
         // ใช้ category จาก fruit หรือ default เป็น FRUIT
