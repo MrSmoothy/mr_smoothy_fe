@@ -326,74 +326,9 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <div className="w-2 h-6 sm:h-8 bg-[#4A3728]"></div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] font-serif">Popular Smoothies</h2>
             </div>
-            
-            {/* Category Filter */}
-            <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 flex-wrap">
-              <button
-                onClick={() => {
-                  setSelectedCategory("ALL");
-                  // Reset scroll position when changing category
-                  if (scrollContainerRef.current) {
-                    scrollContainerRef.current.scrollLeft = 0;
-                  }
-                }}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "ALL"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
-                }`}
-              >
-                ทั้งหมด
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedCategory("FRUIT");
-                  if (scrollContainerRef.current) {
-                    scrollContainerRef.current.scrollLeft = 0;
-                  }
-                }}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "FRUIT"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
-                }`}
-              >
-                ผลไม้
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedCategory("VEGETABLE");
-                  if (scrollContainerRef.current) {
-                    scrollContainerRef.current.scrollLeft = 0;
-                  }
-                }}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "VEGETABLE"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
-                }`}
-              >
-                ผัก
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedCategory("MIXED");
-                  if (scrollContainerRef.current) {
-                    scrollContainerRef.current.scrollLeft = 0;
-                  }
-                }}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "MIXED"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
-                }`}
-              >
-                น้ำผสม
-              </button>
-            </div>
+
           </div>
 
           {/* Carousel Container */}
