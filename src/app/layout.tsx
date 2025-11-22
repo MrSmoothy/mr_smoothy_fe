@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
@@ -19,7 +19,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Mr. Smoothy",
   description: "Mr. Smoothy - สมูทตี้ออนไลน์",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

@@ -3,6 +3,12 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --no-audit --no-fund
+# Copy config files first (for better caching)
+COPY postcss.config.mjs ./
+COPY next.config.ts ./
+COPY tsconfig.json ./
+COPY eslint.config.mjs ./
+# Copy all source files (exclude files in .dockerignore)
 COPY . .
 
 # Build arguments for environment variables (must be passed at build time)
@@ -28,6 +34,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/next-env.d.ts ./next-env.d.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
+# Copy PostCSS config for Tailwind CSS
+COPY --from=builder /app/postcss.config.mjs ./postcss.config.mjs
 EXPOSE 3000
 ENV PORT=3000
 CMD ["npm", "start"]
