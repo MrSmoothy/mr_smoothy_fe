@@ -37,17 +37,17 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F5EFE6] to-white">
       {/* Hero Section */}
-      <div className="bg-[#4A3728] text-white py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <h1 className="text-4xl md:text-5xl font-bold font-serif mb-4 text-center">ติดต่อเรา</h1>
-          <p className="text-xl text-center text-[#E8DDCB]/90 font-sans">เรายินดีให้บริการและตอบคำถามของคุณ</p>
+      <div className="bg-[#4A3728] text-white py-8 sm:py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-3 sm:mb-4 text-center">ติดต่อเรา</h1>
+          <p className="text-base sm:text-lg md:text-xl text-center text-[#E8DDCB]/90 font-sans px-4">เรายินดีให้บริการและตอบคำถามของคุณ</p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* ข้อมูลติดต่อ */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-[#4A3728] mb-6 font-serif">ข้อมูลติดต่อ</h2>
             
             <div className="space-y-6">

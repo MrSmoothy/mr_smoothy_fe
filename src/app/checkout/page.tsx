@@ -194,16 +194,16 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
-      <div className="mx-auto max-w-4xl px-6">
-        <h1 className="text-4xl font-bold text-[#4A2C1B] mb-8">ยืนยันคำสั่งซื้อ</h1>
+    <div className="bg-[#F5EFE6] min-h-screen py-6 sm:py-8 md:py-12">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A2C1B] mb-6 sm:mb-8">ยืนยันคำสั่งซื้อ</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Left Column - Order Summary */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Cart Items */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-2xl font-bold text-[#4A2C1B] mb-4">รายการสินค้า</h2>
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] mb-3 sm:mb-4">รายการสินค้า</h2>
               <div className="space-y-4">
                 {cart.items.map((item) => (
                   <div
@@ -245,9 +245,9 @@ export default function CheckoutPage() {
             </div>
 
             {/* Pickup Information */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-2xl font-bold text-[#4A2C1B] mb-4 flex items-center gap-2">
-                <MapPin className="w-6 h-6" />
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] mb-3 sm:mb-4 flex items-center gap-2">
+                <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />
                 ข้อมูลการรับสินค้า
               </h2>
               <div className="space-y-4">
@@ -330,8 +330,8 @@ export default function CheckoutPage() {
 
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-[#4A2C1B] rounded-lg shadow-md p-6 sticky top-24">
-              <h2 className="text-2xl font-bold text-[#F5EFE6] mb-4">สรุปคำสั่งซื้อ</h2>
+            <div className="bg-[#4A2C1B] rounded-lg shadow-md p-4 sm:p-6 lg:sticky lg:top-24">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#F5EFE6] mb-3 sm:mb-4">สรุปคำสั่งซื้อ</h2>
               
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-[#F5EFE6]">
@@ -363,15 +363,15 @@ export default function CheckoutPage() {
               <button
                 onClick={handlePlaceOrder}
                 disabled={submitting || !formData.pickupTime || !formData.phoneNumber}
-                className="w-full bg-black text-[#F5EFE6] py-4 rounded-md font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-black text-[#F5EFE6] py-3 sm:py-4 rounded-md font-bold text-base sm:text-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                <CreditCard className="w-5 h-5" />
+                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
                 {submitting ? "กำลังดำเนินการ..." : "ยืนยันการสั่งซื้อ"}
               </button>
 
               <button
                 onClick={() => router.back()}
-                className="w-full mt-3 bg-[#F5EFE6]/20 text-[#F5EFE6] py-3 rounded-md font-medium hover:bg-[#F5EFE6]/30 transition-colors"
+                className="w-full mt-2 sm:mt-3 bg-[#F5EFE6]/20 text-[#F5EFE6] py-2.5 sm:py-3 rounded-md font-medium hover:bg-[#F5EFE6]/30 transition-colors text-sm sm:text-base"
               >
                 ย้อนกลับ
               </button>

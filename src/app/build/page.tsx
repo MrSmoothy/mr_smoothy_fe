@@ -280,18 +280,18 @@ export default function BuildPage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#F5EFE6] via-[#F5EFE6] to-[#E8DDD0] min-h-screen py-8">
+    <div className="bg-gradient-to-br from-[#F5EFE6] via-[#F5EFE6] to-[#E8DDD0] min-h-screen py-4 sm:py-6 md:py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 text-center animate-fadeIn">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Sparkles className="w-8 h-8 text-[#4A2C1B]" />
-            <h1 className="text-4xl md:text-5xl font-bold text-[#4A2C1B]">
+        <div className="mb-6 sm:mb-8 text-center animate-fadeIn">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#4A2C1B]" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#4A2C1B]">
               สร้าง Smoothy ของคุณเอง
             </h1>
-            <Sparkles className="w-8 h-8 text-[#4A2C1B]" />
+            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#4A2C1B]" />
           </div>
-          <p className="text-[#4A2C1B]/70 text-lg">
+          <p className="text-[#4A2C1B]/70 text-base sm:text-lg px-4">
             เลือกส่วนผสมที่คุณชื่นชอบ สูงสุด {MAX_FRUITS} อย่าง (ผลไม้ ผัก และส่วนเสริม)
           </p>
           {!user && (
@@ -301,12 +301,12 @@ export default function BuildPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Left Column - Smoothy Cup */}
           <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-[#4A2C1B]/10 animate-scaleIn">
-                <h2 className="text-2xl font-bold text-[#4A2C1B] mb-6 text-center">
+            <div className="lg:sticky lg:top-8">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-[#4A2C1B]/10 animate-scaleIn">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] mb-4 sm:mb-6 text-center">
                   Smoothy ของคุณ
                 </h2>
                 
@@ -419,12 +419,12 @@ export default function BuildPage() {
 
           {/* Right Column - Fruit Selector */}
           <div className="lg:col-span-2">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-8 border border-[#4A2C1B]/10 animate-slideIn">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-[#4A2C1B]/10 animate-slideIn">
               {/* Category Filter */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
-                  <div className="text-sm text-[#4A2C1B]/70">
+              <div className="mb-4 sm:mb-6">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
+                  <div className="text-xs sm:text-sm text-[#4A2C1B]/70">
                     {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
                   </div>
                 </div>

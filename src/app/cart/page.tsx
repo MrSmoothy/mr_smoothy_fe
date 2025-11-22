@@ -300,15 +300,15 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
-      <div className="mx-auto max-w-4xl px-6">
+    <div className="bg-[#F5EFE6] min-h-screen py-6 sm:py-8 md:py-12">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
         {/* Pending Orders Section */}
         {pendingOrders.length > 0 && (
-          <div className="mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Package className="w-6 h-6 text-blue-500" />
-                <h2 className="text-2xl font-bold text-[#4A2C1B] font-sans">คำสั่งซื้อที่กำลังดำเนินการ</h2>
+          <div className="mb-6 sm:mb-8">
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <Package className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
+                <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] font-sans">คำสั่งซื้อที่กำลังดำเนินการ</h2>
               </div>
               <div className="space-y-4">
                 {pendingOrders.map((order) => (
@@ -376,11 +376,11 @@ export default function CartPage() {
             </div>
           </div>
         )}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-[#4A2C1B]">ตะกร้าสินค้า</h1>
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A2C1B]">ตะกร้าสินค้า</h1>
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
             {!user && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm text-yellow-800">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-yellow-800">
                 💡 Guest User - เข้าสู่ระบบเพื่อรับแต้ม
               </div>
             )}
@@ -411,21 +411,21 @@ export default function CartPage() {
 
         {items.length > 0 && (
           <>
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <div className="space-y-4">
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+              <div className="space-y-4 sm:space-y-6">
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="border-b border-[#4A3728]/20 pb-6 last:border-b-0 last:pb-0"
+                    className="border-b border-[#4A3728]/20 pb-4 sm:pb-6 last:border-b-0 last:pb-0"
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       {/* Product Image */}
                       <div className="flex-shrink-0">
                         {item.type === "PREDEFINED" && item.predefinedDrinkImageUrl ? (
                           <img
                             src={getImageUrl(item.predefinedDrinkImageUrl)}
                             alt={item.predefinedDrinkName || "น้ำปั่น"}
-                            className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg border border-[#4A3728]/20 shadow-sm"
+                            className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 object-cover rounded-lg border border-[#4A3728]/20 shadow-sm"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = "none";
@@ -434,14 +434,14 @@ export default function CartPage() {
                             }}
                           />
                         ) : null}
-                        <div className={`w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-[#E8DDCB] to-[#D4C5B0] rounded-lg border border-[#4A3728]/20 flex items-center justify-center shadow-sm ${item.type === "PREDEFINED" && item.predefinedDrinkImageUrl ? "hidden" : ""}`}>
-                          <span className="text-4xl">🥤</span>
+                        <div className={`w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gradient-to-br from-[#E8DDCB] to-[#D4C5B0] rounded-lg border border-[#4A3728]/20 flex items-center justify-center shadow-sm ${item.type === "PREDEFINED" && item.predefinedDrinkImageUrl ? "hidden" : ""}`}>
+                          <span className="text-2xl sm:text-3xl md:text-4xl">🥤</span>
                         </div>
                       </div>
 
                       {/* Product Details */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-xl font-semibold text-[#4A3728] mb-2 font-serif">
+                        <h3 className="text-lg sm:text-xl font-semibold text-[#4A3728] mb-1 sm:mb-2 font-serif">
                           {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
                         </h3>
                         <div className="space-y-1 mb-3">
@@ -483,10 +483,10 @@ export default function CartPage() {
               </div>
             </div>
 
-            <div className="bg-[#4A2C1B] rounded-lg shadow-md p-6 mt-6">
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-2xl font-bold text-[#F5EFE6]">ยอดรวม</span>
-                <span className="text-3xl font-bold text-[#F5EFE6]">
+            <div className="bg-[#4A2C1B] rounded-lg shadow-md p-4 sm:p-6 mt-4 sm:mt-6">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <span className="text-xl sm:text-2xl font-bold text-[#F5EFE6]">ยอดรวม</span>
+                <span className="text-2xl sm:text-3xl font-bold text-[#F5EFE6]">
                   {Number(displayCart?.totalPrice || 0).toFixed(2)} บาท
                 </span>
               </div>
@@ -498,7 +498,7 @@ export default function CartPage() {
                     router.push("/payment");
                   }
                 }}
-                className="w-full bg-black text-[#F5EFE6] py-4 rounded-md font-semibold text-lg hover:opacity-90 transition-opacity"
+                className="w-full bg-black text-[#F5EFE6] py-3 sm:py-4 rounded-md font-semibold text-base sm:text-lg hover:opacity-90 transition-opacity"
               >
                 ดำเนินการสั่งซื้อ
               </button>

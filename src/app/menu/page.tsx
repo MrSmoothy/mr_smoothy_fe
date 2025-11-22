@@ -373,18 +373,18 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="bg-[#E8DDCB] min-h-screen py-12">
-      <div className="mx-auto max-w-7xl px-6">
-        <h1 className="text-4xl font-bold text-[#4A3728] mb-8 font-serif">Ready Menu</h1>
+    <div className="bg-[#E8DDCB] min-h-screen py-6 sm:py-8 md:py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-6 sm:mb-8 font-serif">Ready Menu</h1>
 
         {/* Category Filter */}
-        <section className="mb-8">
-          <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-            <h2 className="text-lg font-semibold text-[#4A3728] mb-4 font-sans">เลือกหมวดหมู่</h2>
-            <div className="flex flex-wrap gap-3">
+        <section className="mb-6 sm:mb-8">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-semibold text-[#4A3728] mb-3 sm:mb-4 font-sans">เลือกหมวดหมู่</h2>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               <button
                 onClick={() => setSelectedCategory("ALL")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "ALL"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
@@ -394,7 +394,7 @@ export default function MenuPage() {
               </button>
               <button
                 onClick={() => setSelectedCategory("FRUIT")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "FRUIT"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
@@ -404,7 +404,7 @@ export default function MenuPage() {
               </button>
               <button
                 onClick={() => setSelectedCategory("VEGETABLE")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "VEGETABLE"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
@@ -414,7 +414,7 @@ export default function MenuPage() {
               </button>
               <button
                 onClick={() => setSelectedCategory("MIXED")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "MIXED"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
@@ -424,7 +424,7 @@ export default function MenuPage() {
               </button>
               <button
                 onClick={() => setSelectedCategory("PROTEIN")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "PROTEIN"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
@@ -437,16 +437,16 @@ export default function MenuPage() {
         </section>
 
         {/* All Drinks */}
-        <section className="mb-12">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-[#4A3728] mb-2 font-serif">
+        <section className="mb-8 sm:mb-12">
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#4A3728] mb-2 font-serif">
               {selectedCategory === "ALL" && "All Smoothies"}
               {selectedCategory === "FRUIT" && "น้ำผลไม้ล้วน"}
               {selectedCategory === "VEGETABLE" && "น้ำผัก"}
               {selectedCategory === "MIXED" && "น้ำผสมผักผลไม้"}
               {selectedCategory === "PROTEIN" && "น้ำโปรตีน/ส่วนเสริม"}
             </h2>
-            <p className="text-lg text-[#4A3728]/80 font-sans">
+            <p className="text-base sm:text-lg text-[#4A3728]/80 font-sans">
               {filteredDrinks.length > 0 
                 ? `พบ ${filteredDrinks.length} รายการ` 
                 : "ยังไม่มีเมนูในหมวดหมู่นี้"}
@@ -472,15 +472,15 @@ export default function MenuPage() {
         </section>
 
         {/* Custom Drink Builder - เปลี่ยนเป็นลิงก์ไปหน้า build */}
-        <section className="mb-12 text-center">
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-3xl font-bold text-[#4A3728] mb-4 font-serif">Want to Create Your Own?</h2>
-            <p className="text-lg text-[#4A3728]/70 mb-6 font-sans">
+        <section className="mb-8 sm:mb-12 text-center">
+          <div className="bg-white rounded-lg shadow-md p-6 sm:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#4A3728] mb-3 sm:mb-4 font-serif">Want to Create Your Own?</h2>
+            <p className="text-base sm:text-lg text-[#4A3728]/70 mb-4 sm:mb-6 font-sans">
               Customize your perfect smoothie with our build tool
             </p>
             <Link
               href="/build"
-              className="inline-block bg-[#4A3728] text-[#E8DDCB] px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              className="inline-block bg-[#4A3728] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm sm:text-base"
             >
               Build Your Own Smoothie
             </Link>
@@ -491,26 +491,26 @@ export default function MenuPage() {
       {/* Product Detail Modal */}
       {showModal && selectedDrink && (
         <div 
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4"
           onClick={closeModal}
         >
           <div 
-            className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-[#4A3728] font-serif">{selectedDrink.name}</h2>
+            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-serif pr-2">{selectedDrink.name}</h2>
               <button
                 onClick={closeModal}
-                className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors"
+                className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors flex-shrink-0"
               >
                 ×
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Image */}
               <div className="mb-6">
                 {selectedDrink.imageUrl ? (

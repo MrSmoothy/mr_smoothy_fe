@@ -285,7 +285,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#E8DDCB]">
       {/* Hero Section */}
       <section 
-        className="relative py-20 px-6 min-h-[600px] flex items-center justify-center overflow-hidden"
+        className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6 min-h-[400px] sm:min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden"
         style={{
           backgroundImage: "url('/background1.png')",
           backgroundSize: "cover",
@@ -297,23 +297,23 @@ export default function Home() {
         <div className="absolute inset-0 bg-[#4A3728]/20"></div>
         
         {/* Content */}
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 font-serif drop-shadow-lg">
+        <div className="relative z-10 mx-auto max-w-4xl text-center px-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 font-serif drop-shadow-lg">
             Welcome to Mr.Smoothy
           </h1>
-          <p className="text-lg md:text-xl text-white mb-8 max-w-2xl mx-auto font-sans drop-shadow-md">
+          <p className="text-base sm:text-lg md:text-xl text-white mb-6 sm:mb-8 max-w-2xl mx-auto font-sans drop-shadow-md px-4">
             Your premium destination for healthy, delicious smoothies. Choose from our signature menu or create your perfect blend.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link
               href="/menu"
-              className="bg-[#4A3728] text-[#E8DDCB] px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg"
+              className="bg-[#4A3728] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
             >
               Explore Ready Menu
             </Link>
             <Link
               href="/build"
-              className="bg-white/90 text-[#4A3728] border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg"
+              className="bg-white/90 text-[#4A3728] border-2 border-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg text-sm sm:text-base"
             >
               Build Your Own
             </Link>
@@ -322,16 +322,16 @@ export default function Home() {
       </section>
 
       {/* Popular Smoothies Section */}
-      <section className="bg-[#E8DDCB] py-16 px-6">
+      <section className="bg-[#E8DDCB] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-2 h-8 bg-[#4A3728]"></div>
-              <h2 className="text-4xl font-bold text-[#4A3728] font-serif">Popular Smoothies</h2>
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="w-2 h-6 sm:h-8 bg-[#4A3728]"></div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] font-serif">Popular Smoothies</h2>
             </div>
             
             {/* Category Filter */}
-            <div className="flex items-center gap-4 mb-6 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 flex-wrap">
               <button
                 onClick={() => {
                   setSelectedCategory("ALL");
@@ -340,7 +340,7 @@ export default function Home() {
                     scrollContainerRef.current.scrollLeft = 0;
                   }
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "ALL"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
@@ -355,7 +355,7 @@ export default function Home() {
                     scrollContainerRef.current.scrollLeft = 0;
                   }
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "FRUIT"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
@@ -370,7 +370,7 @@ export default function Home() {
                     scrollContainerRef.current.scrollLeft = 0;
                   }
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "VEGETABLE"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
@@ -385,7 +385,7 @@ export default function Home() {
                     scrollContainerRef.current.scrollLeft = 0;
                   }
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
                   selectedCategory === "MIXED"
                     ? "bg-[#4A3728] text-[#E8DDCB]"
                     : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
@@ -401,16 +401,16 @@ export default function Home() {
             {/* Left Arrow */}
             <button
               onClick={scrollLeft}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+              className="hidden sm:block absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
               aria-label="เลื่อนซ้าย"
             >
-              <ChevronLeft className="w-6 h-6 text-[#4A3728]" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#4A3728]" />
             </button>
 
             {/* Scrollable Container */}
             <div
               ref={scrollContainerRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+              className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-2 sm:px-0"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {loading ? (
@@ -462,7 +462,7 @@ export default function Home() {
                   return (
                     <div
                       key={drink.id}
-                      className="group flex-shrink-0 w-64 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative"
+                      className="group flex-shrink-0 w-56 sm:w-64 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative"
                       onClick={() => openModal(drink)}
                     >
                       {/* Image Area - reduced size */}
@@ -554,21 +554,21 @@ export default function Home() {
             {/* Right Arrow */}
             <button
               onClick={scrollRight}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+              className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
               aria-label="เลื่อนขวา"
             >
-              <ChevronRight className="w-6 h-6 text-[#4A3728]" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-[#4A3728]" />
             </button>
           </div>
         </div>
       </section>
 
       {/* Seasonal Ingredients Section */}
-      <section className="bg-[#E8DDCB] py-16 px-6">
+      <section className="bg-[#E8DDCB] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-[#4A3728] mb-2 font-serif">วัตถุดิบตามฤดูกาล</h2>
-            <p className="text-lg text-[#4A3728]/80 font-sans">ผลไม้และผักตามฤดูกาลที่คัดสรรมาอย่างดี</p>
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-2 font-serif">วัตถุดิบตามฤดูกาล</h2>
+            <p className="text-base sm:text-lg text-[#4A3728]/80 font-sans px-4">ผลไม้และผักตามฤดูกาลที่คัดสรรมาอย่างดี</p>
           </div>
           {displaySeasonalIngredients.length === 0 ? (
             <div className="text-center text-[#4A3728]/60 py-8 font-sans">
@@ -613,7 +613,7 @@ export default function Home() {
 
       {/* Call to Action Section */}
       <section 
-        className="relative py-20 px-6 min-h-[500px] flex items-center justify-center overflow-hidden"
+        className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6 min-h-[300px] sm:min-h-[400px] md:min-h-[500px] flex items-center justify-center overflow-hidden"
         style={{
           backgroundImage: "url('/background2.png')",
           backgroundAttachment: "fixed",
@@ -626,23 +626,23 @@ export default function Home() {
         <div className="absolute inset-0 bg-[#4A3728]/60"></div>
         
         {/* Content */}
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 font-serif drop-shadow-lg">
+        <div className="relative z-10 mx-auto max-w-4xl text-center px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 font-serif drop-shadow-lg">
             Ready to Start Your Healthy Journey?
           </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto font-sans drop-shadow-md">
+          <p className="text-base sm:text-lg text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto font-sans drop-shadow-md">
             Join thousands of satisfied customers who have transformed their health with Mr.Smoothy.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link
               href="/register"
-              className="bg-white text-[#4A3728] px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg"
+              className="bg-white text-[#4A3728] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
             >
               Get Started Now
             </Link>
             <Link
               href="/menu"
-              className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors"
+              className="bg-transparent border-2 border-white text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors text-sm sm:text-base"
             >
               Browse Menu
             </Link>
@@ -651,15 +651,15 @@ export default function Home() {
       </section>
 
       {/* Special Offer Banner */}
-      <section className="bg-[#4A3728] py-12 px-6">
+      <section className="bg-[#4A3728] py-8 sm:py-10 md:py-12 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl">
-          <div className="bg-[#E8DDCB] rounded-lg p-8 text-center shadow-lg">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-2xl">🎉</span>
-              <h3 className="text-2xl font-bold text-[#4A3728] font-sans">Special Offer This Week</h3>
+          <div className="bg-[#E8DDCB] rounded-lg p-6 sm:p-8 text-center shadow-lg">
+            <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+              <span className="text-xl sm:text-2xl">🎉</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-sans">Special Offer This Week</h3>
             </div>
-            <p className="text-lg text-[#4A3728] mb-2 font-sans">Get 20% off all High-Protein Smoothies!</p>
-            <p className="text-[#4A3728] font-semibold font-sans">Use code: PROTEIN20</p>
+            <p className="text-base sm:text-lg text-[#4A3728] mb-2 font-sans">Get 20% off all High-Protein Smoothies!</p>
+            <p className="text-sm sm:text-base text-[#4A3728] font-semibold font-sans">Use code: PROTEIN20</p>
           </div>
         </div>
       </section>
@@ -667,26 +667,26 @@ export default function Home() {
       {/* Product Detail Modal */}
       {showModal && selectedDrink && (
         <div 
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4"
           onClick={closeModal}
         >
           <div 
-            className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-[#4A3728] font-serif">{selectedDrink.name}</h2>
+            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-serif pr-2">{selectedDrink.name}</h2>
               <button
                 onClick={closeModal}
-                className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors"
+                className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors flex-shrink-0"
               >
                 ×
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Image */}
               <div className="mb-6">
                 {selectedDrink.imageUrl ? (

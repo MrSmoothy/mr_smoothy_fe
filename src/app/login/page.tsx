@@ -39,9 +39,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F5EFE6] p-6">
-      <div className="w-full max-w-md rounded-lg bg-[#4A2C1B] p-8 shadow-lg">
-        <h1 className="mb-8 text-3xl font-bold text-[#F5EFE6] text-center">Log in</h1>
+    <div className="flex min-h-screen items-center justify-center bg-[#F5EFE6] p-4 sm:p-6">
+      <div className="w-full max-w-md rounded-lg bg-[#4A2C1B] p-6 sm:p-8 shadow-lg">
+        <h1 className="mb-6 sm:mb-8 text-2xl sm:text-3xl font-bold text-[#F5EFE6] text-center">Log in</h1>
         <form onSubmit={onSubmit} className="space-y-5">
           <div>
             <label className="mb-2 block text-sm text-[#F5EFE6]">Username</label>

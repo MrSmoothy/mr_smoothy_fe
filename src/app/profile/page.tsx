@@ -391,8 +391,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="bg-[#E8DDCB] min-h-screen py-12">
-      <div className="mx-auto max-w-4xl px-6">
+    <div className="bg-[#E8DDCB] min-h-screen py-6 sm:py-8 md:py-12">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
         {/* Header */}
         <div className="mb-8">
           <button
@@ -402,11 +402,11 @@ export default function ProfilePage() {
             <ArrowLeft className="w-5 h-5" />
             กลับ
           </button>
-          <h1 className="text-4xl font-bold text-[#4A3728] mb-2 font-serif">โปรไฟล์ของฉัน</h1>
-          <p className="text-[#4A3728]/70 font-sans">จัดการข้อมูลส่วนตัวของคุณ</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-2 font-serif">โปรไฟล์ของฉัน</h1>
+          <p className="text-sm sm:text-base text-[#4A3728]/70 font-sans">จัดการข้อมูลส่วนตัวของคุณ</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Profile Card */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-lg p-6 border border-[#4A3728]/20">
