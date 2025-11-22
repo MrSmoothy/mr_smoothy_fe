@@ -105,10 +105,20 @@ export default function AdminDrinksPage() {
     setEditingDrink(null);
   }
 
+  function getTotalQuantity(): number {
+    return formData.ingredients.reduce((sum, ing) => sum + ing.quantity, 0);
+  }
+
   function addIngredient() {
+    const currentTotal = getTotalQuantity();
+    if (currentTotal >= 5) {
+      alert("จำนวนวัตถุดิบรวมกันต้องไม่เกิน 5");
+      return;
+    }
+    const maxQuantity = 5 - currentTotal;
     setFormData({
       ...formData,
-      ingredients: [...formData.ingredients, { fruitId: fruits[0]?.id || 0, quantity: 1 }],
+      ingredients: [...formData.ingredients, { fruitId: fruits[0]?.id || 0, quantity: Math.min(1, maxQuantity) }],
     });
   }
 
@@ -120,6 +130,21 @@ export default function AdminDrinksPage() {
   }
 
   function updateIngredient(index: number, field: "fruitId" | "quantity", value: number) {
+    if (field === "quantity") {
+      const currentTotal = getTotalQuantity();
+      const currentIngredientQuantity = formData.ingredients[index].quantity;
+      const newTotal = currentTotal - currentIngredientQuantity + value;
+      
+      if (newTotal > 5) {
+        const maxAllowed = 5 - (currentTotal - currentIngredientQuantity);
+        alert(`จำนวนวัตถุดิบรวมกันต้องไม่เกิน 5 (จำนวนสูงสุดที่สามารถใส่ได้: ${maxAllowed})`);
+        value = Math.max(1, maxAllowed);
+      }
+      if (value < 1) {
+        value = 1;
+      }
+    }
+    
     const newIngredients = [...formData.ingredients];
     newIngredients[index] = { ...newIngredients[index], [field]: value };
     setFormData({ ...formData, ingredients: newIngredients });
@@ -142,6 +167,11 @@ export default function AdminDrinksPage() {
     e.preventDefault();
     if (formData.ingredients.length === 0) {
       alert("กรุณาเพิ่มส่วนผสมอย่างน้อย 1 อย่าง");
+      return;
+    }
+    const totalQuantity = getTotalQuantity();
+    if (totalQuantity > 5) {
+      alert("จำนวนวัตถุดิบรวมกันต้องไม่เกิน 5");
       return;
     }
     try {
@@ -362,11 +392,17 @@ export default function AdminDrinksPage() {
 
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <label className="block text-[#4A2C1B] font-semibold">ส่วนผสม *</label>
+                    <div>
+                      <label className="block text-[#4A2C1B] font-semibold">ส่วนผสม *</label>
+                      <p className="text-sm text-[#4A2C1B]/70 mt-1">
+                        จำนวนรวม: {getTotalQuantity()}/5
+                      </p>
+                    </div>
                     <button
                       type="button"
                       onClick={addIngredient}
-                      className="bg-[#4A2C1B] text-[#F5EFE6] px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+                      disabled={getTotalQuantity() >= 5}
+                      className="bg-[#4A2C1B] text-[#F5EFE6] px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4" />
                       เพิ่มส่วนผสม
@@ -392,10 +428,14 @@ export default function AdminDrinksPage() {
                         <input
                           type="number"
                           min="1"
+                          max={5 - (getTotalQuantity() - ing.quantity)}
                           value={ing.quantity}
-                          onChange={(e) =>
-                            updateIngredient(index, "quantity", Number(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const newValue = Number(e.target.value);
+                            if (newValue >= 1) {
+                              updateIngredient(index, "quantity", newValue);
+                            }
+                          }}
                           placeholder="จำนวน"
                           className="w-24 rounded-md border border-[#4A2C1B]/30 px-4 py-2 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
                         />

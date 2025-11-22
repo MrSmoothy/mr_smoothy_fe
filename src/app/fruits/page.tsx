@@ -172,7 +172,7 @@ export default function FruitsPage() {
             <div className="text-[#4A2C1B]/60 text-xl mb-4">ยังไม่มีผลไม้ในระบบ</div>
             <p className="text-[#4A2C1B]/50 mb-4">กรุณาตรวจสอบ:</p>
             <ul className="text-[#4A2C1B]/50 text-left max-w-md mx-auto space-y-2">
-              <li>1. ตรวจสอบว่า backend API ทำงานอยู่ที่ http://localhost:8080</li>
+              <li>1. ตรวจสอบว่า backend API ทำงานอยู่ที่ {process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"}</li>
               <li>2. ตรวจสอบว่ามีข้อมูลผลไม้ใน database table `fruit`</li>
               <li>3. ตรวจสอบว่าผลไม้มีค่า `active = true` หรือ `active = 1`</li>
               <li>4. เปิด Browser DevTools → Console เพื่อดู error messages</li>

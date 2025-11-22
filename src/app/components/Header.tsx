@@ -156,88 +156,83 @@ export default function Header() {
           </div>
           <div className="flex flex-col">
             <span className="text-2xl font-bold text-[#E8DDCB] leading-tight font-serif">Mr.Smoothy</span>
-            <span className="text-xs text-[#E8DDCB] leading-tight font-sans">Healthy Living Since 2024</span>
+            {/* <span className="text-xs text-[#E8DDCB] leading-tight font-sans">Healthy</span> */}
           </div>
         </Link>
         <nav className="flex items-center gap-4">
-          {/* Hide navigation links and cart for admin */}
-          {user?.role !== "ADMIN" && (
-            <>
-              <Link
-                href="/"
-                className={`px-3 py-2 rounded transition-all font-medium ${
-                  pathname === '/' 
-                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
-                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
-                }`}
-              >
-                Home
-              </Link>
-              <Link
-                href="/menu"
-                className={`px-3 py-2 rounded transition-all font-medium ${
-                  pathname === '/menu' || pathname?.startsWith('/menu/')
-                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
-                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
-                }`}
-              >
-                Ready Menu
-              </Link>
-              <Link
-                href="/build"
-                className={`px-3 py-2 rounded transition-all font-medium ${
-                  pathname === '/build' || pathname?.startsWith('/build/')
-                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
-                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
-                }`}
-              >
-                Custom Menu
-              </Link>
-              <Link
-                href="/contact"
-                className={`px-3 py-2 rounded transition-all font-medium ${
-                  pathname === '/contact' || pathname?.startsWith('/contact/')
-                    ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
-                    : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
-                }`}
-              >
-                Contact
-              </Link>
-              <div className="relative">
-              <Link
-                href="/cart"
-                  className={`relative px-3 py-2 rounded transition-all inline-flex items-center justify-center ${
-                    pathname === '/cart' || pathname?.startsWith('/cart/')
-                      ? 'bg-[#E8DDCB]' 
-                      : 'hover:bg-[#E8DDCB]/20'
-                  }`}
-                >
-                  {pathname === '/cart' || pathname?.startsWith('/cart/') ? (
-                    <ShoppingCart 
-                      className="w-6 h-6 text-[#4A3728] flex-shrink-0"
-                      strokeWidth={2}
-                    />
-                  ) : (
-                    <ShoppingCart 
-                      className="w-6 h-6 text-[#E8DDCB] flex-shrink-0"
-                      strokeWidth={2}
-                    />
-                  )}
-                {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold z-10">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-                {pendingOrdersCount > 0 && (
-                  <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
-                    <Package className="w-3 h-3" />
-                    <span>{pendingOrdersCount}</span>
-                  </div>
-                )}
+          <Link
+            href="/"
+            className={`px-3 py-2 rounded transition-all font-medium ${
+              pathname === '/' 
+                ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
+            }`}
+          >
+            Home
+          </Link>
+          <Link
+            href="/menu"
+            className={`px-3 py-2 rounded transition-all font-medium ${
+              pathname === '/menu' || pathname?.startsWith('/menu/')
+                ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
+            }`}
+          >
+            Ready Menu
+          </Link>
+          <Link
+            href="/build"
+            className={`px-3 py-2 rounded transition-all font-medium ${
+              pathname === '/build' || pathname?.startsWith('/build/')
+                ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
+            }`}
+          >
+            Custom Menu
+          </Link>
+          <Link
+            href="/contact"
+            className={`px-3 py-2 rounded transition-all font-medium ${
+              pathname === '/contact' || pathname?.startsWith('/contact/')
+                ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold' 
+                : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20 hover:text-[#E8DDCB]'
+            }`}
+          >
+            Contact
+          </Link>
+          <div className="relative">
+            <Link
+              href="/cart"
+              className={`relative px-3 py-2 rounded transition-all inline-flex items-center justify-center ${
+                pathname === '/cart' || pathname?.startsWith('/cart/')
+                  ? 'bg-[#E8DDCB]' 
+                  : 'hover:bg-[#E8DDCB]/20'
+              }`}
+            >
+              {pathname === '/cart' || pathname?.startsWith('/cart/') ? (
+                <ShoppingCart 
+                  className="w-6 h-6 text-[#4A3728] flex-shrink-0"
+                  strokeWidth={2}
+                />
+              ) : (
+                <ShoppingCart 
+                  className="w-6 h-6 text-[#E8DDCB] flex-shrink-0"
+                  strokeWidth={2}
+                />
+              )}
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold z-10">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            {pendingOrdersCount > 0 && (
+              <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                <Package className="w-3 h-3" />
+                <span>{pendingOrdersCount}</span>
               </div>
-            </>
-          )}
+            )}
+          </div>
           {user ? (
             <>
               {/* User Menu Dropdown */}

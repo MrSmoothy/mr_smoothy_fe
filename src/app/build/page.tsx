@@ -266,7 +266,7 @@ export default function BuildPage() {
         <div className="text-center max-w-md">
           <div className="text-[#4A2C1B] text-xl font-bold mb-4">ยังไม่มีผลไม้ในระบบ</div>
           <div className="text-[#4A2C1B]/70 mb-4">
-            กรุณาตรวจสอบว่า backend API ทำงานอยู่ที่ http://localhost:8080
+            กรุณาตรวจสอบว่า backend API ทำงานอยู่ที่ {process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"}
           </div>
           <button
             onClick={loadData}
