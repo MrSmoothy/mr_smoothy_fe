@@ -393,7 +393,7 @@ export default function AdminDrinksPage() {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <label className="block text-[#4A2C1B] font-semibold">ส่วนผสม *</label>
+                    <label className="block text-[#4A2C1B] font-semibold">ส่วนผสม *</label>
                       <p className="text-sm text-[#4A2C1B]/70 mt-1">
                         จำนวนรวม: {getTotalQuantity()}/5
                       </p>
@@ -434,7 +434,7 @@ export default function AdminDrinksPage() {
                             const newValue = Number(e.target.value);
                             if (newValue >= 1) {
                               updateIngredient(index, "quantity", newValue);
-                            }
+                          }
                           }}
                           placeholder="จำนวน"
                           className="w-24 rounded-md border border-[#4A2C1B]/30 px-4 py-2 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"

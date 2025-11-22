@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getMyOrders, getGuestOrdersByPhoneNumber, getOrderById, getGuestOrderById, type Order } from "@/lib/api";
 import { getGuestOrders, type GuestOrder } from "@/lib/guestCart";
 import { Package, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
-export default function OrdersPage() {
+function OrdersContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderIdParam = searchParams?.get("orderId");
@@ -674,6 +674,21 @@ export default function OrdersPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function OrdersPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A2C1B] mx-auto mb-4"></div>
+          <div className="text-[#4A2C1B] text-xl">กำลังโหลด...</div>
+        </div>
+      </div>
+    }>
+      <OrdersContent />
+    </Suspense>
   );
 }
 

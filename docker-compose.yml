@@ -2,14 +2,36 @@ version: "3.9"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Pass environment variables at build time (สำคัญ!)
+      args:
+        # Localhost (สำหรับ development)
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
+        NEXT_PUBLIC_MINIO_URL: http://localhost:9000
+        # Server (สำหรับ production - uncomment เมื่อ deploy บน server)
+        # NEXT_PUBLIC_API_BASE_URL: http://3.91.29.241:8080
+        # NEXT_PUBLIC_MINIO_URL: http://3.91.29.241:9000
     container_name: mr_smoothy_app
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      # ถ้า backend รันใน Docker บนเครื่องเดียวกัน อาจตั้งค่าเป็น http://host.docker.internal:8080
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://host.docker.internal:8080}
+      # ใส่ค่าตรงๆ ไม่ต้องใช้ .env
+      # Localhost (สำหรับ development)
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
+      NEXT_PUBLIC_MINIO_URL: http://localhost:9000
+      # Server (สำหรับ production - uncomment เมื่อ deploy บน server)
+      # NEXT_PUBLIC_API_BASE_URL: http://3.91.29.241:8080
+      # NEXT_PUBLIC_MINIO_URL: http://3.91.29.241:9000
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 
 

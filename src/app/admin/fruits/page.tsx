@@ -257,7 +257,7 @@ export default function AdminFruitsPage() {
               : fruits.filter(f => {
                   const fruitCategory = f.category || "FRUIT";
                   const matches = fruitCategory === selectedCategory;
-                  if (!matches && selectedCategory !== "ALL") {
+                  if (!matches) {
                     console.log(`Fruit ${f.name} (category: ${fruitCategory}) does not match ${selectedCategory}`);
                   }
                   return matches;

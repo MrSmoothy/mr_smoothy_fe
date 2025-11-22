@@ -377,6 +377,11 @@ export type Order = {
   pickupTime: string;
   phoneNumber: string;
   notes?: string;
+  customerName?: string; // สำหรับ guest orders
+  customerEmail?: string; // สำหรับ guest orders
+  username?: string; // สำหรับ logged-in users
+  userEmail?: string; // สำหรับ logged-in users
+  userFullName?: string; // สำหรับ logged-in users
   createdAt: string;
   updatedAt: string;
 };
