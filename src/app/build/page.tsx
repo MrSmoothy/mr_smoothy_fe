@@ -378,19 +378,19 @@ export default function BuildPage() {
                   disabled={!canAddToCart || addingToCart}
                   className={`hidden lg:flex mt-6 w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 items-center justify-center gap-2 ${
                     canAddToCart
-                      ? "bg-gradient-to-r from-[#4A2C1B] to-[#5A3C2B] text-white hover:shadow-xl hover:scale-105 active:scale-95"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      ? "bg-[#4A2C1B] text-white hover:bg-[#5A3C2B] hover:shadow-xl hover:scale-105 active:scale-95 border-2 border-[#4A2C1B]"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
                   }`}
                 >
                   {addingToCart ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>กำลังเพิ่ม...</span>
+                      <span className="text-white">กำลังเพิ่ม...</span>
                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="w-5 h-5" />
-                      <span>เพิ่มลงตะกร้า</span>
+                      <ShoppingCart className={`w-5 h-5 ${canAddToCart ? "text-white" : "text-gray-500"}`} />
+                      <span className={canAddToCart ? "text-white" : "text-gray-500"}>เพิ่มลงตะกร้า</span>
                     </>
                   )}
                 </button>
@@ -524,19 +524,19 @@ export default function BuildPage() {
               disabled={!canAddToCart || addingToCart}
               className={`flex-shrink-0 px-6 py-3 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 ${
                 canAddToCart
-                  ? "bg-gradient-to-r from-[#4A2C1B] to-[#5A3C2B] text-white shadow-lg active:scale-95"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  ? "bg-[#4A2C1B] text-white shadow-lg active:scale-95 border-2 border-[#4A2C1B] hover:bg-[#5A3C2B]"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
               }`}
             >
               {addingToCart ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span className="text-sm">กำลังเพิ่ม...</span>
+                  <span className="text-sm text-white">กำลังเพิ่ม...</span>
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>เพิ่มลงตะกร้า</span>
+                  <ShoppingCart className={`w-5 h-5 ${canAddToCart ? "text-white" : "text-gray-500"}`} />
+                  <span className={canAddToCart ? "text-white" : "text-gray-500"}>เพิ่มลงตะกร้า</span>
                 </>
               )}
             </button>
