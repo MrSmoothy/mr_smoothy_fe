@@ -301,7 +301,7 @@ export default function BuildPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 pb-24 lg:pb-0">
           {/* Left Column - Smoothy Cup */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-8">
@@ -318,7 +318,7 @@ export default function BuildPage() {
 
                 {/* Cup Size Selector */}
                 {cupSizes.length > 0 && (
-                  <div className="mt-6 space-y-3">
+                  <div className="mt-6 space-y-2">
                     <label className="block text-sm font-semibold text-[#4A2C1B]">
                       เลือกขนาดแก้ว
                     </label>
@@ -327,13 +327,13 @@ export default function BuildPage() {
                         <button
                           key={size.id}
                           onClick={() => setSelectedCupSize(size)}
-                          className={`p-3 rounded-lg border-2 transition-all duration-200 ${
+                          className={`px-3 py-2 rounded-lg border-2 transition-all duration-200 ${
                             selectedCupSize?.id === size.id
                               ? "border-[#4A2C1B] bg-[#4A2C1B] text-white shadow-lg scale-105"
                               : "border-[#4A2C1B]/30 bg-white hover:border-[#4A2C1B]/50 text-[#4A2C1B]"
                           }`}
                         >
-                          <div className="font-bold">{size.name}</div>
+                          <div className="font-semibold text-sm">{size.name}</div>
                           <div className="text-xs opacity-80">{size.volumeMl}ml</div>
                           {size.priceExtra > 0 && (
                             <div className="text-xs">+{size.priceExtra.toFixed(0)}฿</div>
@@ -372,11 +372,11 @@ export default function BuildPage() {
                   </div>
                 </div>
 
-                {/* Add to Cart Button */}
+                {/* Add to Cart Button - Desktop */}
                 <button
                   onClick={handleAddToCart}
                   disabled={!canAddToCart || addingToCart}
-                  className={`mt-6 w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                  className={`hidden lg:flex mt-6 w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 items-center justify-center gap-2 ${
                     canAddToCart
                       ? "bg-gradient-to-r from-[#4A2C1B] to-[#5A3C2B] text-white hover:shadow-xl hover:scale-105 active:scale-95"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -428,46 +428,46 @@ export default function BuildPage() {
                     {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedCategory("ALL")}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                       selectedCategory === "ALL"
-                        ? "bg-[#4A2C1B] text-white shadow-md"
-                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                     }`}
                   >
                     ทั้งหมด
                   </button>
                   <button
                     onClick={() => setSelectedCategory("FRUIT")}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                       selectedCategory === "FRUIT"
-                        ? "bg-[#4A2C1B] text-white shadow-md"
-                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                     }`}
                   >
-                    🍎 ผลไม้
+                    ผลไม้
                   </button>
                   <button
                     onClick={() => setSelectedCategory("VEGETABLE")}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                       selectedCategory === "VEGETABLE"
-                        ? "bg-[#4A2C1B] text-white shadow-md"
-                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                     }`}
                   >
-                    🥬 ผัก
+                    ผัก
                   </button>
                   <button
                     onClick={() => setSelectedCategory("ADDON")}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                       selectedCategory === "ADDON"
-                        ? "bg-[#4A2C1B] text-white shadow-md"
-                        : "bg-[#E8DDCB] text-[#4A2C1B] hover:bg-[#D4C5B0]"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                     }`}
                   >
-                    🥛 ส่วนเสริม
+                    ส่วนเสริม
                   </button>
                 </div>
               </div>
@@ -498,6 +498,54 @@ export default function BuildPage() {
               )}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Fixed Add to Cart Button - Mobile Only */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-[#4A2C1B]/20 shadow-lg p-4 safe-area-inset-bottom">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between gap-4 mb-2">
+            {canAddToCart && (
+              <div className="flex-1">
+                <div className="text-xs text-[#4A2C1B]/70">ราคาโดยประมาณ:</div>
+                <div className="text-lg font-bold text-[#4A2C1B]">
+                  {(
+                    Array.from(selectedFruits.values()).reduce(
+                      (sum, { fruit, quantity }) => sum + Number(fruit.pricePerUnit) * quantity,
+                      0
+                    ) +
+                    (selectedCupSize?.priceExtra || 0)
+                  ).toFixed(2)} บาท
+                </div>
+              </div>
+            )}
+            <button
+              onClick={handleAddToCart}
+              disabled={!canAddToCart || addingToCart}
+              className={`flex-shrink-0 px-6 py-3 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 ${
+                canAddToCart
+                  ? "bg-gradient-to-r from-[#4A2C1B] to-[#5A3C2B] text-white shadow-lg active:scale-95"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            >
+              {addingToCart ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span className="text-sm">กำลังเพิ่ม...</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>เพิ่มลงตะกร้า</span>
+                </>
+              )}
+            </button>
+          </div>
+          {canAddToCart && (
+            <div className="text-xs text-[#4A2C1B]/60 text-center">
+              x {quantity} แก้ว
+            </div>
+          )}
         </div>
       </div>
     </div>

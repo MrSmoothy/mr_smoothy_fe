@@ -39,7 +39,7 @@ export default function FruitSelector({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-bold text-[#4A2C1B]">เลือกผลไม้</h3>
+        <h3 className="text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
         <div className="text-sm text-[#4A2C1B]/70">
           {totalFruits} / {maxFruits} ผลไม้
         </div>

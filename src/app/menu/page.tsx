@@ -17,7 +17,7 @@ export default function MenuPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedDrink, setSelectedDrink] = useState<PredefinedDrink | null>(null);
   const [modalCupSize, setModalCupSize] = useState<CupSize | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "FRUIT" | "VEGETABLE" | "MIXED" | "PROTEIN">("ALL");
+  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT">("ALL");
 
   function loadUser() {
     try {
@@ -185,56 +185,50 @@ export default function MenuPage() {
   }
 
   // Filter drinks by category
-  function getDrinksByCategory(category: "ALL" | "FRUIT" | "VEGETABLE" | "MIXED" | "PROTEIN"): PredefinedDrink[] {
+  function getDrinksByCategory(category: "ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT"): PredefinedDrink[] {
     if (category === "ALL") {
       return drinks;
     }
 
-    if (fruits.length === 0) {
-      console.warn("No fruits loaded, cannot filter by category");
-      return drinks;
-    }
-
+    // Filter by category keywords in name or description
     const filtered = drinks.filter(drink => {
-      if (!drink.ingredients || drink.ingredients.length === 0) {
-        // ถ้าไม่มี ingredients ให้เป็น MIXED
-        return category === "MIXED";
+      const name = (drink.name || "").toLowerCase();
+      const description = (drink.description || "").toLowerCase();
+      const searchText = `${name} ${description}`;
+
+      switch (category) {
+        case "SIGNATURE":
+          // Signature drinks - typically premium or special drinks
+          return searchText.includes("signature") || 
+                 searchText.includes("พิเศษ") || 
+                 searchText.includes("premium");
+        case "CLASSIC":
+          // Classic drinks - traditional or standard recipes
+          return searchText.includes("classic") || 
+                 searchText.includes("คลาสสิก") || 
+                 searchText.includes("ดั้งเดิม");
+        case "GREEN_BOOSTER":
+          // Green Booster - drinks with vegetables or green ingredients
+          return searchText.includes("green") || 
+                 searchText.includes("booster") || 
+                 searchText.includes("ผัก") ||
+                 searchText.includes("เขียว");
+        case "HIGH_PROTEIN":
+          // High-Protein drinks
+          return searchText.includes("protein") || 
+                 searchText.includes("โปรตีน") || 
+                 searchText.includes("high") ||
+                 searchText.includes("whey");
+        case "SUPERFRUIT":
+          // Superfruit - drinks with superfoods or exotic fruits
+          return searchText.includes("superfruit") || 
+                 searchText.includes("super") || 
+                 searchText.includes("superfood") ||
+                 searchText.includes("เบอร์รี่") ||
+                 searchText.includes("berry");
+        default:
+          return true;
       }
-
-      // ตรวจสอบว่า ingredients เป็นผลไม้หรือผัก
-      const ingredientCategories: FruitCategory[] = drink.ingredients.map(ing => {
-        const fruit = fruits.find(f => f.id === ing.fruitId);
-        if (!fruit) {
-          return "FRUIT" as FruitCategory;
-        }
-        // ใช้ category จาก fruit หรือ default เป็น FRUIT
-        const fruitCategory: FruitCategory = (fruit.category || "FRUIT") as FruitCategory;
-        return fruitCategory;
-      });
-
-      // ตรวจสอบว่ามีประเภทอะไรบ้าง
-      const hasFruit = ingredientCategories.some(cat => cat === "FRUIT");
-      const hasVegetable = ingredientCategories.some(cat => cat === "VEGETABLE");
-      const hasAddon = ingredientCategories.some(cat => cat === "ADDON");
-      const uniqueCategories = new Set(ingredientCategories);
-
-      let matches = false;
-
-      if (category === "FRUIT") {
-        // น้ำผลไม้ล้วน: มีเฉพาะผลไม้เท่านั้น (ไม่มีผักและส่วนเสริม)
-        matches = hasFruit && !hasVegetable && !hasAddon && uniqueCategories.size === 1 && uniqueCategories.has("FRUIT");
-      } else if (category === "VEGETABLE") {
-        // น้ำผัก: มีเฉพาะผักเท่านั้น (ไม่มีผลไม้และส่วนเสริม)
-        matches = hasVegetable && !hasFruit && !hasAddon && uniqueCategories.size === 1 && uniqueCategories.has("VEGETABLE");
-      } else if (category === "MIXED") {
-        // น้ำผสม: มีทั้งผลไม้และผัก หรือมีหลายประเภท
-        matches = (hasFruit && hasVegetable) || (uniqueCategories.size > 1 && !hasAddon);
-      } else if (category === "PROTEIN") {
-        // น้ำโปรตีน: มีส่วนเสริม (ADDON) เช่น whey protein, โยเกิร์ต ฯลฯ
-        matches = hasAddon;
-      }
-
-      return matches;
     });
 
     return filtered;
@@ -375,64 +369,71 @@ export default function MenuPage() {
   return (
     <div className="bg-[#E8DDCB] min-h-screen py-6 sm:py-8 md:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-6 sm:mb-8 font-serif">Ready Menu</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-6 sm:mb-8 font-serif">smoothies menu</h1>
 
         {/* Category Filter */}
         <section className="mb-6 sm:mb-8">
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-[#4A3728] mb-3 sm:mb-4 font-sans">เลือกหมวดหมู่</h2>
             <div className="flex flex-wrap gap-2 sm:gap-3">
               <button
                 onClick={() => setSelectedCategory("ALL")}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                   selectedCategory === "ALL"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                    ? "bg-[#4A3728] text-white shadow-md"
+                    : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
-                ทั้งหมด
+                All
               </button>
               <button
-                onClick={() => setSelectedCategory("FRUIT")}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "FRUIT"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                onClick={() => setSelectedCategory("SIGNATURE")}
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                  selectedCategory === "SIGNATURE"
+                    ? "bg-[#4A3728] text-white shadow-md"
+                    : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
-                🍎 น้ำผลไม้ล้วน
+                Signature
               </button>
               <button
-                onClick={() => setSelectedCategory("VEGETABLE")}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "VEGETABLE"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                onClick={() => setSelectedCategory("CLASSIC")}
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                  selectedCategory === "CLASSIC"
+                    ? "bg-[#4A3728] text-white shadow-md"
+                    : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
-                🥬 น้ำผัก
+                Classic
               </button>
               <button
-                onClick={() => setSelectedCategory("MIXED")}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "MIXED"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                onClick={() => setSelectedCategory("GREEN_BOOSTER")}
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                  selectedCategory === "GREEN_BOOSTER"
+                    ? "bg-[#4A3728] text-white shadow-md"
+                    : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
-                🍹 ผสมผักผลไม้
+                Green Booster
               </button>
               <button
-                onClick={() => setSelectedCategory("PROTEIN")}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors font-sans text-sm sm:text-base ${
-                  selectedCategory === "PROTEIN"
-                    ? "bg-[#4A3728] text-[#E8DDCB]"
-                    : "bg-[#E8DDCB] text-[#4A3728] hover:bg-[#D4C5B0]"
+                onClick={() => setSelectedCategory("HIGH_PROTEIN")}
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                  selectedCategory === "HIGH_PROTEIN"
+                    ? "bg-[#4A3728] text-white shadow-md"
+                    : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
-                💪 โปรตีน/ส่วนเสริม
+                High-Protein
               </button>
-            </div>
+              <button
+                onClick={() => setSelectedCategory("SUPERFRUIT")}
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                  selectedCategory === "SUPERFRUIT"
+                    ? "bg-[#4A3728] text-white shadow-md"
+                    : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                }`}
+              >
+                Superfruit
+              </button>
           </div>
         </section>
 
@@ -441,10 +442,11 @@ export default function MenuPage() {
           <div className="text-center mb-6 sm:mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#4A3728] mb-2 font-serif">
               {selectedCategory === "ALL" && "All Smoothies"}
-              {selectedCategory === "FRUIT" && "น้ำผลไม้ล้วน"}
-              {selectedCategory === "VEGETABLE" && "น้ำผัก"}
-              {selectedCategory === "MIXED" && "น้ำผสมผักผลไม้"}
-              {selectedCategory === "PROTEIN" && "น้ำโปรตีน/ส่วนเสริม"}
+              {selectedCategory === "SIGNATURE" && "Signature Smoothies"}
+              {selectedCategory === "CLASSIC" && "Classic Smoothies"}
+              {selectedCategory === "GREEN_BOOSTER" && "Green Booster Smoothies"}
+              {selectedCategory === "HIGH_PROTEIN" && "High-Protein Smoothies"}
+              {selectedCategory === "SUPERFRUIT" && "Superfruit Smoothies"}
             </h2>
             <p className="text-base sm:text-lg text-[#4A3728]/80 font-sans">
               {filteredDrinks.length > 0 
