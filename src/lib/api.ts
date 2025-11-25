@@ -48,6 +48,16 @@ export type Fruit = {
   category?: FruitCategory; // Optional เพื่อรองรับข้อมูลเก่าที่อาจจะไม่มี category
   active: boolean;
   seasonal?: boolean; // วัตถุดิบตามฤดูกาล
+  // Nutrition Data (optional)
+  calorie?: number;
+  protein?: number;
+  fiber?: number;
+  vitamins?: string;
+  minerals?: string;
+  flavorProfile?: string;
+  tasteNotes?: string;
+  bestMixPairing?: string;
+  avoidPairing?: string;
 };
 
 export type CupSize = {
@@ -703,6 +713,76 @@ export async function adminUpdateOrderStatus(orderId: number, status: string) {
   return request<OrderResponse>("/api/admin/orders/" + orderId + "/status", {
     method: "PUT",
     body: JSON.stringify({ status }),
+  });
+}
+
+// Ingredient with Nutrition APIs
+export type IngredientAddRequest = {
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  pricePerUnit?: number;
+  category?: FruitCategory;
+  active?: boolean;
+  seasonal?: boolean;
+};
+
+export type IngredientAddResponse = {
+  id: number;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  pricePerUnit: number;
+  category: FruitCategory;
+  active: boolean;
+  seasonal: boolean;
+  calorie?: number;
+  protein?: number;
+  fiber?: number;
+  vitamins?: string; // JSON string
+  minerals?: string; // JSON string
+  flavorProfile?: string;
+  tasteNotes?: string;
+  bestMixPairing?: string; // JSON string
+  avoidPairing?: string; // JSON string
+};
+
+export async function adminAddIngredientWithNutrition(data: IngredientAddRequest) {
+  return request<IngredientAddResponse>("/api/admin/ingredient", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminFetchIngredientNutrition(ingredientId: number) {
+  return request<IngredientAddResponse>(`/api/admin/ingredient/${ingredientId}/fetch-nutrition`, {
+    method: "POST",
+  });
+}
+
+// Smoothy Calculation APIs
+export type SmoothyCalcRequest = {
+  ingredients: {
+    ingredientId: number;
+    amount: number; // Amount in grams
+  }[];
+};
+
+export type SmoothyCalcResponse = {
+  totalNutrition: {
+    totalCalorie: number;
+    totalProtein: number;
+    totalFiber: number;
+  };
+  flavorDescription: string;
+  synergy: string[];
+  cancellation: string[];
+};
+
+export async function calculateSmoothy(data: SmoothyCalcRequest) {
+  return request<SmoothyCalcResponse>("/api/smoothy/calc", {
+    method: "POST",
+    body: JSON.stringify(data),
   });
 }
 
