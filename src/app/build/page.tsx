@@ -6,7 +6,7 @@ import { getFruits, getCupSizes, addToCart, type Fruit, type CupSize, type Fruit
 import { addToGuestCart, getGuestCartCount } from "@/lib/guestCart";
 import SmoothyCup from "@/app/components/SmoothyCup";
 import FruitSelector from "@/app/components/FruitSelector";
-import { ShoppingCart, Sparkles, AlertCircle, Apple } from "lucide-react";
+import { ShoppingCart, Sparkles, AlertCircle, Apple, Search, X } from "lucide-react";
 
 const MAX_FRUITS = 5;
 // สมมติว่า 1 ชิ้น = 100 กรัม (ค่าเฉลี่ย)
@@ -24,25 +24,27 @@ export default function BuildPage() {
   const [selectedFruits, setSelectedFruits] = useState<Map<number, { fruit: Fruit; quantity: number }>>(new Map());
   const [user, setUser] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<FruitCategory | "ALL">("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showCupSizeModal, setShowCupSizeModal] = useState(false);
 
   function loadUser() {
     try {
       const stored = localStorage.getItem("auth_user");
       setUser(stored ? JSON.parse(stored) : null);
-    } catch {}
+    } catch { }
   }
 
   useEffect(() => {
     loadUser();
-    
+
     // Listen for auth state changes
     const handleAuthChange = () => {
       loadUser();
     };
-    
+
     window.addEventListener("authStateChanged", handleAuthChange);
     window.addEventListener("focus", handleAuthChange);
-    
+
     return () => {
       window.removeEventListener("authStateChanged", handleAuthChange);
       window.removeEventListener("focus", handleAuthChange);
@@ -66,27 +68,27 @@ export default function BuildPage() {
         }),
       ]);
 
-      const filteredFruits = Array.isArray(fruitsRes.data) 
+      const filteredFruits = Array.isArray(fruitsRes.data)
         ? fruitsRes.data
-            .filter(f => f && f.active)
-            .map(f => ({
-              ...f,
-              // ถ้าไม่มี category ให้ตั้งเป็น FRUIT (default)
-              category: (f.category || "FRUIT") as FruitCategory
-            }))
+          .filter(f => f && f.active)
+          .map(f => ({
+            ...f,
+            // ถ้าไม่มี category ให้ตั้งเป็น FRUIT (default)
+            category: (f.category || "FRUIT") as FruitCategory
+          }))
         : [];
-      const filteredCupSizes = Array.isArray(cupSizesRes.data) 
-        ? cupSizesRes.data.filter(c => c && c.active) 
+      const filteredCupSizes = Array.isArray(cupSizesRes.data)
+        ? cupSizesRes.data.filter(c => c && c.active)
         : [];
-      
-      
+
+
       setFruits(filteredFruits);
       setCupSizes(filteredCupSizes);
-      
+
       if (filteredCupSizes.length > 0) {
         setSelectedCupSize(filteredCupSizes[0]);
       }
-      
+
       if (filteredFruits.length === 0) {
         setError("ไม่พบข้อมูลผลไม้ในระบบ กรุณาตรวจสอบ API");
       }
@@ -112,10 +114,10 @@ export default function BuildPage() {
       const current = newMap.get(fruitId);
       const currentQty = current?.quantity || 0;
       const newQty = Math.max(0, Math.min(MAX_FRUITS, currentQty + delta));
-      
+
       const totalFruits = Array.from(newMap.values()).reduce((sum, item) => sum + item.quantity, 0);
       const remainingSlots = MAX_FRUITS - totalFruits + currentQty;
-      
+
       // ตรวจสอบว่าไม่เกิน limit
       if (delta > 0 && remainingSlots <= 0) {
         return newMap; // ไม่สามารถเพิ่มได้
@@ -126,7 +128,7 @@ export default function BuildPage() {
       } else {
         newMap.set(fruitId, { fruit, quantity: newQty });
       }
-      
+
       return newMap;
     });
   }
@@ -147,7 +149,7 @@ export default function BuildPage() {
     if (!user) {
       try {
         setAddingToCart(true);
-        
+
         // คำนวณราคา
         const fruitsPrice = Array.from(selectedFruits.values()).reduce(
           (sum, { fruit, quantity }) => sum + Number(fruit.pricePerUnit) * quantity,
@@ -175,12 +177,12 @@ export default function BuildPage() {
 
         // เพิ่มลง guest cart
         addToGuestCart(guestItem);
-        
+
         // Notify header to refresh cart count
         window.dispatchEvent(new Event("cartUpdated"));
-        
+
         alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉\n\n💡 หมายเหตุ: คุณกำลังเป็น Guest User - ข้อมูลจะถูกเก็บในเบราว์เซอร์\nเข้าสู่ระบบเพื่อรับแต้มและสิทธิพิเศษ!");
-        
+
         // Reset form
         setQuantity(1);
         setSelectedFruits(new Map());
@@ -200,20 +202,20 @@ export default function BuildPage() {
         fruitId,
         quantity,
       }));
-      
-      
+
+
       await addToCart({
         type: "CUSTOM",
         cupSizeId: selectedCupSize.id,
         quantity,
         ingredients,
       });
-      
+
       // Notify header to refresh cart count
       window.dispatchEvent(new Event("cartUpdated"));
-      
+
       alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉");
-      
+
       // Reset form
       setQuantity(1);
       setSelectedFruits(new Map());
@@ -344,7 +346,7 @@ export default function BuildPage() {
               {/* Category Filter */}
               <div className="mb-4 sm:mb-6">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-lg sm:text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-[#4A2C1B]">เลือกหมวดหมู่</h3>
                   <div className="text-xs sm:text-sm text-[#4A2C1B]/70">
                     {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
                   </div>
@@ -352,56 +354,88 @@ export default function BuildPage() {
                 <div className="flex flex-wrap gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedCategory("ALL")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "ALL"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "ALL"
+                      ? "bg-[#4A3728] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
                   >
                     ทั้งหมด
                   </button>
                   <button
                     onClick={() => setSelectedCategory("FRUIT")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "FRUIT"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "FRUIT"
+                      ? "bg-[#4A3728] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
                   >
                     ผลไม้
                   </button>
                   <button
                     onClick={() => setSelectedCategory("VEGETABLE")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "VEGETABLE"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "VEGETABLE"
+                      ? "bg-[#4A3728] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
                   >
                     ผัก
                   </button>
                   <button
                     onClick={() => setSelectedCategory("ADDON")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "ADDON"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "ADDON"
+                      ? "bg-[#4A3728] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
                   >
                     ส่วนเสริม
                   </button>
                 </div>
               </div>
-              
+
+              {/* Search Input */}
+              <div className="relative mb-4 sm:mb-6">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-[#4A2C1B]/40" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="ค้นหาวัตถุดิบ..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 border-2 border-[#4A2C1B]/20 rounded-lg focus:outline-none focus:border-[#4A2C1B] focus:ring-2 focus:ring-[#4A2C1B]/20 transition-all duration-200 text-[#4A2C1B] placeholder-[#4A2C1B]/40"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#4A2C1B]/60 hover:text-[#4A2C1B] transition-colors"
+                  >
+                    <span className="text-xl">×</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Results count */}
+              {searchQuery && (
+                <div className="text-sm text-[#4A2C1B]/60 mb-4">
+                  พบ {fruits.filter(f => {
+                    const matchCategory = selectedCategory === "ALL" || (f.category || "FRUIT") === selectedCategory;
+                    const matchSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchCategory && matchSearch;
+                  }).length} รายการ
+                </div>
+              )}
+
               {fruits.length > 0 ? (
                 <FruitSelector
-                  fruits={selectedCategory === "ALL" 
-                    ? fruits 
-                    : fruits.filter(f => {
-                        // ถ้าไม่มี category ให้ถือว่าเป็น FRUIT (สำหรับข้อมูลเก่า)
-                        const fruitCategory = f.category || "FRUIT";
-                        return fruitCategory === selectedCategory;
-                      })}
+                  fruits={fruits.filter(f => {
+                    // Filter by category
+                    const fruitCategory = f.category || "FRUIT";
+                    const matchCategory = selectedCategory === "ALL" || fruitCategory === selectedCategory;
+
+                    // Filter by search query
+                    const matchSearch = searchQuery === "" || f.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+                    return matchCategory && matchSearch;
+                  })}
                   selectedFruits={selectedFruits}
                   maxFruits={MAX_FRUITS}
                   onFruitChange={handleFruitChange}
@@ -427,37 +461,101 @@ export default function BuildPage() {
                 <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] mb-4 sm:mb-6 text-center">
                   Smoothy ของคุณ
                 </h2>
-                
+
                 <SmoothyCup
                   selectedFruits={selectedFruits}
                   maxFruits={MAX_FRUITS}
                   cupSize={selectedCupSize || undefined}
                 />
 
-                {/* Cup Size Selector */}
+                {/* Cup Size Selector Button */}
                 {cupSizes.length > 0 && (
                   <div className="mt-6 space-y-2">
                     <label className="block text-sm font-semibold text-[#4A2C1B]">
-                      เลือกขนาดแก้ว
+                      ขนาดแก้ว
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {cupSizes.map((size) => (
+                    <button
+                      onClick={() => setShowCupSizeModal(true)}
+                      className="w-full px-4 py-3 rounded-lg border-2 border-[#4A2C1B]/30 bg-white hover:border-[#4A2C1B]/50 transition-all duration-200 text-left"
+                    >
+                      {selectedCupSize ? (
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-semibold text-[#4A2C1B]">{selectedCupSize.name}</div>
+                            <div className="text-xs text-[#4A2C1B]/70">
+                              {selectedCupSize.volumeMl}ml
+                              {selectedCupSize.priceExtra > 0 && ` (+${selectedCupSize.priceExtra.toFixed(0)}฿)`}
+                            </div>
+                          </div>
+                          <div className="text-[#4A2C1B]/40">▼</div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <span className="text-[#4A2C1B]/60">เลือกขนาดแก้ว</span>
+                          <div className="text-[#4A2C1B]/40">▼</div>
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                )}
+
+                {/* Cup Size Modal */}
+                {showCupSizeModal && (
+                  <div
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                    onClick={() => setShowCupSizeModal(false)}
+                  >
+                    <div
+                      className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-xl font-bold text-[#4A2C1B]">เลือกขนาดแก้ว</h3>
                         <button
-                          key={size.id}
-                          onClick={() => setSelectedCupSize(size)}
-                          className={`px-3 py-2 rounded-lg border-2 transition-all duration-200 ${
-                            selectedCupSize?.id === size.id
-                              ? "border-[#4A2C1B] bg-[#4A2C1B] text-white shadow-lg scale-105"
-                              : "border-[#4A2C1B]/30 bg-white hover:border-[#4A2C1B]/50 text-[#4A2C1B]"
-                          }`}
+                          onClick={() => setShowCupSizeModal(false)}
+                          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                         >
-                          <div className="font-semibold text-sm">{size.name}</div>
-                          <div className="text-xs opacity-80">{size.volumeMl}ml</div>
-                          {size.priceExtra > 0 && (
-                            <div className="text-xs">+{size.priceExtra.toFixed(0)}฿</div>
-                          )}
+                          <X className="w-5 h-5 text-[#4A2C1B]" />
                         </button>
-                      ))}
+                      </div>
+
+                      <div className="space-y-3">
+                        {cupSizes.map((size) => (
+                          <button
+                            key={size.id}
+                            onClick={() => {
+                              setSelectedCupSize(size);
+                              setShowCupSizeModal(false);
+                            }}
+                            className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-left ${selectedCupSize?.id === size.id
+                                ? "border-[#4A2C1B] bg-[#4A2C1B] text-white shadow-lg scale-105"
+                                : "border-[#4A2C1B]/30 bg-white hover:border-[#4A2C1B]/50 hover:shadow-md"
+                              }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className={`font-bold text-lg ${selectedCupSize?.id === size.id ? "text-white" : "text-[#4A2C1B]"
+                                  }`}>
+                                  {size.name}
+                                </div>
+                                <div className={`text-sm ${selectedCupSize?.id === size.id ? "text-white/80" : "text-[#4A2C1B]/70"
+                                  }`}>
+                                  {size.volumeMl} ml
+                                </div>
+                              </div>
+                              {size.priceExtra > 0 && (
+                                <div className={`font-semibold ${selectedCupSize?.id === size.id ? "text-white" : "text-[#4A2C1B]"
+                                  }`}>
+                                  +{size.priceExtra.toFixed(0)}฿
+                                </div>
+                              )}
+                            </div>
+                            {selectedCupSize?.id === size.id && (
+                              <div className="mt-2 text-white text-sm">✓ เลือกแล้ว</div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -494,11 +592,10 @@ export default function BuildPage() {
                 <button
                   onClick={handleAddToCart}
                   disabled={!canAddToCart || addingToCart}
-                  className={`hidden lg:flex mt-6 w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 items-center justify-center gap-2 ${
-                    canAddToCart
-                      ? "bg-[#4A2C1B] text-white hover:bg-[#5A3C2B] hover:shadow-xl hover:scale-105 active:scale-95 border-2 border-[#4A2C1B]"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
-                  }`}
+                  className={`hidden lg:flex mt-6 w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 items-center justify-center gap-2 ${canAddToCart
+                    ? "bg-[#4A2C1B] text-white hover:bg-[#5A3C2B] hover:shadow-xl hover:scale-105 active:scale-95 border-2 border-[#4A2C1B]"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
+                    }`}
                 >
                   {addingToCart ? (
                     <>
@@ -520,7 +617,7 @@ export default function BuildPage() {
                       <Apple className="w-5 h-5 text-green-600" />
                       <h3 className="text-sm font-semibold text-[#4A2C1B]">ข้อมูลโภชนาการ</h3>
                     </div>
-                    
+
                     {/* รายละเอียดแต่ละวัตถุดิบ */}
                     {Array.from(selectedFruits.values()).length > 0 && (
                       <div className="mb-3 space-y-2 max-h-32 overflow-y-auto">
@@ -620,11 +717,10 @@ export default function BuildPage() {
             <button
               onClick={handleAddToCart}
               disabled={!canAddToCart || addingToCart}
-              className={`flex-shrink-0 px-6 py-3 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 ${
-                canAddToCart
-                  ? "bg-[#4A2C1B] text-white shadow-lg active:scale-95 border-2 border-[#4A2C1B] hover:bg-[#5A3C2B]"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
-              }`}
+              className={`flex-shrink-0 px-6 py-3 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 ${canAddToCart
+                ? "bg-[#4A2C1B] text-white shadow-lg active:scale-95 border-2 border-[#4A2C1B] hover:bg-[#5A3C2B]"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
+                }`}
             >
               {addingToCart ? (
                 <>
