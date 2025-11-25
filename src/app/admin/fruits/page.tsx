@@ -155,22 +155,22 @@ export default function AdminFruitsPage() {
         // Backend will automatically fetch nutrition data if checkbox is checked
         setFetchingNutrition(formData.fetchNutrition);
         try {
-          const createData: FruitCreateRequest = {
-            name: formData.name.trim(),
-            description: formData.description.trim(),
-            pricePerUnit: parseFloat(formData.pricePerUnit),
-            imageUrl: formData.imageUrl?.trim() || undefined,
-            category: formData.category,
-            active: formData.active,
-            seasonal: formData.seasonal,
-          };
+        const createData: FruitCreateRequest = {
+          name: formData.name.trim(),
+          description: formData.description.trim(),
+          pricePerUnit: parseFloat(formData.pricePerUnit),
+          imageUrl: formData.imageUrl?.trim() || undefined,
+          category: formData.category,
+          active: formData.active,
+          seasonal: formData.seasonal,
+        };
           
-          await adminCreateFruit(createData);
+        await adminCreateFruit(createData);
           
           if (formData.fetchNutrition) {
             alert("เพิ่มข้อมูลสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว");
           } else {
-            alert("เพิ่มข้อมูลสำเร็จ");
+        alert("เพิ่มข้อมูลสำเร็จ");
           }
         } catch (err: any) {
           // Even if nutrition fetch fails, the fruit is still created
@@ -486,17 +486,17 @@ export default function AdminFruitsPage() {
                     </div>
                   )}
                   
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="active"
-                      checked={formData.active}
-                      onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                      className="w-5 h-5"
-                    />
-                    <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
-                      แสดงให้ลูกค้าเห็น
-                    </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="active"
+                    checked={formData.active}
+                    onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                    className="w-5 h-5"
+                  />
+                  <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
+                    แสดงให้ลูกค้าเห็น
+                  </label>
                   </div>
                   
                   <div className="flex items-center gap-2">

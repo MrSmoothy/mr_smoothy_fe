@@ -6,9 +6,11 @@ import { getFruits, getCupSizes, addToCart, type Fruit, type CupSize, type Fruit
 import { addToGuestCart, getGuestCartCount } from "@/lib/guestCart";
 import SmoothyCup from "@/app/components/SmoothyCup";
 import FruitSelector from "@/app/components/FruitSelector";
-import { ShoppingCart, Sparkles, AlertCircle } from "lucide-react";
+import { ShoppingCart, Sparkles, AlertCircle, Apple } from "lucide-react";
 
 const MAX_FRUITS = 5;
+// สมมติว่า 1 ชิ้น = 100 กรัม (ค่าเฉลี่ย)
+const GRAMS_PER_PIECE = 100;
 
 export default function BuildPage() {
   const router = useRouter();
@@ -231,6 +233,40 @@ export default function BuildPage() {
   const totalFruits = Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0);
   const canAddToCart = selectedCupSize && totalFruits > 0;
 
+  // คำนวณโภชนาการแบบ real-time
+  const calculateNutrition = () => {
+    let totalCalorie = 0;
+    let totalProtein = 0;
+    let totalFiber = 0;
+
+    Array.from(selectedFruits.values()).forEach(({ fruit, quantity }) => {
+      // แปลงจำนวนชิ้นเป็นกรัม
+      const grams = quantity * GRAMS_PER_PIECE;
+      const multiplier = grams / 100; // ข้อมูลโภชนาการใน database เป็น per 100g
+
+      if (fruit.calorie) {
+        totalCalorie += Number(fruit.calorie) * multiplier;
+      }
+      if (fruit.protein) {
+        totalProtein += Number(fruit.protein) * multiplier;
+      }
+      if (fruit.fiber) {
+        totalFiber += Number(fruit.fiber) * multiplier;
+      }
+    });
+
+    return {
+      totalCalorie: totalCalorie * quantity, // คูณด้วยจำนวนแก้ว
+      totalProtein: totalProtein * quantity,
+      totalFiber: totalFiber * quantity,
+    };
+  };
+
+  const nutrition = calculateNutrition();
+  const hasNutritionData = Array.from(selectedFruits.values()).some(
+    ({ fruit }) => fruit.calorie !== undefined && fruit.calorie !== null
+  );
+
   if (loading) {
     return (
       <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
@@ -302,8 +338,90 @@ export default function BuildPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 pb-24 lg:pb-0">
-          {/* Left Column - Smoothy Cup */}
-          <div className="lg:col-span-1">
+          {/* Left Column - Fruit Selector */}
+          <div className="lg:col-span-2 order-1">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-[#4A2C1B]/10 animate-slideIn">
+              {/* Category Filter */}
+              <div className="mb-4 sm:mb-6">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
+                  <div className="text-xs sm:text-sm text-[#4A2C1B]/70">
+                    {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <button
+                    onClick={() => setSelectedCategory("ALL")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                      selectedCategory === "ALL"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                    }`}
+                  >
+                    ทั้งหมด
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("FRUIT")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                      selectedCategory === "FRUIT"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                    }`}
+                  >
+                    ผลไม้
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("VEGETABLE")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                      selectedCategory === "VEGETABLE"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                    }`}
+                  >
+                    ผัก
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("ADDON")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
+                      selectedCategory === "ADDON"
+                        ? "bg-[#4A3728] text-white shadow-md"
+                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                    }`}
+                  >
+                    ส่วนเสริม
+                  </button>
+                </div>
+              </div>
+              
+              {fruits.length > 0 ? (
+                <FruitSelector
+                  fruits={selectedCategory === "ALL" 
+                    ? fruits 
+                    : fruits.filter(f => {
+                        // ถ้าไม่มี category ให้ถือว่าเป็น FRUIT (สำหรับข้อมูลเก่า)
+                        const fruitCategory = f.category || "FRUIT";
+                        return fruitCategory === selectedCategory;
+                      })}
+                  selectedFruits={selectedFruits}
+                  maxFruits={MAX_FRUITS}
+                  onFruitChange={handleFruitChange}
+                />
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-[#4A2C1B]/60 text-lg mb-4">ไม่พบข้อมูลผลไม้</div>
+                  <button
+                    onClick={loadData}
+                    className="bg-[#4A2C1B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+                  >
+                    ลองโหลดอีกครั้ง
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column - Smoothy Cup */}
+          <div className="lg:col-span-1 order-2">
             <div className="lg:sticky lg:top-8">
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-[#4A2C1B]/10 animate-scaleIn">
                 <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] mb-4 sm:mb-6 text-center">
@@ -395,6 +513,68 @@ export default function BuildPage() {
                   )}
                 </button>
 
+                {/* Nutrition Information */}
+                {hasNutritionData && totalFruits > 0 && (
+                  <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Apple className="w-5 h-5 text-green-600" />
+                      <h3 className="text-sm font-semibold text-[#4A2C1B]">ข้อมูลโภชนาการ</h3>
+                    </div>
+                    
+                    {/* รายละเอียดแต่ละวัตถุดิบ */}
+                    {Array.from(selectedFruits.values()).length > 0 && (
+                      <div className="mb-3 space-y-2 max-h-32 overflow-y-auto">
+                        {Array.from(selectedFruits.values()).map(({ fruit, quantity: qty }) => {
+                          if (!fruit.calorie && !fruit.protein && !fruit.fiber) return null;
+                          const grams = qty * GRAMS_PER_PIECE;
+                          const multiplier = grams / 100;
+                          return (
+                            <div key={fruit.id} className="text-xs bg-white/50 rounded p-2">
+                              <div className="font-semibold text-[#4A2C1B]">{fruit.name} ({qty} ชิ้น)</div>
+                              <div className="text-[#4A2C1B]/70 mt-1">
+                                {fruit.calorie && (
+                                  <span>แคลอรี่: {(Number(fruit.calorie) * multiplier).toFixed(1)} kcal</span>
+                                )}
+                                {fruit.protein && (
+                                  <span className="ml-2">โปรตีน: {(Number(fruit.protein) * multiplier).toFixed(1)} g</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* ผลรวมโภชนาการ */}
+                    <div className="space-y-2 text-sm pt-3 border-t border-green-200">
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-[#4A2C1B]">รวมทั้งหมด:</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#4A2C1B]/70">แคลอรี่:</span>
+                        <span className="font-semibold text-[#4A2C1B]">
+                          {nutrition.totalCalorie.toFixed(1)} kcal
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#4A2C1B]/70">โปรตีน:</span>
+                        <span className="font-semibold text-[#4A2C1B]">
+                          {nutrition.totalProtein.toFixed(1)} g
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#4A2C1B]/70">ไฟเบอร์:</span>
+                        <span className="font-semibold text-[#4A2C1B]">
+                          {nutrition.totalFiber.toFixed(1)} g
+                        </span>
+                      </div>
+                      <div className="text-xs text-[#4A2C1B]/60 mt-2 pt-2 border-t border-green-200">
+                        สำหรับ {quantity} แก้ว ({totalFruits} ส่วนผสม)
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Price Calculation */}
                 {canAddToCart && (
                   <div className="mt-4 p-4 bg-[#C9A78B]/10 rounded-lg border border-[#4A2C1B]/20">
@@ -414,88 +594,6 @@ export default function BuildPage() {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-
-          {/* Right Column - Fruit Selector */}
-          <div className="lg:col-span-2">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-[#4A2C1B]/10 animate-slideIn">
-              {/* Category Filter */}
-              <div className="mb-4 sm:mb-6">
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-lg sm:text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
-                  <div className="text-xs sm:text-sm text-[#4A2C1B]/70">
-                    {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2 sm:gap-3">
-                  <button
-                    onClick={() => setSelectedCategory("ALL")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "ALL"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
-                  >
-                    ทั้งหมด
-                  </button>
-                  <button
-                    onClick={() => setSelectedCategory("FRUIT")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "FRUIT"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
-                  >
-                    ผลไม้
-                  </button>
-                  <button
-                    onClick={() => setSelectedCategory("VEGETABLE")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "VEGETABLE"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
-                  >
-                    ผัก
-                  </button>
-                  <button
-                    onClick={() => setSelectedCategory("ADDON")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
-                      selectedCategory === "ADDON"
-                        ? "bg-[#4A3728] text-white shadow-md"
-                        : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
-                    }`}
-                  >
-                    ส่วนเสริม
-                  </button>
-                </div>
-              </div>
-              
-              {fruits.length > 0 ? (
-                <FruitSelector
-                  fruits={selectedCategory === "ALL" 
-                    ? fruits 
-                    : fruits.filter(f => {
-                        // ถ้าไม่มี category ให้ถือว่าเป็น FRUIT (สำหรับข้อมูลเก่า)
-                        const fruitCategory = f.category || "FRUIT";
-                        return fruitCategory === selectedCategory;
-                      })}
-                  selectedFruits={selectedFruits}
-                  maxFruits={MAX_FRUITS}
-                  onFruitChange={handleFruitChange}
-                />
-              ) : (
-                <div className="text-center py-12">
-                  <div className="text-[#4A2C1B]/60 text-lg mb-4">ไม่พบข้อมูลผลไม้</div>
-                  <button
-                    onClick={loadData}
-                    className="bg-[#4A2C1B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
-                  >
-                    ลองโหลดอีกครั้ง
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>
