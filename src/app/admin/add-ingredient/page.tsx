@@ -9,6 +9,7 @@ import {
   type IngredientAddResponse,
   type FruitCategory,
 } from "@/lib/api";
+import { toast } from "@/app/components/Toast";
 
 export default function AddIngredientPage() {
   const router = useRouter();
@@ -32,13 +33,16 @@ export default function AddIngredientPage() {
     setResult(null);
 
     try {
+      toast("กำลังเพิ่มวัถุดิบและดึงข้อมูลโภชนาการ...", "info", 2000);
       const response = await adminAddIngredientWithNutrition(formData);
       if (response.data) {
         setResult(response.data);
-        alert("เพิ่มวัถุดิบสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการจาก USDA และประมวลผลด้วย OpenAI แล้ว");
+        toast("เพิ่มวัถุดิบสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว ✅", "success");
       }
     } catch (err: any) {
-      setError(err.message || "เกิดข้อผิดพลาดในการเพิ่มวัถุดิบ");
+      const errorMsg = err.message || "เกิดข้อผิดพลาดในการเพิ่มวัถุดิบ";
+      setError(errorMsg);
+      toast(errorMsg, "error", 8000);
       console.error("Error adding ingredient:", err);
     } finally {
       setLoading(false);
@@ -68,18 +72,18 @@ export default function AddIngredientPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-[#4A2C1B] font-semibold mb-2">
-                ชื่อวัถุดิบ (ภาษาอังกฤษ) *
+                ชื่อวัถุดิบ *
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
-                placeholder="เช่น Banana, Strawberry, Spinach"
+                placeholder="เช่น Banana, กล้วย, Strawberry, สตรอเบอร์รี่"
                 required
               />
               <p className="text-sm text-[#4A2C1B]/60 mt-1">
-                ใส่ชื่อเป็นภาษาอังกฤษเพื่อให้ USDA API ค้นหาได้
+                💡 ใส่ชื่อเป็นภาษาไทยหรืออังกฤษได้ ระบบจะแปลและดึงข้อมูลโภชนาการอัตโนมัติ
               </p>
             </div>
 

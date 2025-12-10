@@ -657,9 +657,9 @@ export default function BuildPage() {
 
                     {hasNutritionData ? (
                       <>
-                        {/* รายละเอียดแต่ละวัตถุดิบ */}
-                        {Array.from(selectedFruits.values()).length > 0 && (
-                          <div className="mb-3 space-y-2 max-h-32 overflow-y-auto">
+                    {/* รายละเอียดแต่ละวัตถุดิบ */}
+                    {Array.from(selectedFruits.values()).length > 0 && (
+                      <div className="mb-3 space-y-2 max-h-32 overflow-y-auto">
                             {Array.from(selectedFruits.values())
                               .filter(({ fruit }) => {
                                 const hasCalorie = fruit.calorie !== undefined && fruit.calorie !== null && Number(fruit.calorie) > 0;
@@ -668,65 +668,65 @@ export default function BuildPage() {
                                 return hasCalorie || hasProtein || hasFiber;
                               })
                               .map(({ fruit, quantity: qty }) => {
-                                const grams = qty * GRAMS_PER_PIECE;
-                                const multiplier = grams / 100;
+                          const grams = qty * GRAMS_PER_PIECE;
+                          const multiplier = grams / 100;
                                 const calorieValue = fruit.calorie ? Number(fruit.calorie) : 0;
                                 const proteinValue = fruit.protein ? Number(fruit.protein) : 0;
                                 const fiberValue = fruit.fiber ? Number(fruit.fiber) : 0;
                                 
-                                return (
-                                  <div key={fruit.id} className="text-xs bg-white/50 rounded p-2">
-                                    <div className="font-semibold text-[#4A2C1B]">{fruit.name} ({qty} ชิ้น)</div>
+                          return (
+                            <div key={fruit.id} className="text-xs bg-white/50 rounded p-2">
+                              <div className="font-semibold text-[#4A2C1B]">{fruit.name} ({qty} ชิ้น)</div>
                                     <div className="text-[#4A2C1B]/70 mt-1 space-x-2">
                                       {calorieValue > 0 && (
                                         <span>แคลอรี่: {(calorieValue * multiplier).toFixed(1)} kcal</span>
-                                      )}
+                                )}
                                       {proteinValue > 0 && (
                                         <span>โปรตีน: {(proteinValue * multiplier).toFixed(1)} g</span>
                                       )}
                                       {fiberValue > 0 && (
                                         <span>ไฟเบอร์: {(fiberValue * multiplier).toFixed(1)} g</span>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                          </div>
-                        )}
-
-                        {/* ผลรวมโภชนาการ */}
-                        <div className="space-y-2 text-sm pt-3 border-t border-green-200">
-                          <div className="flex justify-between font-semibold">
-                            <span className="text-[#4A2C1B]">รวมทั้งหมด:</span>
-                          </div>
-                          {nutrition.totalCalorie > 0 && (
-                            <div className="flex justify-between">
-                              <span className="text-[#4A2C1B]/70">แคลอรี่:</span>
-                              <span className="font-semibold text-[#4A2C1B]">
-                                {nutrition.totalCalorie.toFixed(1)} kcal
-                              </span>
+                                )}
+                              </div>
                             </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* ผลรวมโภชนาการ */}
+                    <div className="space-y-2 text-sm pt-3 border-t border-green-200">
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-[#4A2C1B]">รวมทั้งหมด:</span>
+                      </div>
+                          {nutrition.totalCalorie > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-[#4A2C1B]/70">แคลอรี่:</span>
+                        <span className="font-semibold text-[#4A2C1B]">
+                          {nutrition.totalCalorie.toFixed(1)} kcal
+                        </span>
+                      </div>
                           )}
                           {nutrition.totalProtein > 0 && (
-                            <div className="flex justify-between">
-                              <span className="text-[#4A2C1B]/70">โปรตีน:</span>
-                              <span className="font-semibold text-[#4A2C1B]">
-                                {nutrition.totalProtein.toFixed(1)} g
-                              </span>
-                            </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#4A2C1B]/70">โปรตีน:</span>
+                        <span className="font-semibold text-[#4A2C1B]">
+                          {nutrition.totalProtein.toFixed(1)} g
+                        </span>
+                      </div>
                           )}
                           {nutrition.totalFiber > 0 && (
-                            <div className="flex justify-between">
-                              <span className="text-[#4A2C1B]/70">ไฟเบอร์:</span>
-                              <span className="font-semibold text-[#4A2C1B]">
-                                {nutrition.totalFiber.toFixed(1)} g
-                              </span>
-                            </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#4A2C1B]/70">ไฟเบอร์:</span>
+                        <span className="font-semibold text-[#4A2C1B]">
+                          {nutrition.totalFiber.toFixed(1)} g
+                        </span>
+                      </div>
                           )}
-                          <div className="text-xs text-[#4A2C1B]/60 mt-2 pt-2 border-t border-green-200">
-                            สำหรับ {quantity} แก้ว ({totalFruits} ส่วนผสม)
-                          </div>
-                        </div>
+                      <div className="text-xs text-[#4A2C1B]/60 mt-2 pt-2 border-t border-green-200">
+                        สำหรับ {quantity} แก้ว ({totalFruits} ส่วนผสม)
+                      </div>
+                    </div>
                       </>
                     ) : (
                       <div className="text-sm text-[#4A2C1B]/60 py-2 text-center">

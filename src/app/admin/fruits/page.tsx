@@ -8,13 +8,16 @@ import {
   adminCreateFruit,
   adminUpdateFruit,
   adminDeleteFruit,
+  adminAddIngredientWithNutrition,
   uploadFruitImage,
   type Fruit,
   type FruitCreateRequest,
   type FruitUpdateRequest,
+  type IngredientAddRequest,
   type FruitCategory,
 } from "@/lib/api";
 import { getImageUrl } from "@/lib/image";
+import { toast } from "@/app/components/Toast";
 
 export default function AdminFruitsPage() {
   const router = useRouter();
@@ -32,7 +35,6 @@ export default function AdminFruitsPage() {
     category: "FRUIT" as FruitCategory,
     active: true,
     seasonal: false,
-    fetchNutrition: true, // Default to true - ดึงข้อมูลโภชนาการอัตโนมัติ
   });
   const [uploading, setUploading] = useState(false);
   const [fetchingNutrition, setFetchingNutrition] = useState(false);
@@ -93,7 +95,6 @@ export default function AdminFruitsPage() {
         category: fruit.category || "FRUIT",
         active: fruit.active !== undefined ? fruit.active : true,
         seasonal: fruit.seasonal !== undefined ? fruit.seasonal : false,
-        fetchNutrition: false, // เมื่อแก้ไข ไม่ต้องดึงข้อมูลใหม่
       });
       console.log("Form data set:", { description: descriptionValue });
     } else {
@@ -106,7 +107,6 @@ export default function AdminFruitsPage() {
         category: "FRUIT" as FruitCategory,
         active: true,
         seasonal: false,
-        fetchNutrition: true, // Default to true สำหรับการเพิ่มใหม่
       });
     }
     setShowModal(true);
@@ -149,36 +149,34 @@ export default function AdminFruitsPage() {
         console.log("Updating fruit:", editingFruit.id, "with data:", JSON.stringify(updateData, null, 2));
         const response = await adminUpdateFruit(editingFruit.id, updateData);
         console.log("Update response:", response.data);
-        alert("อัปเดตข้อมูลสำเร็จ");
+        toast("อัปเดตข้อมูลสำเร็จ ✅", "success");
       } else {
-        // Use FruitCreateRequest for create
-        // Backend will automatically fetch nutrition data if checkbox is checked
-        setFetchingNutrition(formData.fetchNutrition);
+        // Use IngredientService to add with automatic nutrition data fetch
+        // ใช้หน้า add-ingredient แทน หรือใช้ API ที่ดึงข้อมูลอัตโนมัติ
+        setFetchingNutrition(true);
         try {
-        const createData: FruitCreateRequest = {
-          name: formData.name.trim(),
-          description: formData.description.trim(),
-          pricePerUnit: parseFloat(formData.pricePerUnit),
-          imageUrl: formData.imageUrl?.trim() || undefined,
-          category: formData.category,
-          active: formData.active,
-          seasonal: formData.seasonal,
-        };
+          const createData: IngredientAddRequest = {
+            name: formData.name.trim(),
+            description: formData.description.trim(),
+            pricePerUnit: parseFloat(formData.pricePerUnit),
+            imageUrl: formData.imageUrl?.trim() || undefined,
+            category: formData.category,
+            active: formData.active,
+            seasonal: formData.seasonal,
+          };
           
-        await adminCreateFruit(createData);
+          // ใช้ adminAddIngredientWithNutrition เพื่อดึงข้อมูลโภชนาการอัตโนมัติ (รองรับทั้งไทยและอังกฤษ)
+          toast("กำลังดึงข้อมูลโภชนาการ...", "info", 2000);
+          await adminAddIngredientWithNutrition(createData);
           
-          if (formData.fetchNutrition) {
-            alert("เพิ่มข้อมูลสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว");
-          } else {
-        alert("เพิ่มข้อมูลสำเร็จ");
-          }
+          toast("เพิ่มข้อมูลสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว ✅", "success");
         } catch (err: any) {
-          // Even if nutrition fetch fails, the fruit is still created
-          if (err.message && err.message.includes("nutrition")) {
-            alert("เพิ่มข้อมูลสำเร็จ แต่ไม่สามารถดึงข้อมูลโภชนาการได้: " + err.message);
-          } else {
-            throw err; // Re-throw other errors
-          }
+          const errorMsg = err.message || "ไม่สามารถบันทึกข้อมูลได้";
+          toast(errorMsg, "error", 8000);
+          console.error("Error creating ingredient:", err);
+          // Don't close modal on error so user can fix and retry
+          setFetchingNutrition(false);
+          return;
         } finally {
           setFetchingNutrition(false);
         }
@@ -187,7 +185,8 @@ export default function AdminFruitsPage() {
       closeModal();
       loadFruits();
     } catch (err: any) {
-      alert(err.message || "ไม่สามารถบันทึกข้อมูลได้");
+      const errorMsg = err.message || "ไม่สามารถบันทึกข้อมูลได้";
+      toast(errorMsg, "error");
     }
   }
 
@@ -195,12 +194,13 @@ export default function AdminFruitsPage() {
     if (!confirm("คุณต้องการลบวัถุดิบนี้หรือไม่?")) return;
     try {
       await adminDeleteFruit(id);
-      alert("ลบข้อมูลสำเร็จ");
+      toast("ลบข้อมูลสำเร็จ ✅", "success");
       loadFruits();
     } catch (err: any) {
-      alert(err.message || "ไม่สามารถลบข้อมูลได้");
+      toast(err.message || "ไม่สามารถลบข้อมูลได้", "error");
     }
   }
+
 
   if (loading) {
     return (
@@ -320,7 +320,7 @@ export default function AdminFruitsPage() {
                     {fruit.active ? "✓" : "✗"}
                   </span>
                 </div>
-                <div className="mb-2">
+                <div className="mb-2 flex items-center gap-1 flex-wrap">
                   <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                     fruit.category === "FRUIT" ? "bg-yellow-100 text-yellow-700" :
                     fruit.category === "VEGETABLE" ? "bg-green-100 text-green-700" :
@@ -329,7 +329,13 @@ export default function AdminFruitsPage() {
                     {fruit.category === "FRUIT" ? "🍎 ผลไม้" :
                      fruit.category === "VEGETABLE" ? "🥬 ผัก" :
                      "🥛 ส่วนเสริม"}
-                </span>
+                  </span>
+                  {/* Nutrition Status Badge - แสดงเฉพาะเมื่อมีข้อมูล */}
+                  {fruit.calorie && fruit.protein && fruit.fiber && (
+                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
+                      ✓ โภชนาการ
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="flex gap-1.5">
@@ -457,36 +463,25 @@ export default function AdminFruitsPage() {
                   )}
                 </div>
 
-                <div className="flex flex-col gap-3">
-                  {!editingFruit && (
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <input
-                          type="checkbox"
-                          id="fetchNutrition"
-                          checked={formData.fetchNutrition}
-                          onChange={(e) => setFormData({ ...formData, fetchNutrition: e.target.checked })}
-                          className="w-5 h-5"
-                          disabled={fetchingNutrition}
-                        />
-                        <label htmlFor="fetchNutrition" className="text-[#4A2C1B] font-semibold flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-purple-600" />
-                          ดึงข้อมูลโภชนาการอัตโนมัติ (USDA + OpenAI)
-                        </label>
-                      </div>
-                      <p className="text-sm text-[#4A2C1B]/70 ml-7">
-                        ระบบจะดึงข้อมูลโภชนาการจาก USDA และประมวลผลด้วย OpenAI อัตโนมัติ
+                {!editingFruit && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <div className="flex items-start gap-2">
+                      <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-blue-800">
+                        <p className="font-semibold mb-1">💡 ข้อมูลโภชนาการจะถูกดึงอัตโนมัติ</p>
+                        <p className="text-xs">ระบบจะดึงข้อมูลโภชนาการจาก USDA อัตโนมัติ (รองรับทั้งชื่อไทยและอังกฤษ)</p>
                         {fetchingNutrition && (
-                          <span className="block mt-1 text-purple-600">
-                            <Loader2 className="w-4 h-4 inline animate-spin mr-1" />
+                          <p className="text-xs mt-2 text-blue-600">
+                            <Loader2 className="w-3 h-3 inline animate-spin mr-1" />
                             กำลังดึงข้อมูลโภชนาการ...
-                          </span>
+                          </p>
                         )}
-                      </p>
+                      </div>
                     </div>
-                  )}
-                  
-                <div className="flex items-center gap-2">
+                  </div>
+                )}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     id="active"
