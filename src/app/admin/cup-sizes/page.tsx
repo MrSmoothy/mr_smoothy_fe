@@ -118,6 +118,7 @@ export default function AdminCupSizesPage() {
     } catch (err: any) {
       alert(err.message || "ไม่สามารถลบข้อมูลได้");
     }
+    
   }
 
   if (loading) {
