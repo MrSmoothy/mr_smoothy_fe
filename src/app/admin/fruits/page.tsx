@@ -35,6 +35,7 @@ export default function AdminFruitsPage() {
     category: "FRUIT" as FruitCategory,
     active: true,
     seasonal: false,
+    fetchNutrition: true, // Default to true
   });
   const [uploading, setUploading] = useState(false);
   const [fetchingNutrition, setFetchingNutrition] = useState(false);
@@ -95,6 +96,7 @@ export default function AdminFruitsPage() {
         category: fruit.category || "FRUIT",
         active: fruit.active !== undefined ? fruit.active : true,
         seasonal: fruit.seasonal !== undefined ? fruit.seasonal : false,
+        fetchNutrition: true, // Not applicable for editing
       });
       console.log("Form data set:", { description: descriptionValue });
     } else {
@@ -107,6 +109,7 @@ export default function AdminFruitsPage() {
         category: "FRUIT" as FruitCategory,
         active: true,
         seasonal: false,
+        fetchNutrition: true, // Default to true
       });
     }
     setShowModal(true);
@@ -163,13 +166,22 @@ export default function AdminFruitsPage() {
             category: formData.category,
             active: formData.active,
             seasonal: formData.seasonal,
+            fetchNutrition: formData.fetchNutrition,
           };
           
           // ใช้ adminAddIngredientWithNutrition เพื่อดึงข้อมูลโภชนาการอัตโนมัติ (รองรับทั้งไทยและอังกฤษ)
-          toast("กำลังดึงข้อมูลโภชนาการ...", "info", 2000);
+          if (formData.fetchNutrition) {
+            toast("กำลังดึงข้อมูลโภชนาการ...", "info", 2000);
+          } else {
+            toast("กำลังเพิ่มวัถุดิบ...", "info", 2000);
+          }
           await adminAddIngredientWithNutrition(createData);
           
-          toast("เพิ่มข้อมูลสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว ✅", "success");
+          if (formData.fetchNutrition) {
+            toast("เพิ่มข้อมูลสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว ✅", "success");
+          } else {
+            toast("เพิ่มข้อมูลสำเร็จ! ✅", "success");
+          }
         } catch (err: any) {
           const errorMsg = err.message || "ไม่สามารถบันทึกข้อมูลได้";
           toast(errorMsg, "error", 8000);
@@ -466,11 +478,19 @@ export default function AdminFruitsPage() {
                 {!editingFruit && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                     <div className="flex items-start gap-2">
-                      <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                      <div className="text-sm text-blue-800">
-                        <p className="font-semibold mb-1">💡 ข้อมูลโภชนาการจะถูกดึงอัตโนมัติ</p>
-                        <p className="text-xs">ระบบจะดึงข้อมูลโภชนาการจาก USDA อัตโนมัติ (รองรับทั้งชื่อไทยและอังกฤษ)</p>
-                        {fetchingNutrition && (
+                      <input
+                        type="checkbox"
+                        id="fetchNutrition"
+                        checked={formData.fetchNutrition ?? true}
+                        onChange={(e) => setFormData({ ...formData, fetchNutrition: e.target.checked })}
+                        className="w-5 h-5 mt-0.5"
+                      />
+                      <div className="text-sm text-blue-800 flex-1">
+                        <label htmlFor="fetchNutrition" className="font-semibold mb-1 block cursor-pointer">
+                          ดึงข้อมูลโภชนาการจาก USDA (จะใช้ AI สำหรับข้อมูลรสชาติ)
+                        </label>
+                        <p className="text-xs">💡 ถ้าไม่เลือก ระบบจะเพิ่มวัถุดิบโดยไม่มีข้อมูลโภชนาการ คุณสามารถดึงข้อมูลภายหลังได้</p>
+                        {fetchingNutrition && formData.fetchNutrition && (
                           <p className="text-xs mt-2 text-blue-600">
                             <Loader2 className="w-3 h-3 inline animate-spin mr-1" />
                             กำลังดึงข้อมูลโภชนาการ...

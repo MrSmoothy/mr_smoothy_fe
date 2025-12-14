@@ -22,6 +22,7 @@ export default function AddIngredientPage() {
     category: "FRUIT",
     active: true,
     seasonal: false,
+    fetchNutrition: true, // Default to true
   });
   const [result, setResult] = useState<IngredientAddResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,11 +34,19 @@ export default function AddIngredientPage() {
     setResult(null);
 
     try {
-      toast("กำลังเพิ่มวัถุดิบและดึงข้อมูลโภชนาการ...", "info", 2000);
+      if (formData.fetchNutrition) {
+        toast("กำลังเพิ่มวัถุดิบและดึงข้อมูลโภชนาการ...", "info", 2000);
+      } else {
+        toast("กำลังเพิ่มวัถุดิบ...", "info", 2000);
+      }
       const response = await adminAddIngredientWithNutrition(formData);
       if (response.data) {
         setResult(response.data);
-        toast("เพิ่มวัถุดิบสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว ✅", "success");
+        if (formData.fetchNutrition) {
+          toast("เพิ่มวัถุดิบสำเร็จ! ระบบได้ดึงข้อมูลโภชนาการอัตโนมัติแล้ว ✅", "success");
+        } else {
+          toast("เพิ่มวัถุดิบสำเร็จ! ✅", "success");
+        }
       }
     } catch (err: any) {
       const errorMsg = err.message || "เกิดข้อผิดพลาดในการเพิ่มวัถุดิบ";
@@ -62,11 +71,11 @@ export default function AddIngredientPage() {
 
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-[#4A2C1B] mb-2">
-            เพิ่มวัถุดิบพร้อมข้อมูลโภชนาการ
+            เพิ่มวัถุดิบ
           </h1>
           <p className="text-[#4A2C1B]/70 mb-6">
-            ระบบจะดึงข้อมูลโภชนาการจาก USDA FoodData Central API 
-            และประมวลผลด้วย OpenAI เพื่อเพิ่มข้อมูลรสชาติและการจับคู่
+            คุณสามารถเลือกให้ระบบดึงข้อมูลโภชนาการจาก USDA FoodData Central API 
+            และประมวลผลด้วย OpenAI เพื่อเพิ่มข้อมูลรสชาติและการจับคู่ หรือเพิ่มโดยไม่มีข้อมูลโภชนาการ
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -143,6 +152,22 @@ export default function AddIngredientPage() {
             </div>
 
             <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <input
+                  type="checkbox"
+                  id="fetchNutrition"
+                  checked={formData.fetchNutrition ?? true}
+                  onChange={(e) => setFormData({ ...formData, fetchNutrition: e.target.checked })}
+                  className="w-5 h-5"
+                />
+                <label htmlFor="fetchNutrition" className="text-[#4A2C1B] font-semibold cursor-pointer">
+                  ดึงข้อมูลโภชนาการจาก USDA (จะใช้ AI สำหรับข้อมูลรสชาติ)
+                </label>
+              </div>
+              <p className="text-sm text-[#4A2C1B]/60 ml-7 -mt-2">
+                💡 ถ้าไม่เลือก ระบบจะเพิ่มวัถุดิบโดยไม่มีข้อมูลโภชนาการ คุณสามารถดึงข้อมูลภายหลังได้
+              </p>
+
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"

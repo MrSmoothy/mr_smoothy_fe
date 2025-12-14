@@ -725,6 +725,7 @@ export type IngredientAddRequest = {
   category?: FruitCategory;
   active?: boolean;
   seasonal?: boolean;
+  fetchNutrition?: boolean; // Whether to fetch nutrition data from USDA
 };
 
 export type IngredientAddResponse = {
