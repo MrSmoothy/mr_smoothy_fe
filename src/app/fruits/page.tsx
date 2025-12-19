@@ -10,6 +10,7 @@ export default function FruitsPage() {
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const [showDebug, setShowDebug] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     loadFruits();
@@ -97,6 +98,17 @@ export default function FruitsPage() {
     }
   }
 
+  // Filter fruits by search query
+  const filteredFruits = searchQuery.trim()
+    ? fruits.filter(fruit => {
+        const query = searchQuery.toLowerCase();
+        const nameMatch = fruit.name?.toLowerCase().includes(query);
+        const descMatch = fruit.description?.toLowerCase().includes(query);
+        const categoryMatch = fruit.category?.toLowerCase().includes(query);
+        return nameMatch || descMatch || categoryMatch;
+      })
+    : fruits;
+
   if (loading) {
     return (
       <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
@@ -115,7 +127,7 @@ export default function FruitsPage() {
           <div>
             <h1 className="text-4xl font-bold text-[#4A2C1B] mb-2">ผลไม้ทั้งหมด</h1>
             <p className="text-[#4A2C1B]/70">
-              เลือกผลไม้ที่คุณชื่นชอบสำหรับทำน้ำปั่นของคุณ ({fruits.length} รายการ)
+              เลือกผลไม้ที่คุณชื่นชอบสำหรับทำน้ำปั่นของคุณ ({filteredFruits.length} {searchQuery ? "รายการที่พบ" : `จาก ${fruits.length} รายการ`})
             </p>
           </div>
           <button
@@ -124,6 +136,60 @@ export default function FruitsPage() {
           >
             {showDebug ? "ซ่อน" : "แสดง"} Debug
           </button>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-2xl">
+            <input
+              type="text"
+              placeholder="ค้นหาวัตถุดิบ, ผลไม้, ผัก..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-[#4A2C1B]/30 bg-white text-[#4A2C1B] placeholder:text-[#4A2C1B]/50 focus:outline-none focus:border-[#4A2C1B] focus:ring-2 focus:ring-[#4A2C1B]/20 transition-all font-sans"
+            />
+            <svg
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#4A2C1B]/50"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4A2C1B]/50 hover:text-[#4A2C1B] transition-colors"
+                aria-label="Clear search"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <p className="mt-2 text-sm text-[#4A2C1B]/70 font-sans">
+              {filteredFruits.length > 0 
+                ? `พบ ${filteredFruits.length} รายการที่ตรงกับ "${searchQuery}"` 
+                : `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"`}
+            </p>
+          )}
         </div>
 
         {/* Debug Panel */}
@@ -185,9 +251,19 @@ export default function FruitsPage() {
               ลองโหลดอีกครั้ง
             </button>
           </div>
+        ) : filteredFruits.length === 0 && searchQuery ? (
+          <div className="text-center py-16 bg-white rounded-lg shadow-md p-12">
+            <div className="text-[#4A2C1B]/60 text-xl mb-4">ไม่พบผลลัพธ์สำหรับ "{searchQuery}"</div>
+            <button
+              onClick={() => setSearchQuery("")}
+              className="bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+            >
+              ล้างการค้นหา
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {fruits.map((fruit) => (
+            {filteredFruits.map((fruit) => (
               <div
                 key={fruit.id}
                 className="bg-white rounded-lg border border-[#4A2C1B]/20 p-4 hover:shadow-lg transition-all duration-300 relative overflow-hidden group"
@@ -255,7 +331,7 @@ export default function FruitsPage() {
         )}
 
         {/* ข้อมูลเพิ่มเติม */}
-        {fruits.length > 0 && (
+        {filteredFruits.length > 0 && (
           <div className="mt-12 text-center">
             <p className="text-[#4A2C1B]/60 text-sm">
               ต้องการสร้างน้ำปั่นด้วยผลไม้เหล่านี้?{" "}

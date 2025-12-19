@@ -18,6 +18,7 @@ export default function MenuPage() {
   const [selectedDrink, setSelectedDrink] = useState<PredefinedDrink | null>(null);
   const [modalCupSize, setModalCupSize] = useState<CupSize | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<"ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT">("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
 
   function loadUser() {
     try {
@@ -235,7 +236,23 @@ export default function MenuPage() {
   }
 
   // Get filtered drinks based on selected category
-  const filteredDrinks = getDrinksByCategory(selectedCategory);
+  const categoryFilteredDrinks = getDrinksByCategory(selectedCategory);
+
+  // Filter drinks by search query
+  const filteredDrinks = searchQuery.trim() 
+    ? categoryFilteredDrinks.filter(drink => {
+        const query = searchQuery.toLowerCase();
+        const nameMatch = drink.name?.toLowerCase().includes(query);
+        const descMatch = drink.description?.toLowerCase().includes(query);
+        
+        // Search in ingredient names
+        const ingredientMatch = drink.ingredients?.some(ing => 
+          ing.fruitName?.toLowerCase().includes(query)
+        );
+        
+        return nameMatch || descMatch || ingredientMatch;
+      })
+    : categoryFilteredDrinks;
 
   function renderDrinkCard(drink: PredefinedDrink) {
     // คำนวณราคาจาก ingredients
@@ -371,6 +388,53 @@ export default function MenuPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-6 sm:mb-8 font-serif">smoothies menu</h1>
 
+        {/* Search Bar */}
+        <section className="mb-6 sm:mb-8">
+          <div className="relative max-w-2xl mx-auto">
+            <input
+              type="text"
+              placeholder="ค้นหาเครื่องดื่ม, ส่วนผสม..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-[#4A3728]/30 bg-white text-[#4A3728] placeholder:text-[#4A3728]/50 focus:outline-none focus:border-[#4A3728] focus:ring-2 focus:ring-[#4A3728]/20 transition-all font-sans"
+            />
+            <svg
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#4A3728]/50"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4A3728]/50 hover:text-[#4A3728] transition-colors"
+                aria-label="Clear search"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
+        </section>
+
         {/* Category Filter */}
         <section className="mb-6 sm:mb-8">
             <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -449,18 +513,37 @@ export default function MenuPage() {
               {selectedCategory === "SUPERFRUIT" && "Superfruit Smoothies"}
             </h2>
             <p className="text-base sm:text-lg text-[#4A3728]/80 font-sans">
-              {filteredDrinks.length > 0 
-                ? `พบ ${filteredDrinks.length} รายการ` 
-                : "ยังไม่มีเมนูในหมวดหมู่นี้"}
+              {searchQuery 
+                ? filteredDrinks.length > 0 
+                  ? `พบ ${filteredDrinks.length} รายการที่ตรงกับ "${searchQuery}"` 
+                  : `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"`
+                : filteredDrinks.length > 0 
+                  ? `พบ ${filteredDrinks.length} รายการ` 
+                  : "ยังไม่มีเมนูในหมวดหมู่นี้"}
             </p>
           </div>
           {loading ? (
             <div className="text-center text-[#4A3728]/60 py-8">กำลังโหลด...</div>
           ) : filteredDrinks.length === 0 ? (
             <div className="text-center text-[#4A3728]/60 py-8 bg-white rounded-lg shadow-md p-12">
-              <p className="text-xl mb-4">ยังไม่มีเมนูในหมวดหมู่นี้</p>
+              <p className="text-xl mb-4">
+                {searchQuery 
+                  ? `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"`
+                  : "ยังไม่มีเมนูในหมวดหมู่นี้"}
+              </p>
+              {searchQuery ? (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="bg-[#4A3728] text-[#E8DDCB] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity mr-2"
+                >
+                  ล้างการค้นหา
+                </button>
+              ) : null}
               <button
-                onClick={() => setSelectedCategory("ALL")}
+                onClick={() => {
+                  setSelectedCategory("ALL");
+                  setSearchQuery("");
+                }}
                 className="bg-[#4A3728] text-[#E8DDCB] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 ดูเมนูทั้งหมด
