@@ -307,13 +307,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link
               href="/menu"
-              className="bg-[#4A3728] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
+              className="bg-[#FFFFFF] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
             >
               Explore Ready Menu
             </Link>
             <Link
               href="/build"
-              className="bg-white/90 text-[#000000] border-2 border-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg text-sm sm:text-base"
+              className="bg-white/90 text-[#4A3728] border-2 border-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg text-sm sm:text-base"
             >
               Build Your Own
             </Link>
