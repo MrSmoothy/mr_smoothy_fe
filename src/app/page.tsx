@@ -307,7 +307,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link
               href="/menu"
-              className="bg-[#FFFFFF] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
+              className="bg-[#4A3728] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
             >
               Explore Ready Menu
             </Link>
@@ -610,8 +610,8 @@ export default function Home() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-serif pr-2">{selectedDrink.name}</h2>
+            <div className="sticky top-0 bg-white border-b border-[#ffffff]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#000000] font-serif pr-2">{selectedDrink.name}</h2>
               <button
                 onClick={closeModal}
                 className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors flex-shrink-0"
