@@ -1,30 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import LoginModal from "@/components/LoginModal";
+import { useState, useEffect } from "react";
+import LoginModal from "@/app/components/LoginModal";
 
-export default function HomePage() {
-  const [open, setOpen] = useState(false);
+export default function LoginPage() {
+  const [open, setOpen] = useState(true);
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
+
+  useEffect(() => {
+    // อ่าน redirect parameter จาก URL
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+      setRedirectPath(redirect);
+    }
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5EFE6]">
-      {/* ปุ่มเปิด modal */}
-      <div className="p-6">
-        <button
-          onClick={() => setOpen(true)}
-          className="rounded-md bg-[#4A2C1B] px-4 py-2 text-[#F5EFE6]"
-        >
-          Log in
-        </button>
-      </div>
-
-      {/* เนื้อหาพื้นหลัง */}
-      <div className="p-6 text-[#4A2C1B]">
-        เนื้อหาหน้าเว็บของคุณอยู่ตรงนี้...
-      </div>
-
-      {/* Modal */}
-      <LoginModal open={open} onClose={() => setOpen(false)} />
+    <div className="min-h-screen bg-[#F5EFE6] flex items-center justify-center p-4">
+      <LoginModal 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        redirectPath={redirectPath}
+      />
     </div>
   );
 }
