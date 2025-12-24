@@ -171,7 +171,7 @@ export default function Header() {
   }, [pathname]);
 
   return (
-    <header className="bg-[#4A3728] w-full sticky top-0 z-50 shadow-md">
+    <header className="bg-[#ffffff] w-full sticky top-0 z-50 shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
         <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition-opacity">
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#E8DDCB] flex items-center justify-center flex-shrink-0">

@@ -610,8 +610,8 @@ export default function Home() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-[#ffffff]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#000000] font-serif pr-2">{selectedDrink.name}</h2>
+            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-serif pr-2">{selectedDrink.name}</h2>
               <button
                 onClick={closeModal}
                 className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors flex-shrink-0"
