@@ -313,7 +313,7 @@ export default function Home() {
             </Link>
             <Link
               href="/build"
-              className="bg-white/90 text-[#4A3728] border-2 border-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg text-sm sm:text-base"
+              className="bg-white/90 text-[#000000] border-2 border-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg text-sm sm:text-base"
             >
               Build Your Own
             </Link>

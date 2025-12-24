@@ -67,7 +67,7 @@ export default function SmoothyCustomPage() {
 
   async function handleCalculate() {
     if (selectedIngredients.length === 0) {
-      alert("กรุณาเลือกวัถุดิบอย่างน้อย 1 ชนิด");
+      alert("กรุณาเลือกวัตถุดิบอย่างน้อย 1 ชนิด");
       return;
     }
 
@@ -111,7 +111,7 @@ export default function SmoothyCustomPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left: Ingredient Selection */}
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-[#4A2C1B] mb-4">เลือกวัถุดิบ</h2>
+            <h2 className="text-2xl font-bold text-[#4A2C1B] mb-4">เลือกวัตถุดิบ</h2>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
               {fruits.map((fruit) => (
@@ -138,7 +138,7 @@ export default function SmoothyCustomPage() {
             {/* Selected Ingredients */}
             {selectedIngredients.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-lg font-semibold text-[#4A2C1B] mb-3">วัถุดิบที่เลือก</h3>
+                <h3 className="text-lg font-semibold text-[#4A2C1B] mb-3">วัตถุดิบที่เลือก</h3>
                 <div className="space-y-2">
                   {selectedIngredients.map((ingredient) => (
                     <div
@@ -264,7 +264,7 @@ export default function SmoothyCustomPage() {
               </div>
             ) : (
               <div className="text-center text-[#4A2C1B]/70 py-12">
-                เลือกวัถุดิบและกดคำนวณเพื่อดูผลลัพธ์
+                เลือกวัตถุดิบและกดคำนวณเพื่อดูผลลัพธ์
               </div>
             )}
           </div>
