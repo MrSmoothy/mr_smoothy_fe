@@ -93,14 +93,14 @@ export default function LoginModal({ open, onClose, redirectPath }: Props) {
 
       {/* กล่อง Modal (กันไม่ให้คลิกแล้วปิดตอนคลิกในกล่อง) */}
       <div
-        className="relative w-full max-w-md rounded-lg bg-[#4A2C1B] p-6 sm:p-8 shadow-lg"
+        className="relative w-full max-w-md rounded-lg bg-[#14433B] p-6 sm:p-8 shadow-lg"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="mb-6 sm:mb-8 flex items-center justify-between">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#F5EFE6]">Log in</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#FFF6F0]">Log in</h1>
           <button
             onClick={onClose}
-            className="rounded-md px-3 py-2 text-[#F5EFE6] hover:bg-white/10"
+            className="rounded-md px-3 py-2 text-[#FFF6F0] hover:bg-white/10"
             aria-label="Close"
           >
             ✕
@@ -109,9 +109,9 @@ export default function LoginModal({ open, onClose, redirectPath }: Props) {
 
         <form onSubmit={onSubmit} className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm text-[#F5EFE6]">Username</label>
+            <label className="mb-2 block text-sm text-[#FFF6F0]">Username</label>
             <input
-              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#14433B] placeholder:text-[#14433B]/60 outline-none focus:ring-2 focus:ring-[#FFF6F0]/50"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
@@ -121,10 +121,10 @@ export default function LoginModal({ open, onClose, redirectPath }: Props) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-[#F5EFE6]">Password</label>
+            <label className="mb-2 block text-sm text-[#FFF6F0]">Password</label>
             <input
               type="password"
-              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#14433B] placeholder:text-[#14433B]/60 outline-none focus:ring-2 focus:ring-[#FFF6F0]/50"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
@@ -137,13 +137,13 @@ export default function LoginModal({ open, onClose, redirectPath }: Props) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-black px-4 py-3 text-[#F5EFE6] font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
+            className="w-full rounded-md bg-black px-4 py-3 text-[#FFF6F0] font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
           >
             {loading ? "กำลังเข้าสู่ระบบ..." : "Log in"}
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-center text-[#F5EFE6]">
+        <p className="mt-6 text-sm text-center text-[#FFF6F0]">
           ยังไม่มีบัญชี?{" "}
           <Link className="underline hover:opacity-80" href="/register">
             สมัครสมาชิก

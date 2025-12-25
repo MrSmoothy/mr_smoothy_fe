@@ -94,7 +94,7 @@ function ToastItem({ toast: t }: { toast: Toast }) {
   };
 
   const bgColors = {
-    success: "bg-green-500",
+    success: "bg-[#14433B]",
     error: "bg-red-500",
     warning: "bg-yellow-500",
     info: "bg-blue-500",

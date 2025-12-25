@@ -53,14 +53,14 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F5EFE6] p-4 sm:p-6">
-      <div className="w-full max-w-md rounded-lg bg-[#4A2C1B] p-6 sm:p-8 shadow-lg">
-        <h1 className="mb-6 sm:mb-8 text-2xl sm:text-3xl font-bold text-[#F5EFE6] text-center">Sign up</h1>
+    <div className="flex min-h-screen items-center justify-center bg-[#FFF6F0] p-4 sm:p-6">
+      <div className="w-full max-w-md rounded-lg bg-[#14433B] p-6 sm:p-8 shadow-lg">
+        <h1 className="mb-6 sm:mb-8 text-2xl sm:text-3xl font-bold text-[#FFF6F0] text-center">Sign up</h1>
         <form onSubmit={onSubmit} className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm text-[#F5EFE6]">Username</label>
+            <label className="mb-2 block text-sm text-[#FFF6F0]">Username</label>
             <input
-              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#14433B] placeholder:text-[#14433B]/60 outline-none focus:ring-2 focus:ring-[#FFF6F0]/50"
               value={form.username}
               onChange={(e) => update("username", e.target.value)}
               placeholder="Enter your username"
@@ -68,10 +68,10 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm text-[#F5EFE6]">Email</label>
+            <label className="mb-2 block text-sm text-[#FFF6F0]">Email</label>
             <input
               type="email"
-              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#14433B] placeholder:text-[#14433B]/60 outline-none focus:ring-2 focus:ring-[#FFF6F0]/50"
               value={form.email}
               onChange={(e) => update("email", e.target.value)}
               placeholder="Enter your email"
@@ -79,10 +79,10 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm text-[#F5EFE6]">Password</label>
+            <label className="mb-2 block text-sm text-[#FFF6F0]">Password</label>
             <input
               type="password"
-              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#14433B] placeholder:text-[#14433B]/60 outline-none focus:ring-2 focus:ring-[#FFF6F0]/50"
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
               placeholder="Enter your password"
@@ -90,10 +90,10 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm text-[#F5EFE6]">Password</label>
+            <label className="mb-2 block text-sm text-[#FFF6F0]">Password</label>
             <input
               type="password"
-              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#4A2C1B] placeholder:text-[#4A2C1B]/60 outline-none focus:ring-2 focus:ring-[#F5EFE6]/50"
+              className="w-full rounded-md bg-[#C9A78B] px-4 py-3 text-[#14433B] placeholder:text-[#14433B]/60 outline-none focus:ring-2 focus:ring-[#FFF6F0]/50"
               value={form.confirmPassword}
               onChange={(e) => update("confirmPassword", e.target.value)}
               placeholder="Confirm your password"
@@ -104,12 +104,12 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-black px-4 py-3 text-[#F5EFE6] font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
+            className="w-full rounded-md bg-black px-4 py-3 text-[#FFF6F0] font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
           >
             {loading ? "กำลังสมัครสมาชิก..." : "Signup"}
           </button>
         </form>
-        <p className="mt-6 text-sm text-center text-[#F5EFE6]">
+        <p className="mt-6 text-sm text-center text-[#FFF6F0]">
           มีบัญชีอยู่แล้ว? <Link className="underline hover:opacity-80" href="/login">เข้าสู่ระบบ</Link>
         </p>
       </div>

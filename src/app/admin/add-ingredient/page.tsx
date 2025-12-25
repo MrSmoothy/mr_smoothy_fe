@@ -59,58 +59,58 @@ export default function AddIngredientPage() {
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
+    <div className="bg-[#FFF6F0] min-h-screen py-12">
       <div className="mx-auto max-w-4xl px-6">
         <button
           onClick={() => router.back()}
-          className="mb-6 flex items-center gap-2 text-[#4A2C1B] hover:opacity-70 transition-opacity"
+          className="mb-6 flex items-center gap-2 text-[#14433B] hover:opacity-70 transition-opacity"
         >
           <ArrowLeft className="w-5 h-5" />
           กลับ
         </button>
 
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-[#4A2C1B] mb-2">
+          <h1 className="text-3xl font-bold text-[#14433B] mb-2">
             เพิ่มวัถุดิบ
           </h1>
-          <p className="text-[#4A2C1B]/70 mb-6">
+          <p className="text-[#14433B]/70 mb-6">
             คุณสามารถเลือกให้ระบบดึงข้อมูลโภชนาการจาก USDA FoodData Central API 
             และประมวลผลด้วย OpenAI เพื่อเพิ่มข้อมูลรสชาติและการจับคู่ หรือเพิ่มโดยไม่มีข้อมูลโภชนาการ
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-[#4A2C1B] font-semibold mb-2">
+              <label className="block text-[#14433B] font-semibold mb-2">
                 ชื่อวัถุดิบ *
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                 placeholder="เช่น Banana, กล้วย, Strawberry, สตรอเบอร์รี่"
                 required
               />
-              <p className="text-sm text-[#4A2C1B]/60 mt-1">
+              <p className="text-sm text-[#14433B]/60 mt-1">
                 💡 ใส่ชื่อเป็นภาษาไทยหรืออังกฤษได้ ระบบจะแปลและดึงข้อมูลโภชนาการอัตโนมัติ
               </p>
             </div>
 
             <div>
-              <label className="block text-[#4A2C1B] font-semibold mb-2">
+              <label className="block text-[#14433B] font-semibold mb-2">
                 คำอธิบาย (ไม่บังคับ)
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                 placeholder="คำอธิบายเพิ่มเติม (ถ้ามี)"
               />
             </div>
 
             <div>
-              <label className="block text-[#4A2C1B] font-semibold mb-2">
+              <label className="block text-[#14433B] font-semibold mb-2">
                 ราคาต่อหน่วย (บาท)
               </label>
               <input
@@ -121,18 +121,18 @@ export default function AddIngredientPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, pricePerUnit: parseFloat(e.target.value) || 0 })
                 }
-                className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
               />
             </div>
 
             <div>
-              <label className="block text-[#4A2C1B] font-semibold mb-2">หมวดหมู่</label>
+              <label className="block text-[#14433B] font-semibold mb-2">หมวดหมู่</label>
               <select
                 value={formData.category}
                 onChange={(e) =>
                   setFormData({ ...formData, category: e.target.value as FruitCategory })
                 }
-                className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
               >
                 <option value="FRUIT">🍎 ผลไม้</option>
                 <option value="VEGETABLE">🥬 ผัก</option>
@@ -141,12 +141,12 @@ export default function AddIngredientPage() {
             </div>
 
             <div>
-              <label className="block text-[#4A2C1B] font-semibold mb-2">URL รูปภาพ</label>
+              <label className="block text-[#14433B] font-semibold mb-2">URL รูปภาพ</label>
               <input
                 type="text"
                 value={formData.imageUrl}
                 onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                 placeholder="https://..."
               />
             </div>
@@ -160,11 +160,11 @@ export default function AddIngredientPage() {
                   onChange={(e) => setFormData({ ...formData, fetchNutrition: e.target.checked })}
                   className="w-5 h-5"
                 />
-                <label htmlFor="fetchNutrition" className="text-[#4A2C1B] font-semibold cursor-pointer">
+                <label htmlFor="fetchNutrition" className="text-[#14433B] font-semibold cursor-pointer">
                   ดึงข้อมูลโภชนาการจาก USDA (จะใช้ AI สำหรับข้อมูลรสชาติ)
                 </label>
               </div>
-              <p className="text-sm text-[#4A2C1B]/60 ml-7 -mt-2">
+              <p className="text-sm text-[#14433B]/60 ml-7 -mt-2">
                 💡 ถ้าไม่เลือก ระบบจะเพิ่มวัถุดิบโดยไม่มีข้อมูลโภชนาการ คุณสามารถดึงข้อมูลภายหลังได้
               </p>
 
@@ -176,7 +176,7 @@ export default function AddIngredientPage() {
                   onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                   className="w-5 h-5"
                 />
-                <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
+                <label htmlFor="active" className="text-[#14433B] font-semibold">
                   แสดงให้ลูกค้าเห็น
                 </label>
               </div>
@@ -189,7 +189,7 @@ export default function AddIngredientPage() {
                   onChange={(e) => setFormData({ ...formData, seasonal: e.target.checked })}
                   className="w-5 h-5"
                 />
-                <label htmlFor="seasonal" className="text-[#4A2C1B] font-semibold">
+                <label htmlFor="seasonal" className="text-[#14433B] font-semibold">
                   วัตถุดิบตามฤดูกาล
                 </label>
               </div>
@@ -205,14 +205,14 @@ export default function AddIngredientPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="flex-1 bg-gray-200 text-[#4A2C1B] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+                className="flex-1 bg-gray-200 text-[#14433B] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
               >
                 ยกเลิก
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -227,8 +227,8 @@ export default function AddIngredientPage() {
           </form>
 
           {result && (
-            <div className="mt-8 p-6 bg-green-50 border border-green-200 rounded-lg">
-              <h2 className="text-xl font-bold text-[#4A2C1B] mb-4">ผลลัพธ์</h2>
+            <div className="mt-8 p-6 bg-[#14433B]/10 border border-[#14433B]/20 rounded-lg">
+              <h2 className="text-xl font-bold text-[#14433B] mb-4">ผลลัพธ์</h2>
               <div className="space-y-3">
                 <div>
                   <span className="font-semibold">ชื่อ:</span> {result.name}

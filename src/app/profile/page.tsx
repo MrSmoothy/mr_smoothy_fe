@@ -316,10 +316,10 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="bg-[#E8DDCB] min-h-screen flex items-center justify-center">
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3728] mx-auto mb-4"></div>
-          <div className="text-[#4A3728] text-xl">กำลังโหลดข้อมูล...</div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
+          <div className="text-[#14433B] text-xl">กำลังโหลดข้อมูล...</div>
         </div>
       </div>
     );
@@ -334,13 +334,13 @@ export default function ProfilePage() {
       if (!stored || !token) {
         // ถ้าไม่มีข้อมูลเลย ให้ redirect ไป login
         return (
-          <div className="bg-[#E8DDCB] min-h-screen flex items-center justify-center px-4">
+          <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center px-4">
             <div className="text-center max-w-md">
               <div className="text-red-600 text-xl font-bold mb-2">ต้องเข้าสู่ระบบ</div>
-              <div className="text-[#4A3728] mb-4">กรุณาเข้าสู่ระบบเพื่อดูข้อมูลโปรไฟล์</div>
+              <div className="text-[#14433B] mb-4">กรุณาเข้าสู่ระบบเพื่อดูข้อมูลโปรไฟล์</div>
               <button
                 onClick={() => router.push("/login?redirect=/profile")}
-                className="bg-[#4A3728] text-[#E8DDCB] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 ไปที่หน้าเข้าสู่ระบบ
               </button>
@@ -351,20 +351,20 @@ export default function ProfilePage() {
       
       // ถ้ามี token แต่โหลดข้อมูลไม่ได้ แสดง error screen
       return (
-        <div className="bg-[#E8DDCB] min-h-screen flex items-center justify-center px-4">
+        <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center px-4">
           <div className="text-center max-w-md">
             <div className="text-red-600 text-xl font-bold mb-2">เกิดข้อผิดพลาด</div>
-            <div className="text-[#4A3728] mb-4">{error || "ไม่สามารถโหลดข้อมูลโปรไฟล์ได้"}</div>
+            <div className="text-[#14433B] mb-4">{error || "ไม่สามารถโหลดข้อมูลโปรไฟล์ได้"}</div>
             <div className="space-y-2">
               <button
                 onClick={loadProfile}
-                className="w-full bg-[#4A3728] text-[#E8DDCB] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="w-full bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 ลองใหม่อีกครั้ง
               </button>
               <button
                 onClick={() => router.push("/")}
-                className="w-full bg-gray-200 text-[#4A3728] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="w-full bg-gray-200 text-[#14433B] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 กลับหน้าหลัก
               </button>
@@ -374,13 +374,13 @@ export default function ProfilePage() {
       );
     } catch (err) {
       return (
-        <div className="bg-[#E8DDCB] min-h-screen flex items-center justify-center px-4">
+        <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center px-4">
           <div className="text-center max-w-md">
             <div className="text-red-600 text-xl font-bold mb-2">เกิดข้อผิดพลาด</div>
-            <div className="text-[#4A3728] mb-4">{error || "ไม่พบข้อมูลผู้ใช้"}</div>
+            <div className="text-[#14433B] mb-4">{error || "ไม่พบข้อมูลผู้ใช้"}</div>
             <button
               onClick={() => router.push("/")}
-              className="bg-[#4A3728] text-[#E8DDCB] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              className="bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
             >
               กลับหน้าหลัก
             </button>
@@ -391,53 +391,53 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="bg-[#E8DDCB] min-h-screen py-6 sm:py-8 md:py-12">
+    <div className="bg-[#FFF6F0] min-h-screen py-6 sm:py-8 md:py-12">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-[#4A3728] hover:opacity-80 transition-opacity mb-4 font-sans"
+            className="flex items-center gap-2 text-[#14433B] hover:opacity-80 transition-opacity mb-4 font-sans"
           >
             <ArrowLeft className="w-5 h-5" />
             กลับ
           </button>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-2 font-serif">โปรไฟล์ของฉัน</h1>
-          <p className="text-sm sm:text-base text-[#4A3728]/70 font-sans">จัดการข้อมูลส่วนตัวของคุณ</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B] mb-2 font-serif">โปรไฟล์ของฉัน</h1>
+          <p className="text-sm sm:text-base text-[#14433B]/70 font-sans">จัดการข้อมูลส่วนตัวของคุณ</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Profile Card */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6 border border-[#4A3728]/20">
+            <div className="bg-white rounded-lg shadow-lg p-6 border border-[#14433B]/20">
               <div className="text-center mb-6">
-                <div className="w-24 h-24 rounded-full bg-[#4A3728] flex items-center justify-center mx-auto mb-4">
-                  <UserCircle className="w-16 h-16 text-[#E8DDCB]" />
+                <div className="w-24 h-24 rounded-full bg-[#14433B] flex items-center justify-center mx-auto mb-4">
+                  <UserCircle className="w-16 h-16 text-[#FFF6F0]" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#4A3728] mb-1 font-serif">
+                <h2 className="text-2xl font-bold text-[#14433B] mb-1 font-serif">
                   {user.fullName || user.username}
                 </h2>
-                <p className="text-[#4A3728]/70 font-sans">@{user.username}</p>
+                <p className="text-[#14433B]/70 font-sans">@{user.username}</p>
                 {user.role === "ADMIN" && (
-                  <span className="inline-block mt-2 px-3 py-1 bg-[#4A3728] text-[#E8DDCB] rounded-full text-xs font-semibold">
+                  <span className="inline-block mt-2 px-3 py-1 bg-[#14433B] text-[#FFF6F0] rounded-full text-xs font-semibold">
                     ผู้ดูแลระบบ
                   </span>
                 )}
               </div>
 
-              <div className="space-y-4 border-t border-[#4A3728]/20 pt-4">
-                <div className="flex items-center gap-3 text-[#4A3728]">
+              <div className="space-y-4 border-t border-[#14433B]/20 pt-4">
+                <div className="flex items-center gap-3 text-[#14433B]">
                   <Mail className="w-5 h-5" />
                   <span className="font-sans">{user.email}</span>
                 </div>
                 {user.phoneNumber && (
-                  <div className="flex items-center gap-3 text-[#4A3728]">
+                  <div className="flex items-center gap-3 text-[#14433B]">
                     <Phone className="w-5 h-5" />
                     <span className="font-sans">{user.phoneNumber}</span>
                   </div>
                 )}
                 {user.dateOfBirth && (
-                  <div className="flex items-center gap-3 text-[#4A3728]">
+                  <div className="flex items-center gap-3 text-[#14433B]">
                     <Cake className="w-5 h-5" />
                     <span className="font-sans">
                       {new Date(user.dateOfBirth).toLocaleDateString('th-TH', {
@@ -449,7 +449,7 @@ export default function ProfilePage() {
                   </div>
                 )}
                 {user.createdAt && (
-                  <div className="flex items-center gap-3 text-[#4A3728]/70">
+                  <div className="flex items-center gap-3 text-[#14433B]/70">
                     <Calendar className="w-5 h-5" />
                     <span className="text-sm font-sans">
                       สมาชิกตั้งแต่ {new Date(user.createdAt).toLocaleDateString('th-TH')}
@@ -470,8 +470,8 @@ export default function ProfilePage() {
 
           {/* Edit Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-lg p-8 border border-[#4A3728]/20">
-              <h3 className="text-2xl font-bold text-[#4A3728] mb-6 font-serif">แก้ไขข้อมูลส่วนตัว</h3>
+            <div className="bg-white rounded-lg shadow-lg p-8 border border-[#14433B]/20">
+              <h3 className="text-2xl font-bold text-[#14433B] mb-6 font-serif">แก้ไขข้อมูลส่วนตัว</h3>
 
               {error && (
                 <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 font-sans">
@@ -482,7 +482,7 @@ export default function ProfilePage() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-[#4A3728] font-semibold mb-2 font-sans">
+                  <label className="block text-[#14433B] font-semibold mb-2 font-sans">
                     <User className="w-4 h-4 inline mr-2" />
                     ชื่อ-นามสกุล
                   </label>
@@ -490,13 +490,13 @@ export default function ProfilePage() {
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className="w-full rounded-lg border border-[#4A3728]/30 px-4 py-3 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans"
+                    className="w-full rounded-lg border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans"
                     placeholder="กรุณากรอกชื่อ-นามสกุล"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#4A3728] font-semibold mb-2 font-sans">
+                  <label className="block text-[#14433B] font-semibold mb-2 font-sans">
                     <Mail className="w-4 h-4 inline mr-2" />
                     อีเมล
                   </label>
@@ -504,14 +504,14 @@ export default function ProfilePage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full rounded-lg border border-[#4A3728]/30 px-4 py-3 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans"
+                    className="w-full rounded-lg border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans"
                     placeholder="example@email.com"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#4A3728] font-semibold mb-2 font-sans">
+                  <label className="block text-[#14433B] font-semibold mb-2 font-sans">
                     <Phone className="w-4 h-4 inline mr-2" />
                     เบอร์โทรศัพท์
                   </label>
@@ -523,7 +523,7 @@ export default function ProfilePage() {
                       const value = e.target.value.replace(/\D/g, '').slice(0, 10);
                       setFormData({ ...formData, phoneNumber: value });
                     }}
-                    className="w-full rounded-lg border border-[#4A3728]/30 px-4 py-3 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans"
+                    className="w-full rounded-lg border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans"
                     placeholder="0801234567"
                     maxLength={10}
                     pattern="[0-9]{10}"
@@ -534,20 +534,20 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#4A3728] font-semibold mb-2 font-sans">
+                  <label className="block text-[#14433B] font-semibold mb-2 font-sans">
                     <Cake className="w-4 h-4 inline mr-2" />
                     วันที่เกิด (วัน/เดือน/ปี พ.ศ.)
                   </label>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-sm text-[#4A3728]/70 mb-1 font-sans">วัน</label>
+                      <label className="block text-sm text-[#14433B]/70 mb-1 font-sans">วัน</label>
                       <select
                         value={dateParts.day}
                         onChange={(e) => {
                           const day = e.target.value;
                           updateDateOfBirth(day, null, null);
                         }}
-                        className="w-full rounded-lg border border-[#4A3728]/30 px-3 py-2 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans bg-white"
+                        className="w-full rounded-lg border border-[#14433B]/30 px-3 py-2 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans bg-white"
                       >
                         <option value="">เลือกวัน</option>
                         {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
@@ -558,14 +558,14 @@ export default function ProfilePage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm text-[#4A3728]/70 mb-1 font-sans">เดือน</label>
+                      <label className="block text-sm text-[#14433B]/70 mb-1 font-sans">เดือน</label>
                       <select
                         value={dateParts.month}
                         onChange={(e) => {
                           const month = e.target.value;
                           updateDateOfBirth(null, month, null);
                         }}
-                        className="w-full rounded-lg border border-[#4A3728]/30 px-3 py-2 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans bg-white"
+                        className="w-full rounded-lg border border-[#14433B]/30 px-3 py-2 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans bg-white"
                       >
                         <option value="">เลือกเดือน</option>
                         <option value="1">มกราคม</option>
@@ -583,14 +583,14 @@ export default function ProfilePage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm text-[#4A3728]/70 mb-1 font-sans">ปี พ.ศ.</label>
+                      <label className="block text-sm text-[#14433B]/70 mb-1 font-sans">ปี พ.ศ.</label>
                       <select
                         value={dateParts.year}
                         onChange={(e) => {
                           const yearBE = e.target.value;
                           updateDateOfBirth(null, null, yearBE);
                         }}
-                        className="w-full rounded-lg border border-[#4A3728]/30 px-3 py-2 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans bg-white"
+                        className="w-full rounded-lg border border-[#14433B]/30 px-3 py-2 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans bg-white"
                       >
                         <option value="">เลือกปี พ.ศ.</option>
                         {Array.from({ length: 111 }, (_, i) => 2460 + i).map((year) => (
@@ -602,38 +602,38 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   {formData.dateOfBirth && (
-                    <p className="text-sm text-[#4A3728]/70 mt-2 font-sans">
+                    <p className="text-sm text-[#14433B]/70 mt-2 font-sans">
                       วันที่เลือก: {formatThaiDate(formData.dateOfBirth)}
                     </p>
                   )}
                 </div>
 
-                <div className="border-t border-[#4A3728]/20 pt-6">
-                  <h4 className="text-lg font-semibold text-[#4A3728] mb-4 font-serif">เปลี่ยนรหัสผ่าน</h4>
-                  <p className="text-sm text-[#4A3728]/70 mb-4 font-sans">
+                <div className="border-t border-[#14433B]/20 pt-6">
+                  <h4 className="text-lg font-semibold text-[#14433B] mb-4 font-serif">เปลี่ยนรหัสผ่าน</h4>
+                  <p className="text-sm text-[#14433B]/70 mb-4 font-sans">
                     ปล่อยว่างไว้ถ้าไม่ต้องการเปลี่ยนรหัสผ่าน
                   </p>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-[#4A3728] font-semibold mb-2 font-sans">รหัสผ่านใหม่</label>
+                      <label className="block text-[#14433B] font-semibold mb-2 font-sans">รหัสผ่านใหม่</label>
                       <input
                         type="password"
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full rounded-lg border border-[#4A3728]/30 px-4 py-3 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans"
+                        className="w-full rounded-lg border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans"
                         placeholder="รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)"
                         minLength={6}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[#4A3728] font-semibold mb-2 font-sans">ยืนยันรหัสผ่าน</label>
+                      <label className="block text-[#14433B] font-semibold mb-2 font-sans">ยืนยันรหัสผ่าน</label>
                       <input
                         type="password"
                         value={formData.confirmPassword}
                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                        className="w-full rounded-lg border border-[#4A3728]/30 px-4 py-3 text-[#4A3728] outline-none focus:ring-2 focus:ring-[#4A3728]/50 font-sans"
+                        className="w-full rounded-lg border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans"
                         placeholder="ยืนยันรหัสผ่านใหม่"
                         minLength={6}
                       />
@@ -645,14 +645,14 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => router.back()}
-                    className="flex-1 bg-gray-200 text-[#4A3728] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity font-sans"
+                    className="flex-1 bg-gray-200 text-[#14433B] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity font-sans"
                   >
                     ยกเลิก
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="flex-1 bg-[#4A3728] text-[#E8DDCB] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-sans"
+                    className="flex-1 bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-sans"
                   >
                     {saving ? (
                       <>

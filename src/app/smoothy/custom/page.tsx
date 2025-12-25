@@ -97,28 +97,28 @@ export default function SmoothyCustomPage() {
 
   if (loading) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
-        <div className="text-[#4A2C1B] text-xl">กำลังโหลด...</div>
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
+        <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
+    <div className="bg-[#FFF6F0] min-h-screen py-12">
       <div className="mx-auto max-w-6xl px-6">
-        <h1 className="text-3xl font-bold text-[#4A2C1B] mb-8">สร้าง Smoothy แบบกำหนดเอง</h1>
+        <h1 className="text-3xl font-bold text-[#14433B] mb-8">สร้าง Smoothy แบบกำหนดเอง</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left: Ingredient Selection */}
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-[#4A2C1B] mb-4">เลือกวัตถุดิบ</h2>
+            <h2 className="text-2xl font-bold text-[#14433B] mb-4">เลือกวัตถุดิบ</h2>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
               {fruits.map((fruit) => (
                 <button
                   key={fruit.id}
                   onClick={() => addIngredient(fruit)}
-                  className="bg-[#F5EFE6] rounded-lg p-3 hover:bg-[#C9A78B] transition-colors text-left"
+                  className="bg-[#FFF6F0] rounded-lg p-3 hover:bg-[#C9A78B] transition-colors text-left"
                 >
                   {fruit.imageUrl && (
                     <img
@@ -127,8 +127,8 @@ export default function SmoothyCustomPage() {
                       className="w-full h-20 object-cover rounded mb-2"
                     />
                   )}
-                  <div className="text-sm font-semibold text-[#4A2C1B]">{fruit.name}</div>
-                  <div className="text-xs text-[#4A2C1B]/70">
+                  <div className="text-sm font-semibold text-[#14433B]">{fruit.name}</div>
+                  <div className="text-xs text-[#14433B]/70">
                     {Number(fruit.pricePerUnit).toFixed(2)} ฿
                   </div>
                 </button>
@@ -138,15 +138,15 @@ export default function SmoothyCustomPage() {
             {/* Selected Ingredients */}
             {selectedIngredients.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-lg font-semibold text-[#4A2C1B] mb-3">วัตถุดิบที่เลือก</h3>
+                <h3 className="text-lg font-semibold text-[#14433B] mb-3">วัตถุดิบที่เลือก</h3>
                 <div className="space-y-2">
                   {selectedIngredients.map((ingredient) => (
                     <div
                       key={ingredient.ingredientId}
-                      className="flex items-center justify-between bg-[#F5EFE6] rounded-lg p-3"
+                      className="flex items-center justify-between bg-[#FFF6F0] rounded-lg p-3"
                     >
                       <div className="flex-1">
-                        <div className="font-semibold text-[#4A2C1B]">{ingredient.name}</div>
+                        <div className="font-semibold text-[#14433B]">{ingredient.name}</div>
                         <div className="flex items-center gap-2 mt-1">
                           <input
                             type="number"
@@ -156,9 +156,9 @@ export default function SmoothyCustomPage() {
                             onChange={(e) =>
                               updateAmount(ingredient.ingredientId, parseFloat(e.target.value) || 0)
                             }
-                            className="w-20 px-2 py-1 rounded border border-[#4A2C1B]/30 text-sm"
+                            className="w-20 px-2 py-1 rounded border border-[#14433B]/30 text-sm"
                           />
-                          <span className="text-sm text-[#4A2C1B]/70">กรัม</span>
+                          <span className="text-sm text-[#14433B]/70">กรัม</span>
                         </div>
                       </div>
                       <button
@@ -174,7 +174,7 @@ export default function SmoothyCustomPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={calculating}
-                  className="w-full mt-4 bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full mt-4 bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {calculating ? (
                     <>
@@ -191,7 +191,7 @@ export default function SmoothyCustomPage() {
 
           {/* Right: Results */}
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-[#4A2C1B] mb-4">ผลลัพธ์</h2>
+            <h2 className="text-2xl font-bold text-[#14433B] mb-4">ผลลัพธ์</h2>
 
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -202,24 +202,24 @@ export default function SmoothyCustomPage() {
             {result ? (
               <div className="space-y-6">
                 {/* Nutrition Summary */}
-                <div className="bg-[#F5EFE6] rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-[#4A2C1B] mb-3">ข้อมูลโภชนาการ</h3>
+                <div className="bg-[#FFF6F0] rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3">ข้อมูลโภชนาการ</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-[#4A2C1B]">แคลอรี่:</span>
-                      <span className="font-semibold text-[#4A2C1B]">
+                      <span className="text-[#14433B]">แคลอรี่:</span>
+                      <span className="font-semibold text-[#14433B]">
                         {result.totalNutrition.totalCalorie.toFixed(2)} kcal
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#4A2C1B]">โปรตีน:</span>
-                      <span className="font-semibold text-[#4A2C1B]">
+                      <span className="text-[#14433B]">โปรตีน:</span>
+                      <span className="font-semibold text-[#14433B]">
                         {result.totalNutrition.totalProtein.toFixed(2)} g
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#4A2C1B]">ไฟเบอร์:</span>
-                      <span className="font-semibold text-[#4A2C1B]">
+                      <span className="text-[#14433B]">ไฟเบอร์:</span>
+                      <span className="font-semibold text-[#14433B]">
                         {result.totalNutrition.totalFiber.toFixed(2)} g
                       </span>
                     </div>
@@ -229,18 +229,18 @@ export default function SmoothyCustomPage() {
                 {/* Flavor Description */}
                 {result.flavorDescription && (
                   <div className="bg-blue-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-[#4A2C1B] mb-2">คำอธิบายรสชาติ</h3>
-                    <p className="text-[#4A2C1B]">{result.flavorDescription}</p>
+                    <h3 className="text-lg font-semibold text-[#14433B] mb-2">คำอธิบายรสชาติ</h3>
+                    <p className="text-[#14433B]">{result.flavorDescription}</p>
                   </div>
                 )}
 
                 {/* Synergy */}
                 {result.synergy && result.synergy.length > 0 && (
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-[#4A2C1B] mb-2">
+                  <div className="bg-[#14433B]/10 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-[#14433B] mb-2">
                       💚 การทำงานร่วมกันที่ดี
                     </h3>
-                    <ul className="list-disc list-inside space-y-1 text-[#4A2C1B]">
+                    <ul className="list-disc list-inside space-y-1 text-[#14433B]">
                       {result.synergy.map((item, index) => (
                         <li key={index}>{item}</li>
                       ))}
@@ -251,10 +251,10 @@ export default function SmoothyCustomPage() {
                 {/* Cancellation */}
                 {result.cancellation && result.cancellation.length > 0 && (
                   <div className="bg-yellow-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-[#4A2C1B] mb-2">
+                    <h3 className="text-lg font-semibold text-[#14433B] mb-2">
                       ⚠️ ข้อควรระวัง
                     </h3>
-                    <ul className="list-disc list-inside space-y-1 text-[#4A2C1B]">
+                    <ul className="list-disc list-inside space-y-1 text-[#14433B]">
                       {result.cancellation.map((item, index) => (
                         <li key={index}>{item}</li>
                       ))}
@@ -263,7 +263,7 @@ export default function SmoothyCustomPage() {
                 )}
               </div>
             ) : (
-              <div className="text-center text-[#4A2C1B]/70 py-12">
+              <div className="text-center text-[#14433B]/70 py-12">
                 เลือกวัตถุดิบและกดคำนวณเพื่อดูผลลัพธ์
               </div>
             )}

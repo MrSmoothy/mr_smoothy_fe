@@ -25,7 +25,8 @@ export default function AdminFruitsPage() {
   const [fruits, setFruits] = useState<Fruit[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<FruitCategory | "ALL">("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "ORGANIC_FRUIT" | "ORGANIC_VEGETABLE" | "BASE" | "SUPERFRUIT" | "PROTEIN" | "TOPPING" | "SWEETENER">("ALL");
   const [editingFruit, setEditingFruit] = useState<Fruit | null>(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -173,7 +174,7 @@ export default function AdminFruitsPage() {
           if (formData.fetchNutrition) {
             toast("กำลังดึงข้อมูลโภชนาการ...", "info", 2000);
           } else {
-            toast("กำลังเพิ่มวัถุดิบ...", "info", 2000);
+            toast("กำลังเพิ่มวัตถุดิบ...", "info", 2000);
           }
           await adminAddIngredientWithNutrition(createData);
           
@@ -203,7 +204,7 @@ export default function AdminFruitsPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm("คุณต้องการลบวัถุดิบนี้หรือไม่?")) return;
+    if (!confirm("คุณต้องการลบวัตถุดิบนี้หรือไม่?")) return;
     try {
       await adminDeleteFruit(id);
       toast("ลบข้อมูลสำเร็จ ✅", "success");
@@ -216,126 +217,260 @@ export default function AdminFruitsPage() {
 
   if (loading) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
-        <div className="text-[#4A2C1B] text-xl">กำลังโหลด...</div>
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
+        <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
+    <div className="bg-[#FFF6F0] min-h-screen py-12">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#4A2C1B] mb-1">จัดการวัถุดิบ</h1>
-            <p className="text-[#4A2C1B]/70 text-sm">เพิ่ม แก้ไข หรือลบวัถุดิบ (ผลไม้ ผัก และส่วนเสริม)</p>
+            <h1 className="text-4xl font-bold text-[#14433B] mb-2">จัดการวัตถุดิบ</h1>
+            <p className="text-[#14433B]/70">เพิ่ม แก้ไข หรือลบวัตถุดิบ (ผลไม้ ผัก และส่วนเสริม)</p>
           </div>
           <button
             onClick={() => openModal()}
-            className="bg-[#4A2C1B] text-[#F5EFE6] px-4 py-2 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 text-sm"
+            className="bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center gap-2"
           >
-            <Plus className="w-4 h-4" />
-            เพิ่มวัถุดิบ
+            <Plus className="w-5 h-5" />
+            เพิ่มวัตถุดิบ
           </button>
         </div>
 
-        {/* Category Filter */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
+        {/* Search Bar and Category Filter */}
+        <div className="mb-6 flex items-center gap-4">
+          {/* Search Bar - 990x45 */}
+          <div className="relative flex-shrink-0" style={{ width: '990px', height: '45px' }}>
+            <input
+              type="text"
+              placeholder="ค้นหาวัตถุดิบ, คำอธิบาย..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-full px-4 pl-12 rounded-lg border-2 border-[#14433B]/30 bg-white text-[#14433B] placeholder:text-[#14433B]/50 focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all"
+              style={{ height: '45px' }}
+            />
+            <svg
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#14433B]/50"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#14433B]/50 hover:text-[#14433B] transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+
+          {/* Category Filter - Horizontal Scrollable */}
+          <div className="flex-1 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 min-w-max">
             <button
               onClick={() => setSelectedCategory("ALL")}
-              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
                 selectedCategory === "ALL"
-                  ? "bg-[#4A2C1B] text-white shadow-md"
-                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
               }`}
             >
-              ทั้งหมด
+              All
             </button>
             <button
-              onClick={() => setSelectedCategory("FRUIT")}
-              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
-                selectedCategory === "FRUIT"
-                  ? "bg-[#4A2C1B] text-white shadow-md"
-                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+              onClick={() => setSelectedCategory("ORGANIC_FRUIT")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                selectedCategory === "ORGANIC_FRUIT"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
               }`}
             >
-              🍎 ผลไม้
+              Organic Fruit
             </button>
             <button
-              onClick={() => setSelectedCategory("VEGETABLE")}
-              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
-                selectedCategory === "VEGETABLE"
-                  ? "bg-[#4A2C1B] text-white shadow-md"
-                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+              onClick={() => setSelectedCategory("ORGANIC_VEGETABLE")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                selectedCategory === "ORGANIC_VEGETABLE"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
               }`}
             >
-              🥬 ผัก
+              Organic Vegetable
             </button>
             <button
-              onClick={() => setSelectedCategory("ADDON")}
-              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${
-                selectedCategory === "ADDON"
-                  ? "bg-[#4A2C1B] text-white shadow-md"
-                  : "bg-white text-[#4A2C1B] border border-[#4A2C1B]/30 hover:border-[#4A2C1B]/50"
+              onClick={() => setSelectedCategory("BASE")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                selectedCategory === "BASE"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
               }`}
             >
-              🥛 ส่วนเสริม
+              Base
             </button>
+            <button
+              onClick={() => setSelectedCategory("SUPERFRUIT")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                selectedCategory === "SUPERFRUIT"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
+              }`}
+            >
+              Super fruit
+            </button>
+            <button
+              onClick={() => setSelectedCategory("PROTEIN")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                selectedCategory === "PROTEIN"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
+              }`}
+            >
+              Protein
+            </button>
+            <button
+              onClick={() => setSelectedCategory("TOPPING")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                selectedCategory === "TOPPING"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
+              }`}
+            >
+              Topping
+            </button>
+            <button
+              onClick={() => setSelectedCategory("SWEETENER")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                selectedCategory === "SWEETENER"
+                  ? "bg-[#14433B] text-white shadow-md"
+                  : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
+              }`}
+            >
+              Sweetener
+            </button>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {(() => {
-            const filteredFruits = selectedCategory === "ALL" 
-              ? fruits 
-              : fruits.filter(f => {
-                  const fruitCategory = f.category || "FRUIT";
-                  const matches = fruitCategory === selectedCategory;
-                  if (!matches) {
-                    console.log(`Fruit ${f.name} (category: ${fruitCategory}) does not match ${selectedCategory}`);
-                  }
-                  return matches;
-                });
-            console.log(`Filtering: ${selectedCategory}, Total: ${fruits.length}, Filtered: ${filteredFruits.length}`);
+            // Filter by category
+            let categoryFiltered = fruits;
+            if (selectedCategory !== "ALL") {
+              categoryFiltered = fruits.filter(f => {
+                const name = (f.name || "").toLowerCase();
+                const desc = (f.description || "").toLowerCase();
+                const searchText = `${name} ${desc}`;
+                const fruitCategory = f.category || "FRUIT";
+
+                switch (selectedCategory) {
+                  case "ORGANIC_FRUIT":
+                    return fruitCategory === "FRUIT" && !searchText.includes("super");
+                  case "ORGANIC_VEGETABLE":
+                    return fruitCategory === "VEGETABLE";
+                  case "BASE":
+                    return fruitCategory === "ADDON" && (
+                      searchText.includes("base") || 
+                      searchText.includes("นม") ||
+                      searchText.includes("milk") ||
+                      searchText.includes("yogurt") ||
+                      searchText.includes("โยเกิร์ต")
+                    );
+                  case "SUPERFRUIT":
+                    return fruitCategory === "FRUIT" && (
+                      searchText.includes("super") ||
+                      searchText.includes("berry") ||
+                      searchText.includes("เบอร์รี่") ||
+                      searchText.includes("goji") ||
+                      searchText.includes("acai")
+                    );
+                  case "PROTEIN":
+                    return fruitCategory === "ADDON" && (
+                      searchText.includes("protein") ||
+                      searchText.includes("โปรตีน") ||
+                      searchText.includes("whey") ||
+                      searchText.includes("collagen")
+                    );
+                  case "TOPPING":
+                    return fruitCategory === "ADDON" && (
+                      searchText.includes("topping") ||
+                      searchText.includes("topping") ||
+                      searchText.includes("chia") ||
+                      searchText.includes("flax")
+                    );
+                  case "SWEETENER":
+                    return fruitCategory === "ADDON" && (
+                      searchText.includes("sweet") ||
+                      searchText.includes("honey") ||
+                      searchText.includes("น้ำผึ้ง") ||
+                      searchText.includes("sugar") ||
+                      searchText.includes("น้ำตาล") ||
+                      searchText.includes("syrup")
+                    );
+                  default:
+                    return true;
+                }
+              });
+            }
+
+            // Filter by search query
+            const filteredFruits = searchQuery.trim() 
+              ? categoryFiltered.filter(f => {
+                  const query = searchQuery.toLowerCase();
+                  const nameMatch = f.name?.toLowerCase().includes(query);
+                  const descMatch = f.description?.toLowerCase().includes(query);
+                  return nameMatch || descMatch;
+                })
+              : categoryFiltered;
+
             return filteredFruits;
           })().map((fruit) => (
             <div
               key={fruit.id}
-              className="bg-white rounded-lg shadow-sm p-3 hover:shadow-md transition-shadow border border-[#4A2C1B]/10"
+              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
             >
               {fruit.imageUrl ? (
                 <img
                   src={getImageUrl(fruit.imageUrl)}
                   alt={fruit.name}
-                  className="w-full h-24 object-cover rounded-md mb-2"
+                  className="w-full h-48 object-cover rounded-lg mb-4"
                 />
               ) : (
-                <div className="w-full h-24 bg-gray-100 rounded-md mb-2 flex items-center justify-center text-gray-400 text-xs">
-                  ไม่มีรูป
+                <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center text-gray-400">
+                  ไม่มีรูปภาพ
                 </div>
               )}
-              <div className="mb-2">
-                <h3 className="text-sm font-semibold text-[#4A2C1B] mb-1 line-clamp-1">{fruit.name}</h3>
-                <p className="text-[#4A2C1B]/70 text-xs mb-1.5 line-clamp-1">{fruit.description}</p>
+              <h3 className="text-xl font-semibold text-[#14433B] mb-2">{fruit.name}</h3>
+              <p className="text-[#14433B]/70 text-sm mb-3 line-clamp-2">{fruit.description}</p>
+              <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-[#4A2C1B]">
+                  <span className="text-lg font-bold text-[#14433B]">
                     {Number(fruit.pricePerUnit).toFixed(2)} ฿
-                </span>
-                <span
-                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    fruit.active
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                    {fruit.active ? "✓" : "✗"}
+                  </span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      fruit.active
+                        ? "bg-[#14433B]/20 text-[#14433B]"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {fruit.active ? "ใช้งาน" : "ไม่ใช้งาน"}
                   </span>
                 </div>
-                <div className="mb-2 flex items-center gap-1 flex-wrap">
-                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                <div className="flex flex-wrap gap-2">
+                  <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                     fruit.category === "FRUIT" ? "bg-yellow-100 text-yellow-700" :
-                    fruit.category === "VEGETABLE" ? "bg-green-100 text-green-700" :
+                    fruit.category === "VEGETABLE" ? "bg-[#14433B]/20 text-[#14433B]" :
                     "bg-blue-100 text-blue-700"
                   }`}>
                     {fruit.category === "FRUIT" ? "🍎 ผลไม้" :
@@ -344,25 +479,25 @@ export default function AdminFruitsPage() {
                   </span>
                   {/* Nutrition Status Badge - แสดงเฉพาะเมื่อมีข้อมูล */}
                   {fruit.calorie && fruit.protein && fruit.fiber && (
-                    <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
+                    <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-[#14433B]/20 text-[#14433B]">
                       ✓ โภชนาการ
                     </span>
                   )}
                 </div>
               </div>
-              <div className="flex gap-1.5">
+              <div className="flex gap-2">
                 <button
                   onClick={() => openModal(fruit)}
-                  className="flex-1 bg-[#C9A78B] text-[#4A2C1B] px-2 py-1.5 rounded text-xs font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
+                  className="flex-1 bg-[#C9A78B] text-[#14433B] px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                 >
-                  <Edit className="w-3 h-3" />
+                  <Edit className="w-4 h-4" />
                   แก้ไข
                 </button>
                 <button
                   onClick={() => handleDelete(fruit.id)}
-                  className="flex-1 bg-red-500 text-white px-2 py-1.5 rounded text-xs font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
+                  className="flex-1 bg-red-500 text-white px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-4 h-4" />
                   ลบ
                 </button>
               </div>
@@ -374,12 +509,12 @@ export default function AdminFruitsPage() {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-[#4A2C1B]">
-                  {editingFruit ? "แก้ไขวัถุดิบ" : "เพิ่มวัถุดิบใหม่"}
+                <h2 className="text-2xl font-bold text-[#14433B]">
+                  {editingFruit ? "แก้ไขวัตถุดิบ" : "เพิ่มวัตถุดิบใหม่"}
                 </h2>
                 <button
                   onClick={closeModal}
-                  className="text-[#4A2C1B]/70 hover:text-[#4A2C1B]"
+                  className="text-[#14433B]/70 hover:text-[#14433B]"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -387,48 +522,48 @@ export default function AdminFruitsPage() {
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-[#4A2C1B] font-semibold mb-2">ชื่อวัถุดิบ *</label>
+                  <label className="block text-[#14433B] font-semibold mb-2">ชื่อวัตถุดิบ *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                    className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#4A2C1B] font-semibold mb-2">คำอธิบาย *</label>
+                  <label className="block text-[#14433B] font-semibold mb-2">คำอธิบาย *</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                    className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#4A2C1B] font-semibold mb-2">ราคาต่อหน่วย (บาท) *</label>
+                  <label className="block text-[#14433B] font-semibold mb-2">ราคาต่อหน่วย (บาท) *</label>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     value={formData.pricePerUnit}
                     onChange={(e) => setFormData({ ...formData, pricePerUnit: e.target.value })}
-                    className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                    className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#4A2C1B] font-semibold mb-2">
+                  <label className="block text-[#14433B] font-semibold mb-2">
                     หมวดหมู่ *
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as FruitCategory })}
-                    className="w-full rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                    className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                     required
                   >
                     <option value="FRUIT">🍎 ผลไม้</option>
@@ -438,7 +573,7 @@ export default function AdminFruitsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#4A2C1B] font-semibold mb-2">รูปภาพ</label>
+                  <label className="block text-[#14433B] font-semibold mb-2">รูปภาพ</label>
                   <div className="flex gap-4">
                     <input
                       type="file"
@@ -453,7 +588,7 @@ export default function AdminFruitsPage() {
                     />
                     <label
                       htmlFor="fruit-image-upload"
-                      className="flex-1 bg-[#C9A78B] text-[#4A2C1B] px-4 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="flex-1 bg-[#C9A78B] text-[#14433B] px-4 py-3 rounded-md font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       <Upload className="w-5 h-5" />
                       {uploading ? "กำลังอัปโหลด..." : "อัปโหลดรูปภาพ"}
@@ -463,7 +598,7 @@ export default function AdminFruitsPage() {
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                       placeholder="หรือใส่ URL รูปภาพ"
-                      className="flex-1 rounded-md border border-[#4A2C1B]/30 px-4 py-3 text-[#4A2C1B] outline-none focus:ring-2 focus:ring-[#4A2C1B]/50"
+                      className="flex-1 rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                     />
                   </div>
                   {formData.imageUrl && (
@@ -489,7 +624,7 @@ export default function AdminFruitsPage() {
                         <label htmlFor="fetchNutrition" className="font-semibold mb-1 block cursor-pointer">
                           ดึงข้อมูลโภชนาการจาก USDA (จะใช้ AI สำหรับข้อมูลรสชาติ)
                         </label>
-                        <p className="text-xs">💡 ถ้าไม่เลือก ระบบจะเพิ่มวัถุดิบโดยไม่มีข้อมูลโภชนาการ คุณสามารถดึงข้อมูลภายหลังได้</p>
+                        <p className="text-xs">💡 ถ้าไม่เลือก ระบบจะเพิ่มวัตถุดิบโดยไม่มีข้อมูลโภชนาการ คุณสามารถดึงข้อมูลภายหลังได้</p>
                         {fetchingNutrition && formData.fetchNutrition && (
                           <p className="text-xs mt-2 text-blue-600">
                             <Loader2 className="w-3 h-3 inline animate-spin mr-1" />
@@ -509,7 +644,7 @@ export default function AdminFruitsPage() {
                     onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                     className="w-5 h-5"
                   />
-                  <label htmlFor="active" className="text-[#4A2C1B] font-semibold">
+                  <label htmlFor="active" className="text-[#14433B] font-semibold">
                     แสดงให้ลูกค้าเห็น
                   </label>
                   </div>
@@ -522,7 +657,7 @@ export default function AdminFruitsPage() {
                       onChange={(e) => setFormData({ ...formData, seasonal: e.target.checked })}
                       className="w-5 h-5"
                     />
-                    <label htmlFor="seasonal" className="text-[#4A2C1B] font-semibold">
+                    <label htmlFor="seasonal" className="text-[#14433B] font-semibold">
                       วัตถุดิบตามฤดูกาล
                     </label>
                   </div>
@@ -533,14 +668,14 @@ export default function AdminFruitsPage() {
                     type="button"
                     onClick={closeModal}
                     disabled={fetchingNutrition}
-                    className="flex-1 bg-gray-200 text-[#4A2C1B] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+                    className="flex-1 bg-gray-200 text-[#14433B] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
                     ยกเลิก
                   </button>
                   <button
                     type="submit"
                     disabled={fetchingNutrition}
-                    className="flex-1 bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {fetchingNutrition ? (
                       <>

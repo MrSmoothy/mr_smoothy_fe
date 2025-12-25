@@ -12,10 +12,10 @@ export default function AdminSidebar() {
   const isActive = (path: string) => pathname === path || pathname?.startsWith(path + "/");
 
   return (
-    <div className="w-64 bg-[#4A3728] min-h-screen flex flex-col">
+    <div className="w-64 bg-[#14433B] min-h-screen flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-[#5A4A3A]">
-        <h1 className="text-2xl font-bold text-[#E8DDCB] font-serif">Admin Dashboard</h1>
+        <h1 className="text-2xl font-bold text-[#FFF6F0] font-serif">Admin Dashboard</h1>
       </div>
 
       {/* Navigation */}
@@ -24,8 +24,8 @@ export default function AdminSidebar() {
           href="/admin/dashboard"
           className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-sans ${
             isActive("/admin/dashboard")
-              ? "bg-[#E8DDCB] text-[#4A3728]"
-              : "text-[#E8DDCB] hover:bg-[#5A4A3A]"
+              ? "bg-[#FFF6F0] text-[#14433B]"
+              : "text-[#FFF6F0] hover:bg-[#5A4A3A]"
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
@@ -36,8 +36,8 @@ export default function AdminSidebar() {
           href="/admin/home-editor"
           className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-sans ${
             isActive("/admin/home-editor")
-              ? "bg-[#E8DDCB] text-[#4A3728]"
-              : "text-[#E8DDCB] hover:bg-[#5A4A3A]"
+              ? "bg-[#FFF6F0] text-[#14433B]"
+              : "text-[#FFF6F0] hover:bg-[#5A4A3A]"
           }`}
         >
           <Home className="w-5 h-5" />
@@ -50,8 +50,8 @@ export default function AdminSidebar() {
             onClick={() => setShowMenuSubmenu(!showMenuSubmenu)}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors font-sans ${
               isActive("/admin/fruits") || isActive("/admin/drinks") || isActive("/admin/cup-sizes")
-                ? "bg-[#E8DDCB] text-[#4A3728]"
-                : "text-[#E8DDCB] hover:bg-[#5A4A3A]"
+                ? "bg-[#FFF6F0] text-[#14433B]"
+                : "text-[#FFF6F0] hover:bg-[#5A4A3A]"
             }`}
           >
             <div className="flex items-center gap-3">
@@ -68,18 +68,18 @@ export default function AdminSidebar() {
                 href="/admin/fruits"
                 className={`block px-4 py-2 rounded-lg transition-colors font-sans ${
                   isActive("/admin/fruits")
-                    ? "bg-[#E8DDCB] text-[#4A3728]"
-                    : "text-[#E8DDCB]/80 hover:bg-[#5A4A3A]"
+                    ? "bg-[#FFF6F0] text-[#14433B]"
+                    : "text-[#FFF6F0]/80 hover:bg-[#5A4A3A]"
                 }`}
               >
-                จัดการวัถุดิบ
+                จัดการวัตถุดิบ
               </Link>
               <Link
                 href="/admin/drinks"
                 className={`block px-4 py-2 rounded-lg transition-colors font-sans ${
                   isActive("/admin/drinks")
-                    ? "bg-[#E8DDCB] text-[#4A3728]"
-                    : "text-[#E8DDCB]/80 hover:bg-[#5A4A3A]"
+                    ? "bg-[#FFF6F0] text-[#14433B]"
+                    : "text-[#FFF6F0]/80 hover:bg-[#5A4A3A]"
                 }`}
               >
                 จัดการเมนู
@@ -88,8 +88,8 @@ export default function AdminSidebar() {
                 href="/admin/cup-sizes"
                 className={`block px-4 py-2 rounded-lg transition-colors font-sans ${
                   isActive("/admin/cup-sizes")
-                    ? "bg-[#E8DDCB] text-[#4A3728]"
-                    : "text-[#E8DDCB]/80 hover:bg-[#5A4A3A]"
+                    ? "bg-[#FFF6F0] text-[#14433B]"
+                    : "text-[#FFF6F0]/80 hover:bg-[#5A4A3A]"
                 }`}
               >
                 จัดการขนาดแก้ว
@@ -102,8 +102,8 @@ export default function AdminSidebar() {
           href="/admin/orders"
           className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-sans ${
             isActive("/admin/orders")
-              ? "bg-[#E8DDCB] text-[#4A3728]"
-              : "text-[#E8DDCB] hover:bg-[#5A4A3A]"
+              ? "bg-[#FFF6F0] text-[#14433B]"
+              : "text-[#FFF6F0] hover:bg-[#5A4A3A]"
           }`}
         >
           <ShoppingCart className="w-5 h-5" />

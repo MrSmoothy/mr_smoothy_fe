@@ -60,7 +60,7 @@ export default function AdminOrdersPage() {
       case "CONFIRMED":
         return "bg-blue-200 text-blue-800";
       case "READY":
-        return "bg-green-200 text-green-800";
+        return "bg-[#14433B]/20 text-[#14433B]";
       default:
         return "bg-gray-200 text-black";
     }
@@ -95,8 +95,8 @@ export default function AdminOrdersPage() {
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3728] mx-auto mb-4"></div>
-            <div className="text-[#4A3728] text-xl">กำลังโหลดข้อมูล...</div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
+            <div className="text-[#14433B] text-xl">กำลังโหลดข้อมูล...</div>
           </div>
         </div>
       </div>
@@ -104,18 +104,18 @@ export default function AdminOrdersPage() {
   }
 
   return (
-    <div className="p-8 bg-[#E8DDCB] min-h-screen">
+    <div className="p-8 bg-[#FFF6F0] min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#4A3728] mb-2 font-serif">Order Management</h1>
-            <p className="text-[#4A3728]/70 font-sans">จัดการคำสั่งซื้อทั้งหมด</p>
+            <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-serif">Order Management</h1>
+            <p className="text-[#14433B]/70 font-sans">จัดการคำสั่งซื้อทั้งหมด</p>
           </div>
           <button
             onClick={loadOrders}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-[#4A3728] text-[#E8DDCB] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-sans"
+            className="flex items-center gap-2 px-4 py-2 bg-[#14433B] text-[#FFF6F0] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-sans"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             รีเฟรช
@@ -123,10 +123,10 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Orders Table */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden border border-[#4A3728]/10">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden border border-[#14433B]/10">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#4A3728] text-[#E8DDCB]">
+              <thead className="bg-[#14433B] text-[#FFF6F0]">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold font-sans">Order ID</th>
                   <th className="px-6 py-4 text-left font-semibold font-sans">Item Name</th>
@@ -137,17 +137,17 @@ export default function AdminOrdersPage() {
                   <th className="px-6 py-4 text-left font-semibold font-sans">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#4A3728]/10">
+              <tbody className="divide-y divide-[#14433B]/10">
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-[#4A3728]/70 font-sans">
+                    <td colSpan={7} className="px-6 py-12 text-center text-[#14433B]/70 font-sans">
                       ไม่มีคำสั่งซื้อ
                     </td>
                   </tr>
                 ) : (
                   orders.map((order) => (
                     <>
-                      <tr key={order.orderId} className="hover:bg-[#E8DDCB]/30">
+                      <tr key={order.orderId} className="hover:bg-[#FFF6F0]/30">
                         <td className="px-6 py-4">
                           <span className="text-blue-600 font-semibold font-sans">
                             #{String(order.orderId).padStart(3, "0")}
@@ -157,7 +157,7 @@ export default function AdminOrdersPage() {
                           <div className="space-y-1">
                             {order.items && order.items.length > 0 ? (
                               <>
-                                <div className="text-[#4A3728] font-sans font-semibold">
+                                <div className="text-[#14433B] font-sans font-semibold">
                                   {order.items[0].predefinedDrinkName || "Custom"} ({order.items[0].quantity} แก้ว)
                                 </div>
                                 {order.items.length > 1 && (
@@ -180,14 +180,14 @@ export default function AdminOrdersPage() {
                                 )}
                               </>
                             ) : (
-                              <span className="text-[#4A3728]/50 font-sans">ไม่มีรายการ</span>
+                              <span className="text-[#14433B]/50 font-sans">ไม่มีรายการ</span>
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-[#4A3728] font-sans">
+                        <td className="px-6 py-4 text-[#14433B] font-sans">
                           {order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
                         </td>
-                        <td className="px-6 py-4 text-green-600 font-semibold font-sans">
+                        <td className="px-6 py-4 text-[#14433B] font-semibold font-sans">
                           ฿{Number(order.totalPrice).toFixed(2)}
                         </td>
                         <td className="px-6 py-4">
@@ -199,7 +199,7 @@ export default function AdminOrdersPage() {
                             {getStatusLabel(order.status || "PENDING")}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-[#4A3728]/70 text-sm font-sans">
+                        <td className="px-6 py-4 text-[#14433B]/70 text-sm font-sans">
                           {formatDate(order.createdAt)}
                         </td>
                         <td className="px-6 py-4">
@@ -208,7 +208,7 @@ export default function AdminOrdersPage() {
                               value={order.status || "PENDING"}
                               onChange={(e) => handleUpdateStatus(order.orderId!, e.target.value)}
                               disabled={updating === order.orderId}
-                              className="px-3 py-1 border border-[#4A3728]/30 rounded text-sm font-sans disabled:opacity-50"
+                              className="px-3 py-1 border border-[#14433B]/30 rounded text-sm font-sans disabled:opacity-50"
                             >
                               <option value="PENDING">Pending</option>
                               <option value="CONFIRMED">Confirmed</option>
@@ -219,7 +219,7 @@ export default function AdminOrdersPage() {
                             </select>
                             <button
                               onClick={() => setExpandedOrderId(expandedOrderId === order.orderId ? null : order.orderId!)}
-                              className="px-3 py-1 bg-[#4A3728] text-[#E8DDCB] rounded text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1 font-sans"
+                              className="px-3 py-1 bg-[#14433B] text-[#FFF6F0] rounded text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1 font-sans"
                             >
                               {expandedOrderId === order.orderId ? (
                                 <>
@@ -238,12 +238,12 @@ export default function AdminOrdersPage() {
                       </tr>
                       {/* Expanded Row with Order Details */}
                       {expandedOrderId === order.orderId && (
-                        <tr className="bg-[#F5EFE6]">
+                        <tr className="bg-[#FFF6F0]">
                           <td colSpan={7} className="px-6 py-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               {/* Customer/User Information */}
-                              <div className="bg-white rounded-lg p-4 border border-[#4A3728]/20">
-                                <h3 className="text-lg font-bold text-[#4A3728] mb-4 flex items-center gap-2 font-sans">
+                              <div className="bg-white rounded-lg p-4 border border-[#14433B]/20">
+                                <h3 className="text-lg font-bold text-[#14433B] mb-4 flex items-center gap-2 font-sans">
                                   <User className="w-5 h-5" />
                                   ข้อมูลผู้สั่งซื้อ
                                 </h3>
@@ -252,19 +252,19 @@ export default function AdminOrdersPage() {
                                   {order.username && (
                                     <>
                                       <div>
-                                        <p className="text-xs text-[#4A3728]/70 font-sans">ชื่อผู้ใช้:</p>
-                                        <p className="font-semibold text-[#4A3728] font-sans">{order.username}</p>
+                                        <p className="text-xs text-[#14433B]/70 font-sans">ชื่อผู้ใช้:</p>
+                                        <p className="font-semibold text-[#14433B] font-sans">{order.username}</p>
                                       </div>
                                       {order.userFullName && (
                                         <div>
-                                          <p className="text-xs text-[#4A3728]/70 font-sans">ชื่อ-นามสกุล:</p>
-                                          <p className="font-semibold text-[#4A3728] font-sans">{order.userFullName}</p>
+                                          <p className="text-xs text-[#14433B]/70 font-sans">ชื่อ-นามสกุล:</p>
+                                          <p className="font-semibold text-[#14433B] font-sans">{order.userFullName}</p>
                                         </div>
                                       )}
                                       {order.userEmail && (
                                         <div>
-                                          <p className="text-xs text-[#4A3728]/70 font-sans">อีเมล:</p>
-                                          <p className="font-semibold text-[#4A3728] font-sans">{order.userEmail}</p>
+                                          <p className="text-xs text-[#14433B]/70 font-sans">อีเมล:</p>
+                                          <p className="font-semibold text-[#14433B] font-sans">{order.userEmail}</p>
                                         </div>
                                       )}
                                     </>
@@ -273,61 +273,61 @@ export default function AdminOrdersPage() {
                                   {order.customerName && !order.username && (
                                     <>
                                       <div>
-                                        <p className="text-xs text-[#4A3728]/70 font-sans">ชื่อลูกค้า (Guest):</p>
-                                        <p className="font-semibold text-[#4A3728] font-sans">{order.customerName}</p>
+                                        <p className="text-xs text-[#14433B]/70 font-sans">ชื่อลูกค้า (Guest):</p>
+                                        <p className="font-semibold text-[#14433B] font-sans">{order.customerName}</p>
                                       </div>
                                       {order.customerEmail && (
                                         <div>
-                                          <p className="text-xs text-[#4A3728]/70 font-sans">อีเมล:</p>
-                                          <p className="font-semibold text-[#4A3728] font-sans">{order.customerEmail}</p>
+                                          <p className="text-xs text-[#14433B]/70 font-sans">อีเมล:</p>
+                                          <p className="font-semibold text-[#14433B] font-sans">{order.customerEmail}</p>
                                         </div>
                                       )}
                                     </>
                                   )}
                                   <div>
-                                    <p className="text-xs text-[#4A3728]/70 font-sans">เบอร์โทรติดต่อ:</p>
-                                    <p className="font-semibold text-[#4A3728] font-sans">{order.phoneNumber}</p>
+                                    <p className="text-xs text-[#14433B]/70 font-sans">เบอร์โทรติดต่อ:</p>
+                                    <p className="font-semibold text-[#14433B] font-sans">{order.phoneNumber}</p>
                                   </div>
                                   {order.pickupTime && (
                                     <div>
-                                      <p className="text-xs text-[#4A3728]/70 font-sans">เวลารับสินค้า:</p>
-                                      <p className="font-semibold text-[#4A3728] font-sans">
+                                      <p className="text-xs text-[#14433B]/70 font-sans">เวลารับสินค้า:</p>
+                                      <p className="font-semibold text-[#14433B] font-sans">
                                         {formatDate(order.pickupTime)}
                                       </p>
                                     </div>
                                   )}
                                   {order.notes && (
                                     <div>
-                                      <p className="text-xs text-[#4A3728]/70 font-sans">หมายเหตุ:</p>
-                                      <p className="font-semibold text-[#4A3728] font-sans">{order.notes}</p>
+                                      <p className="text-xs text-[#14433B]/70 font-sans">หมายเหตุ:</p>
+                                      <p className="font-semibold text-[#14433B] font-sans">{order.notes}</p>
                                     </div>
                                   )}
                                 </div>
                               </div>
 
                               {/* Order Items Details */}
-                              <div className="bg-white rounded-lg p-4 border border-[#4A3728]/20">
-                                <h3 className="text-lg font-bold text-[#4A3728] mb-4 font-sans">รายการเมนูทั้งหมด</h3>
+                              <div className="bg-white rounded-lg p-4 border border-[#14433B]/20">
+                                <h3 className="text-lg font-bold text-[#14433B] mb-4 font-sans">รายการเมนูทั้งหมด</h3>
                                 <div className="space-y-3 max-h-64 overflow-y-auto">
                                   {order.items && order.items.length > 0 ? (
                                     order.items.map((item, idx) => (
-                                      <div key={idx} className="border-b border-[#4A3728]/10 pb-3 last:border-b-0 last:pb-0">
+                                      <div key={idx} className="border-b border-[#14433B]/10 pb-3 last:border-b-0 last:pb-0">
                                         <div className="flex justify-between items-start mb-2">
                                           <div className="flex-1">
-                                            <p className="font-semibold text-[#4A3728] font-sans">
+                                            <p className="font-semibold text-[#14433B] font-sans">
                                               {item.predefinedDrinkName || "น้ำปั่นแบบกำหนดเอง"}
                                             </p>
-                                            <p className="text-sm text-[#4A3728]/70 font-sans">
+                                            <p className="text-sm text-[#14433B]/70 font-sans">
                                               ขนาด: {item.cupSizeName} | จำนวน: {item.quantity} แก้ว
                                             </p>
                                             {item.fruits && item.fruits.length > 0 && (
                                               <div className="mt-2">
-                                                <p className="text-xs text-[#4A3728]/60 font-sans mb-1">ส่วนผสม:</p>
+                                                <p className="text-xs text-[#14433B]/60 font-sans mb-1">ส่วนผสม:</p>
                                                 <div className="flex flex-wrap gap-1">
                                                   {item.fruits.map((fruit, fruitIdx) => (
                                                     <span
                                                       key={fruitIdx}
-                                                      className="bg-[#E8DDCB] text-[#4A3728] px-2 py-0.5 rounded text-xs font-sans"
+                                                      className="bg-[#FFF6F0] text-[#14433B] px-2 py-0.5 rounded text-xs font-sans"
                                                     >
                                                       {fruit.fruitName} x{fruit.quantity}
                                                     </span>
@@ -337,11 +337,11 @@ export default function AdminOrdersPage() {
                                             )}
                                           </div>
                                           <div className="text-right ml-4">
-                                            <p className="text-sm text-[#4A3728]/70 font-sans">ราคาต่อหน่วย</p>
-                                            <p className="font-semibold text-[#4A3728] font-sans">
+                                            <p className="text-sm text-[#14433B]/70 font-sans">ราคาต่อหน่วย</p>
+                                            <p className="font-semibold text-[#14433B] font-sans">
                                               ฿{Number(item.unitPrice).toFixed(2)}
                                             </p>
-                                            <p className="text-lg font-bold text-green-600 font-sans mt-1">
+                                            <p className="text-lg font-bold text-[#14433B] font-sans mt-1">
                                               ฿{Number(item.totalPrice).toFixed(2)}
                                             </p>
                                           </div>
@@ -349,13 +349,13 @@ export default function AdminOrdersPage() {
                                       </div>
                                     ))
                                   ) : (
-                                    <p className="text-[#4A3728]/50 font-sans">ไม่มีรายการ</p>
+                                    <p className="text-[#14433B]/50 font-sans">ไม่มีรายการ</p>
                                   )}
                                 </div>
-                                <div className="mt-4 pt-4 border-t border-[#4A3728]/20">
+                                <div className="mt-4 pt-4 border-t border-[#14433B]/20">
                                   <div className="flex justify-between items-center">
-                                    <span className="text-lg font-semibold text-[#4A3728] font-sans">ยอดรวม:</span>
-                                    <span className="text-xl font-bold text-green-600 font-sans">
+                                    <span className="text-lg font-semibold text-[#14433B] font-sans">ยอดรวม:</span>
+                                    <span className="text-xl font-bold text-[#14433B] font-sans">
                                       ฿{Number(order.totalPrice).toFixed(2)}
                                     </span>
                                   </div>

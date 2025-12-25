@@ -36,10 +36,10 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
         {/* แก้ว */}
         <div className="absolute inset-0 flex flex-col">
           {/* ฝาแก้ว */}
-          <div className="h-4 bg-[#4A2C1B]/20 rounded-t-lg border-2 border-[#4A2C1B]/30"></div>
+          <div className="h-4 bg-[#14433B]/20 rounded-t-lg border-2 border-[#14433B]/30"></div>
           
           {/* ตัวแก้ว */}
-          <div className="flex-1 bg-gradient-to-b from-white/30 to-white/10 rounded-b-lg border-2 border-[#4A2C1B]/30 backdrop-blur-sm relative overflow-hidden">
+          <div className="flex-1 bg-gradient-to-b from-white/30 to-white/10 rounded-b-lg border-2 border-[#14433B]/30 backdrop-blur-sm relative overflow-hidden">
             {/* Smoothy Layers */}
             {fruitEntries.length > 0 ? (
               <div className="absolute inset-0 flex flex-col-reverse">
@@ -78,7 +78,7 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
               </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-[#4A2C1B]/30 text-xs text-center">
+                <div className="text-[#14433B]/30 text-xs text-center">
                   เลือกผลไม้
                 </div>
               </div>
@@ -105,9 +105,9 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
         </div>
         
         {/* Progress indicator */}
-        <div className="absolute -right-8 top-0 bottom-0 w-2 bg-[#4A2C1B]/10 rounded-full overflow-hidden">
+        <div className="absolute -right-8 top-0 bottom-0 w-2 bg-[#14433B]/10 rounded-full overflow-hidden">
           <div
-            className="absolute bottom-0 w-full bg-gradient-to-t from-green-500 to-green-400 transition-all duration-500 ease-out rounded-full"
+            className="absolute bottom-0 w-full bg-gradient-to-t from-[#14433B] to-[#14433B]/80 transition-all duration-500 ease-out rounded-full"
             style={{ height: `${fillPercentage}%` }}
           ></div>
         </div>
@@ -116,17 +116,17 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
       {/* ข้อมูลแก้ว */}
       <div className="text-center space-y-2 min-w-[200px]">
         {cupSize && (
-          <div className="text-sm text-[#4A2C1B]/70">
+          <div className="text-sm text-[#14433B]/70">
             ขนาด: {cupSize.name} ({cupSize.volumeMl}ml)
           </div>
         )}
         
-        <div className="text-lg font-bold text-[#4A2C1B]">
+        <div className="text-lg font-bold text-[#14433B]">
           {totalFruits} / {maxFruits} ผลไม้
         </div>
         
         {remainingSlots > 0 ? (
-          <div className="text-sm text-green-600 font-medium">
+          <div className="text-sm text-[#14433B] font-medium">
             สามารถเพิ่มได้อีก {remainingSlots} อย่าง
           </div>
         ) : (
@@ -136,9 +136,9 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
         )}
         
         {/* Progress bar */}
-        <div className="w-full h-2 bg-[#4A2C1B]/10 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-[#14433B]/10 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-green-400 via-green-500 to-green-600 transition-all duration-500 ease-out"
+            className="h-full bg-gradient-to-r from-[#14433B]/80 via-[#14433B] to-[#14433B] transition-all duration-500 ease-out"
             style={{ width: `${fillPercentage}%` }}
           ></div>
         </div>
@@ -147,7 +147,7 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
       {/* รายการผลไม้ที่เลือก */}
       {fruitEntries.length > 0 && (
         <div className="mt-4 w-full max-w-xs">
-          <div className="text-sm font-semibold text-[#4A2C1B] mb-2">ผลไม้ที่เลือก:</div>
+          <div className="text-sm font-semibold text-[#14433B] mb-2">ผลไม้ที่เลือก:</div>
           <div className="space-y-1">
             {fruitEntries.map(([fruitId, { fruit, quantity }]) => (
               <div
@@ -162,9 +162,9 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
                       className="w-6 h-6 rounded-full object-cover"
                     />
                   )}
-                  <span className="text-[#4A2C1B]">{fruit.name}</span>
+                  <span className="text-[#14433B]">{fruit.name}</span>
                 </div>
-                <span className="font-bold text-[#4A2C1B]">x{quantity}</span>
+                <span className="font-bold text-[#14433B]">x{quantity}</span>
               </div>
             ))}
           </div>

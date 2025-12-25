@@ -55,8 +55,8 @@ export default function FruitSelector({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-bold text-[#4A2C1B]">เลือกส่วนผสม</h3>
-        <div className="text-sm text-[#4A2C1B]/70">
+        <h3 className="text-xl font-bold text-[#14433B]">เลือกส่วนผสม</h3>
+        <div className="text-sm text-[#14433B]/70">
           {totalFruits} / {maxFruits} ผลไม้
         </div>
       </div>
@@ -64,8 +64,8 @@ export default function FruitSelector({
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {currentFruits.length === 0 ? (
           <div className="col-span-full text-center py-12">
-            <div className="text-[#4A2C1B]/40 text-6xl mb-4">🔍</div>
-            <div className="text-[#4A2C1B]/60 text-lg mb-2">
+            <div className="text-[#14433B]/40 text-6xl mb-4">🔍</div>
+            <div className="text-[#14433B]/60 text-lg mb-2">
               ไม่มีวัตถุดิบในหมวดหมู่นี้
             </div>
           </div>
@@ -86,8 +86,8 @@ export default function FruitSelector({
               >
                 <div
                   className={`relative rounded-xl overflow-hidden border-2 transition-all duration-300 ${isSelected
-                    ? "border-[#4A2C1B] bg-[#C9A78B]/20 shadow-md"
-                    : "border-[#4A2C1B]/20 bg-white hover:border-[#4A2C1B]/50"
+                    ? "border-[#14433B] bg-[#C9A78B]/20 shadow-md"
+                    : "border-[#14433B]/20 bg-white hover:border-[#14433B]/50"
                     }`}
                 >
                   {/* รูปภาพผลไม้ */}
@@ -110,8 +110,8 @@ export default function FruitSelector({
 
                     {/* Overlay เมื่อเลือก */}
                     {isSelected && (
-                      <div className="absolute inset-0 bg-[#4A2C1B]/10 flex items-center justify-center">
-                        <div className="bg-white/90 rounded-full px-3 py-1 text-[#4A2C1B] font-bold text-lg shadow-lg animate-bounce">
+                      <div className="absolute inset-0 bg-[#14433B]/10 flex items-center justify-center">
+                        <div className="bg-white/90 rounded-full px-3 py-1 text-[#14433B] font-bold text-lg shadow-lg animate-bounce">
                           {quantity}
                         </div>
                       </div>
@@ -120,10 +120,10 @@ export default function FruitSelector({
 
                   {/* ข้อมูลผลไม้ */}
                   <div className="p-3 space-y-1">
-                    <h4 className="font-semibold text-[#4A2C1B] text-sm line-clamp-1">
+                    <h4 className="font-semibold text-[#14433B] text-sm line-clamp-1">
                       {fruit.name}
                     </h4>
-                    <p className="text-xs text-[#4A2C1B]/70">
+                    <p className="text-xs text-[#14433B]/70">
                       {Number(fruit.pricePerUnit).toFixed(2)} บาท
                     </p>
                   </div>
@@ -142,7 +142,7 @@ export default function FruitSelector({
                         >
                           <Minus className="w-4 h-4" />
                         </button>
-                        <div className="bg-white/95 rounded-full px-3 py-1 text-[#4A2C1B] font-bold text-sm shadow-md min-w-[2rem] text-center">
+                        <div className="bg-white/95 rounded-full px-3 py-1 text-[#14433B] font-bold text-sm shadow-md min-w-[2rem] text-center">
                           {quantity}
                         </div>
                         <button
@@ -152,7 +152,7 @@ export default function FruitSelector({
                           }}
                           disabled={!canAdd}
                           className={`rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 ${canAdd
-                            ? "bg-green-500 hover:bg-green-600 text-white"
+                            ? "bg-[#14433B] hover:bg-[#1a5444] text-white"
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                             }`}
                           aria-label="เพิ่มจำนวน"
@@ -168,7 +168,7 @@ export default function FruitSelector({
                         }}
                         disabled={!canAdd}
                         className={`rounded-full p-2 shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 ${canAdd
-                          ? "bg-[#4A2C1B] hover:bg-[#5A3C2B] text-white"
+                          ? "bg-[#14433B] hover:bg-[#1a5444] text-white"
                           : "bg-gray-300 text-gray-500 cursor-not-allowed"
                           }`}
                         aria-label="เพิ่มผลไม้"
@@ -180,7 +180,7 @@ export default function FruitSelector({
 
                   {/* Badge เมื่อเลือก */}
                   {isSelected && (
-                    <div className="absolute top-2 left-2 bg-[#4A2C1B] text-white rounded-full px-2 py-1 text-xs font-bold shadow-lg animate-pulse">
+                    <div className="absolute top-2 left-2 bg-[#14433B] text-white rounded-full px-2 py-1 text-xs font-bold shadow-lg animate-pulse">
                       ✓
                     </div>
                   )}
@@ -207,7 +207,7 @@ export default function FruitSelector({
             disabled={currentPage === 1}
             className={`p-2 rounded-lg transition-all duration-200 ${currentPage === 1
               ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-              : "bg-[#4A2C1B] text-white hover:bg-[#5A3C2B] shadow-md hover:shadow-lg active:scale-95"
+              : "bg-[#14433B] text-white hover:bg-[#1a5444] shadow-md hover:shadow-lg active:scale-95"
               }`}
             aria-label="หน้าก่อนหน้า"
           >
@@ -221,8 +221,8 @@ export default function FruitSelector({
                 key={page}
                 onClick={() => setCurrentPage(page)}
                 className={`min-w-[2.5rem] h-10 rounded-lg font-semibold transition-all duration-200 ${currentPage === page
-                  ? "bg-[#4A2C1B] text-white shadow-lg scale-110"
-                  : "bg-white text-[#4A2C1B] border-2 border-[#4A2C1B]/20 hover:border-[#4A2C1B]/50 hover:shadow-md active:scale-95"
+                  ? "bg-[#14433B] text-white shadow-lg scale-110"
+                  : "bg-white text-[#14433B] border-2 border-[#14433B]/20 hover:border-[#14433B]/50 hover:shadow-md active:scale-95"
                   }`}
               >
                 {page}
@@ -236,7 +236,7 @@ export default function FruitSelector({
             disabled={currentPage === totalPages}
             className={`p-2 rounded-lg transition-all duration-200 ${currentPage === totalPages
               ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-              : "bg-[#4A2C1B] text-white hover:bg-[#5A3C2B] shadow-md hover:shadow-lg active:scale-95"
+              : "bg-[#14433B] text-white hover:bg-[#1a5444] shadow-md hover:shadow-lg active:scale-95"
               }`}
             aria-label="หน้าถัดไป"
           >
@@ -247,10 +247,10 @@ export default function FruitSelector({
 
       {/* สรุปผลไม้ที่เลือก */}
       {selectedFruits.size > 0 && (
-        <div className="mt-6 p-4 bg-gradient-to-r from-[#C9A78B]/20 to-[#C9A78B]/10 rounded-lg border border-[#4A2C1B]/20">
+        <div className="mt-6 p-4 bg-gradient-to-r from-[#C9A78B]/20 to-[#C9A78B]/10 rounded-lg border border-[#14433B]/20">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-[#4A2C1B]">ผลไม้ที่เลือก:</span>
-            <span className="text-sm text-[#4A2C1B]/70">
+            <span className="text-sm font-semibold text-[#14433B]">ผลไม้ที่เลือก:</span>
+            <span className="text-sm text-[#14433B]/70">
               {totalFruits} / {maxFruits} ผลไม้
             </span>
           </div>
@@ -258,7 +258,7 @@ export default function FruitSelector({
             {Array.from(selectedFruits.entries()).map(([fruitId, { fruit, quantity }]) => (
               <div
                 key={fruitId}
-                className="flex items-center gap-2 bg-white rounded-full px-3 py-1.5 shadow-sm border border-[#4A2C1B]/20"
+                className="flex items-center gap-2 bg-white rounded-full px-3 py-1.5 shadow-sm border border-[#14433B]/20"
               >
                 {fruit.imageUrl && (
                   <img
@@ -267,8 +267,8 @@ export default function FruitSelector({
                     className="w-5 h-5 rounded-full object-cover"
                   />
                 )}
-                <span className="text-sm text-[#4A2C1B] font-medium">{fruit.name}</span>
-                <span className="text-sm font-bold text-[#4A2C1B]">x{quantity}</span>
+                <span className="text-sm text-[#14433B] font-medium">{fruit.name}</span>
+                <span className="text-sm font-bold text-[#14433B]">x{quantity}</span>
               </div>
             ))}
           </div>

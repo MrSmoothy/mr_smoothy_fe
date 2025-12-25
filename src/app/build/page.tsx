@@ -308,10 +308,10 @@ export default function BuildPage() {
 
   if (loading) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A2C1B] mx-auto mb-4"></div>
-          <div className="text-[#4A2C1B] text-xl">กำลังโหลดข้อมูลผลไม้...</div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
+          <div className="text-[#14433B] text-xl">กำลังโหลดข้อมูลผลไม้...</div>
         </div>
       </div>
     );
@@ -319,14 +319,14 @@ export default function BuildPage() {
 
   if (error) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center px-4">
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <div className="text-red-600 text-xl font-bold mb-2">เกิดข้อผิดพลาด</div>
-          <div className="text-[#4A2C1B] mb-4">{error}</div>
+          <div className="text-[#14433B] mb-4">{error}</div>
           <button
             onClick={loadData}
-            className="bg-[#4A2C1B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+            className="bg-[#14433B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
           >
             ลองอีกครั้ง
           </button>
@@ -337,15 +337,15 @@ export default function BuildPage() {
 
   if (fruits.length === 0) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center px-4">
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="text-[#4A2C1B] text-xl font-bold mb-4">ยังไม่มีผลไม้ในระบบ</div>
-          <div className="text-[#4A2C1B]/70 mb-4">
+          <div className="text-[#14433B] text-xl font-bold mb-4">ยังไม่มีผลไม้ในระบบ</div>
+          <div className="text-[#14433B]/70 mb-4">
             กรุณาตรวจสอบว่า backend API ทำงานอยู่ที่ {process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"}
           </div>
           <button
             onClick={loadData}
-            className="bg-[#4A2C1B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+            className="bg-[#14433B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
           >
             ลองโหลดอีกครั้ง
           </button>
@@ -355,18 +355,18 @@ export default function BuildPage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#F5EFE6] via-[#F5EFE6] to-[#E8DDD0] min-h-screen py-4 sm:py-6 md:py-8">
+    <div className="bg-gradient-to-br from-[#FFF6F0] via-[#FFF6F0] to-[#E8DDD0] min-h-screen py-4 sm:py-6 md:py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 sm:mb-8 text-center animate-fadeIn">
           <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#4A2C1B]" />
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#4A2C1B]">
+            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#14433B]" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#14433B]">
               สร้าง Smoothy ของคุณเอง
             </h1>
-            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#4A2C1B]" />
+            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#14433B]" />
           </div>
-          <p className="text-[#4A2C1B]/70 text-base sm:text-lg px-4">
+          <p className="text-[#14433B]/70 text-base sm:text-lg px-4">
             เลือกส่วนผสมที่คุณชื่นชอบ สูงสุด {MAX_FRUITS} อย่าง (ผลไม้ ผัก และส่วนเสริม)
           </p>
           {!user && (
@@ -379,12 +379,12 @@ export default function BuildPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 pb-24 lg:pb-0">
           {/* Left Column - Fruit Selector */}
           <div className="lg:col-span-2 order-1">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-[#4A2C1B]/10 animate-slideIn">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-[#14433B]/10 animate-slideIn">
               {/* Category Filter */}
               <div className="mb-4 sm:mb-6">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-lg sm:text-xl font-bold text-[#4A2C1B]">เลือกหมวดหมู่</h3>
-                  <div className="text-xs sm:text-sm text-[#4A2C1B]/70">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#14433B]">เลือกหมวดหมู่</h3>
+                  <div className="text-xs sm:text-sm text-[#14433B]/70">
                     {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
                   </div>
                 </div>
@@ -392,7 +392,7 @@ export default function BuildPage() {
                   <button
                     onClick={() => setSelectedCategory("ALL")}
                     className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "ALL"
-                      ? "bg-[#4A3728] text-white shadow-md"
+                      ? "bg-[#14433B] text-white shadow-md"
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
@@ -401,7 +401,7 @@ export default function BuildPage() {
                   <button
                     onClick={() => setSelectedCategory("FRUIT")}
                     className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "FRUIT"
-                      ? "bg-[#4A3728] text-white shadow-md"
+                      ? "bg-[#14433B] text-white shadow-md"
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
@@ -410,7 +410,7 @@ export default function BuildPage() {
                   <button
                     onClick={() => setSelectedCategory("VEGETABLE")}
                     className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "VEGETABLE"
-                      ? "bg-[#4A3728] text-white shadow-md"
+                      ? "bg-[#14433B] text-white shadow-md"
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
@@ -419,7 +419,7 @@ export default function BuildPage() {
                   <button
                     onClick={() => setSelectedCategory("ADDON")}
                     className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "ADDON"
-                      ? "bg-[#4A3728] text-white shadow-md"
+                      ? "bg-[#14433B] text-white shadow-md"
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
@@ -431,19 +431,19 @@ export default function BuildPage() {
               {/* Search Input */}
               <div className="relative mb-4 sm:mb-6">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-[#4A2C1B]/40" />
+                  <Search className="h-5 w-5 text-[#14433B]/40" />
                 </div>
                 <input
                   type="text"
                   placeholder="ค้นหาวัตถุดิบ..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border-2 border-[#4A2C1B]/20 rounded-lg focus:outline-none focus:border-[#4A2C1B] focus:ring-2 focus:ring-[#4A2C1B]/20 transition-all duration-200 text-[#4A2C1B] placeholder-[#4A2C1B]/40"
+                  className="w-full pl-10 pr-4 py-2.5 border-2 border-[#14433B]/20 rounded-lg focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all duration-200 text-[#14433B] placeholder-[#14433B]/40"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#4A2C1B]/60 hover:text-[#4A2C1B] transition-colors"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#14433B]/60 hover:text-[#14433B] transition-colors"
                   >
                     <span className="text-xl">×</span>
                   </button>
@@ -452,7 +452,7 @@ export default function BuildPage() {
 
               {/* Results count */}
               {searchQuery && (
-                <div className="text-sm text-[#4A2C1B]/60 mb-4">
+                <div className="text-sm text-[#14433B]/60 mb-4">
                   พบ {fruits.filter(f => {
                     const matchCategory = selectedCategory === "ALL" || (f.category || "FRUIT") === selectedCategory;
                     const matchSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -479,10 +479,10 @@ export default function BuildPage() {
                 />
               ) : (
                 <div className="text-center py-12">
-                  <div className="text-[#4A2C1B]/60 text-lg mb-4">ไม่พบข้อมูลผลไม้</div>
+                  <div className="text-[#14433B]/60 text-lg mb-4">ไม่พบข้อมูลผลไม้</div>
                   <button
                     onClick={loadData}
-                    className="bg-[#4A2C1B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+                    className="bg-[#14433B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
                   >
                     ลองโหลดอีกครั้ง
                   </button>
@@ -494,8 +494,8 @@ export default function BuildPage() {
           {/* Right Column - Smoothy Cup */}
           <div className="lg:col-span-1 order-2">
             <div className="lg:sticky lg:top-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-[#4A2C1B]/10 animate-scaleIn">
-                <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] mb-4 sm:mb-6 text-center">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-[#14433B]/10 animate-scaleIn">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#14433B] mb-4 sm:mb-6 text-center">
                   Smoothy ของคุณ
                 </h2>
 
@@ -508,28 +508,28 @@ export default function BuildPage() {
                 {/* Cup Size Selector Button */}
                 {cupSizes.length > 0 && (
                   <div className="mt-6 space-y-2">
-                    <label className="block text-sm font-semibold text-[#4A2C1B]">
+                    <label className="block text-sm font-semibold text-[#14433B]">
                       ขนาดแก้ว
                     </label>
                     <button
                       onClick={() => setShowCupSizeModal(true)}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#4A2C1B]/30 bg-white hover:border-[#4A2C1B]/50 transition-all duration-200 text-left"
+                      className="w-full px-4 py-3 rounded-lg border-2 border-[#14433B]/30 bg-white hover:border-[#14433B]/50 transition-all duration-200 text-left"
                     >
                       {selectedCupSize ? (
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-semibold text-[#4A2C1B]">{selectedCupSize.name}</div>
-                            <div className="text-xs text-[#4A2C1B]/70">
+                            <div className="font-semibold text-[#14433B]">{selectedCupSize.name}</div>
+                            <div className="text-xs text-[#14433B]/70">
                               {selectedCupSize.volumeMl}ml
                               {selectedCupSize.priceExtra > 0 && ` (+${selectedCupSize.priceExtra.toFixed(0)}฿)`}
                             </div>
                           </div>
-                          <div className="text-[#4A2C1B]/40">▼</div>
+                          <div className="text-[#14433B]/40">▼</div>
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <span className="text-[#4A2C1B]/60">เลือกขนาดแก้ว</span>
-                          <div className="text-[#4A2C1B]/40">▼</div>
+                          <span className="text-[#14433B]/60">เลือกขนาดแก้ว</span>
+                          <div className="text-[#14433B]/40">▼</div>
                         </div>
                       )}
                     </button>
@@ -547,12 +547,12 @@ export default function BuildPage() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-xl font-bold text-[#4A2C1B]">เลือกขนาดแก้ว</h3>
+                        <h3 className="text-xl font-bold text-[#14433B]">เลือกขนาดแก้ว</h3>
                         <button
                           onClick={() => setShowCupSizeModal(false)}
                           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                         >
-                          <X className="w-5 h-5 text-[#4A2C1B]" />
+                          <X className="w-5 h-5 text-[#14433B]" />
                         </button>
                       </div>
 
@@ -565,23 +565,23 @@ export default function BuildPage() {
                               setShowCupSizeModal(false);
                             }}
                             className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-left ${selectedCupSize?.id === size.id
-                                ? "border-[#4A2C1B] bg-[#4A2C1B] text-white shadow-lg scale-105"
-                                : "border-[#4A2C1B]/30 bg-white hover:border-[#4A2C1B]/50 hover:shadow-md"
+                                ? "border-[#14433B] bg-[#14433B] text-white shadow-lg scale-105"
+                                : "border-[#14433B]/30 bg-white hover:border-[#14433B]/50 hover:shadow-md"
                               }`}
                           >
                             <div className="flex items-center justify-between">
                               <div>
-                                <div className={`font-bold text-lg ${selectedCupSize?.id === size.id ? "text-white" : "text-[#4A2C1B]"
+                                <div className={`font-bold text-lg ${selectedCupSize?.id === size.id ? "text-white" : "text-[#14433B]"
                                   }`}>
                                   {size.name}
                                 </div>
-                                <div className={`text-sm ${selectedCupSize?.id === size.id ? "text-white/80" : "text-[#4A2C1B]/70"
+                                <div className={`text-sm ${selectedCupSize?.id === size.id ? "text-white/80" : "text-[#14433B]/70"
                                   }`}>
                                   {size.volumeMl} ml
                                 </div>
                               </div>
                               {size.priceExtra > 0 && (
-                                <div className={`font-semibold ${selectedCupSize?.id === size.id ? "text-white" : "text-[#4A2C1B]"
+                                <div className={`font-semibold ${selectedCupSize?.id === size.id ? "text-white" : "text-[#14433B]"
                                   }`}>
                                   +{size.priceExtra.toFixed(0)}฿
                                 </div>
@@ -599,13 +599,13 @@ export default function BuildPage() {
 
                 {/* Quantity */}
                 <div className="mt-6 space-y-3">
-                  <label className="block text-sm font-semibold text-[#4A2C1B]">
+                  <label className="block text-sm font-semibold text-[#14433B]">
                     จำนวน
                   </label>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 rounded-lg bg-[#4A2C1B]/10 hover:bg-[#4A2C1B]/20 text-[#4A2C1B] font-bold transition-colors"
+                      className="w-10 h-10 rounded-lg bg-[#14433B]/10 hover:bg-[#14433B]/20 text-[#14433B] font-bold transition-colors"
                     >
                       -
                     </button>
@@ -614,11 +614,11 @@ export default function BuildPage() {
                       min="1"
                       value={quantity}
                       onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-                      className="flex-1 text-center text-lg font-bold text-[#4A2C1B] bg-white border-2 border-[#4A2C1B]/20 rounded-lg py-2"
+                      className="flex-1 text-center text-lg font-bold text-[#14433B] bg-white border-2 border-[#14433B]/20 rounded-lg py-2"
                     />
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 rounded-lg bg-[#4A2C1B]/10 hover:bg-[#4A2C1B]/20 text-[#4A2C1B] font-bold transition-colors"
+                      className="w-10 h-10 rounded-lg bg-[#14433B]/10 hover:bg-[#14433B]/20 text-[#14433B] font-bold transition-colors"
                     >
                       +
                     </button>
@@ -630,7 +630,7 @@ export default function BuildPage() {
                   onClick={handleAddToCart}
                   disabled={!canAddToCart || addingToCart}
                   className={`hidden lg:flex mt-6 w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 items-center justify-center gap-2 ${canAddToCart
-                    ? "bg-[#4A2C1B] text-white hover:bg-[#5A3C2B] hover:shadow-xl hover:scale-105 active:scale-95 border-2 border-[#4A2C1B]"
+                    ? "bg-[#14433B] text-white hover:bg-[#1a5444] hover:shadow-xl hover:scale-105 active:scale-95 border-2 border-[#14433B]"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
                     }`}
                 >
@@ -649,10 +649,10 @@ export default function BuildPage() {
 
                 {/* Nutrition Information */}
                 {totalFruits > 0 && (
-                  <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="mt-4 p-4 bg-[#14433B]/10 rounded-lg border border-[#14433B]/20">
                     <div className="flex items-center gap-2 mb-3">
-                      <Apple className="w-5 h-5 text-green-600" />
-                      <h3 className="text-sm font-semibold text-[#4A2C1B]">ข้อมูลโภชนาการ</h3>
+                      <Apple className="w-5 h-5 text-[#14433B]" />
+                      <h3 className="text-sm font-semibold text-[#14433B]">ข้อมูลโภชนาการ</h3>
                     </div>
 
                     {hasNutritionData ? (
@@ -676,8 +676,8 @@ export default function BuildPage() {
                                 
                           return (
                             <div key={fruit.id} className="text-xs bg-white/50 rounded p-2">
-                              <div className="font-semibold text-[#4A2C1B]">{fruit.name} ({qty} ชิ้น)</div>
-                                    <div className="text-[#4A2C1B]/70 mt-1 space-x-2">
+                              <div className="font-semibold text-[#14433B]">{fruit.name} ({qty} ชิ้น)</div>
+                                    <div className="text-[#14433B]/70 mt-1 space-x-2">
                                       {calorieValue > 0 && (
                                         <span>แคลอรี่: {(calorieValue * multiplier).toFixed(1)} kcal</span>
                                 )}
@@ -695,41 +695,41 @@ export default function BuildPage() {
                     )}
 
                     {/* ผลรวมโภชนาการ */}
-                    <div className="space-y-2 text-sm pt-3 border-t border-green-200">
+                    <div className="space-y-2 text-sm pt-3 border-t border-[#14433B]/20">
                       <div className="flex justify-between font-semibold">
-                        <span className="text-[#4A2C1B]">รวมทั้งหมด:</span>
+                        <span className="text-[#14433B]">รวมทั้งหมด:</span>
                       </div>
                           {nutrition.totalCalorie > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-[#4A2C1B]/70">แคลอรี่:</span>
-                        <span className="font-semibold text-[#4A2C1B]">
+                        <span className="text-[#14433B]/70">แคลอรี่:</span>
+                        <span className="font-semibold text-[#14433B]">
                           {nutrition.totalCalorie.toFixed(1)} kcal
                         </span>
                       </div>
                           )}
                           {nutrition.totalProtein > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-[#4A2C1B]/70">โปรตีน:</span>
-                        <span className="font-semibold text-[#4A2C1B]">
+                        <span className="text-[#14433B]/70">โปรตีน:</span>
+                        <span className="font-semibold text-[#14433B]">
                           {nutrition.totalProtein.toFixed(1)} g
                         </span>
                       </div>
                           )}
                           {nutrition.totalFiber > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-[#4A2C1B]/70">ไฟเบอร์:</span>
-                        <span className="font-semibold text-[#4A2C1B]">
+                        <span className="text-[#14433B]/70">ไฟเบอร์:</span>
+                        <span className="font-semibold text-[#14433B]">
                           {nutrition.totalFiber.toFixed(1)} g
                         </span>
                       </div>
                           )}
-                      <div className="text-xs text-[#4A2C1B]/60 mt-2 pt-2 border-t border-green-200">
+                      <div className="text-xs text-[#14433B]/60 mt-2 pt-2 border-t border-[#14433B]/20">
                         สำหรับ {quantity} แก้ว ({totalFruits} ส่วนผสม)
                       </div>
                     </div>
                       </>
                     ) : (
-                      <div className="text-sm text-[#4A2C1B]/60 py-2 text-center">
+                      <div className="text-sm text-[#14433B]/60 py-2 text-center">
                         ⚠️ ยังไม่มีข้อมูลโภชนาการสำหรับผลไม้ที่เลือก
                         <br />
                         <span className="text-xs">
@@ -742,9 +742,9 @@ export default function BuildPage() {
 
                 {/* Price Calculation */}
                 {canAddToCart && (
-                  <div className="mt-4 p-4 bg-[#C9A78B]/10 rounded-lg border border-[#4A2C1B]/20">
-                    <div className="text-sm text-[#4A2C1B]/70 mb-2">ราคาโดยประมาณ:</div>
-                    <div className="text-2xl font-bold text-[#4A2C1B]">
+                  <div className="mt-4 p-4 bg-[#C9A78B]/10 rounded-lg border border-[#14433B]/20">
+                    <div className="text-sm text-[#14433B]/70 mb-2">ราคาโดยประมาณ:</div>
+                    <div className="text-2xl font-bold text-[#14433B]">
                       {(
                         Array.from(selectedFruits.values()).reduce(
                           (sum, { fruit, quantity }) => sum + Number(fruit.pricePerUnit) * quantity,
@@ -753,7 +753,7 @@ export default function BuildPage() {
                         (selectedCupSize?.priceExtra || 0)
                       ).toFixed(2)} บาท
                     </div>
-                    <div className="text-xs text-[#4A2C1B]/60 mt-1">
+                    <div className="text-xs text-[#14433B]/60 mt-1">
                       x {quantity} แก้ว
                     </div>
                   </div>
@@ -765,13 +765,13 @@ export default function BuildPage() {
       </div>
 
       {/* Fixed Add to Cart Button - Mobile Only */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-[#4A2C1B]/20 shadow-lg p-4 safe-area-inset-bottom">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-[#14433B]/20 shadow-lg p-4 safe-area-inset-bottom">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-4 mb-2">
             {canAddToCart && (
               <div className="flex-1">
-                <div className="text-xs text-[#4A2C1B]/70">ราคาโดยประมาณ:</div>
-                <div className="text-lg font-bold text-[#4A2C1B]">
+                <div className="text-xs text-[#14433B]/70">ราคาโดยประมาณ:</div>
+                <div className="text-lg font-bold text-[#14433B]">
                   {(
                     Array.from(selectedFruits.values()).reduce(
                       (sum, { fruit, quantity }) => sum + Number(fruit.pricePerUnit) * quantity,
@@ -786,7 +786,7 @@ export default function BuildPage() {
               onClick={handleAddToCart}
               disabled={!canAddToCart || addingToCart}
               className={`flex-shrink-0 px-6 py-3 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 ${canAddToCart
-                ? "bg-[#4A2C1B] text-white shadow-lg active:scale-95 border-2 border-[#4A2C1B] hover:bg-[#5A3C2B]"
+                ? "bg-[#14433B] text-white shadow-lg active:scale-95 border-2 border-[#14433B] hover:bg-[#1a5444]"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300"
                 }`}
             >
@@ -804,7 +804,7 @@ export default function BuildPage() {
             </button>
           </div>
           {canAddToCart && (
-            <div className="text-xs text-[#4A2C1B]/60 text-center">
+            <div className="text-xs text-[#14433B]/60 text-center">
               x {quantity} แก้ว
             </div>
           )}

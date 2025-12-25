@@ -111,22 +111,22 @@ export default function FruitsPage() {
 
   if (loading) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-[#4A2C1B] text-xl mb-4">กำลังโหลดข้อมูลผลไม้...</div>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A2C1B] mx-auto"></div>
+          <div className="text-[#14433B] text-xl mb-4">กำลังโหลดข้อมูลผลไม้...</div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-12">
+    <div className="bg-[#FFF6F0] min-h-screen py-12">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-[#4A2C1B] mb-2">ผลไม้ทั้งหมด</h1>
-            <p className="text-[#4A2C1B]/70">
+            <h1 className="text-4xl font-bold text-[#14433B] mb-2">ผลไม้ทั้งหมด</h1>
+            <p className="text-[#14433B]/70">
               เลือกผลไม้ที่คุณชื่นชอบสำหรับทำน้ำปั่นของคุณ ({filteredFruits.length} {searchQuery ? "รายการที่พบ" : `จาก ${fruits.length} รายการ`})
             </p>
           </div>
@@ -146,10 +146,10 @@ export default function FruitsPage() {
               placeholder="ค้นหาวัตถุดิบ, ผลไม้, ผัก..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-[#4A2C1B]/30 bg-white text-[#4A2C1B] placeholder:text-[#4A2C1B]/50 focus:outline-none focus:border-[#4A2C1B] focus:ring-2 focus:ring-[#4A2C1B]/20 transition-all font-sans"
+              className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-[#14433B]/30 bg-white text-[#14433B] placeholder:text-[#14433B]/50 focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all font-sans"
             />
             <svg
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#4A2C1B]/50"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#14433B]/50"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -164,7 +164,7 @@ export default function FruitsPage() {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4A2C1B]/50 hover:text-[#4A2C1B] transition-colors"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#14433B]/50 hover:text-[#14433B] transition-colors"
                 aria-label="Clear search"
               >
                 <svg
@@ -184,7 +184,7 @@ export default function FruitsPage() {
             )}
           </div>
           {searchQuery && (
-            <p className="mt-2 text-sm text-[#4A2C1B]/70 font-sans">
+            <p className="mt-2 text-sm text-[#14433B]/70 font-sans">
               {filteredFruits.length > 0 
                 ? `พบ ${filteredFruits.length} รายการที่ตรงกับ "${searchQuery}"` 
                 : `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"`}
@@ -195,7 +195,7 @@ export default function FruitsPage() {
         {/* Debug Panel */}
         {showDebug && debugInfo && (
           <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="font-bold text-[#4A2C1B] mb-2">Debug Information:</h3>
+            <h3 className="font-bold text-[#14433B] mb-2">Debug Information:</h3>
             <div className="text-sm space-y-1 font-mono">
               <p><strong>API Base URL:</strong> {debugInfo.apiBaseUrl}</p>
               <p><strong>Data Type:</strong> {debugInfo.dataType}</p>
@@ -209,7 +209,7 @@ export default function FruitsPage() {
               )}
             </div>
             <details className="mt-2">
-              <summary className="cursor-pointer text-sm font-semibold text-[#4A2C1B]">
+              <summary className="cursor-pointer text-sm font-semibold text-[#14433B]">
                 ดู Raw Response
               </summary>
               <pre className="mt-2 p-2 bg-white rounded text-xs overflow-auto max-h-96">
@@ -235,9 +235,9 @@ export default function FruitsPage() {
 
         {fruits.length === 0 && !loading && !error ? (
           <div className="text-center py-16">
-            <div className="text-[#4A2C1B]/60 text-xl mb-4">ยังไม่มีผลไม้ในระบบ</div>
-            <p className="text-[#4A2C1B]/50 mb-4">กรุณาตรวจสอบ:</p>
-            <ul className="text-[#4A2C1B]/50 text-left max-w-md mx-auto space-y-2">
+            <div className="text-[#14433B]/60 text-xl mb-4">ยังไม่มีผลไม้ในระบบ</div>
+            <p className="text-[#14433B]/50 mb-4">กรุณาตรวจสอบ:</p>
+            <ul className="text-[#14433B]/50 text-left max-w-md mx-auto space-y-2">
               <li>1. ตรวจสอบว่า backend API ทำงานอยู่ที่ {process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"}</li>
               <li>2. ตรวจสอบว่ามีข้อมูลผลไม้ใน database table `fruit`</li>
               <li>3. ตรวจสอบว่าผลไม้มีค่า `active = true` หรือ `active = 1`</li>
@@ -246,17 +246,17 @@ export default function FruitsPage() {
             </ul>
             <button
               onClick={loadFruits}
-              className="mt-6 bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+              className="mt-6 bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
             >
               ลองโหลดอีกครั้ง
             </button>
           </div>
         ) : filteredFruits.length === 0 && searchQuery ? (
           <div className="text-center py-16 bg-white rounded-lg shadow-md p-12">
-            <div className="text-[#4A2C1B]/60 text-xl mb-4">ไม่พบผลลัพธ์สำหรับ "{searchQuery}"</div>
+            <div className="text-[#14433B]/60 text-xl mb-4">ไม่พบผลลัพธ์สำหรับ "{searchQuery}"</div>
             <button
               onClick={() => setSearchQuery("")}
-              className="bg-[#4A2C1B] text-[#F5EFE6] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+              className="bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
             >
               ล้างการค้นหา
             </button>
@@ -266,7 +266,7 @@ export default function FruitsPage() {
             {filteredFruits.map((fruit) => (
               <div
                 key={fruit.id}
-                className="bg-white rounded-lg border border-[#4A2C1B]/20 p-4 hover:shadow-lg transition-all duration-300 relative overflow-hidden group"
+                className="bg-white rounded-lg border border-[#14433B]/20 p-4 hover:shadow-lg transition-all duration-300 relative overflow-hidden group"
               >
                 {/* รูปภาพผลไม้ */}
                 <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden bg-gray-100">
@@ -298,25 +298,25 @@ export default function FruitsPage() {
 
                 {/* ข้อมูลผลไม้ */}
                 <div className="space-y-2">
-                  <h3 className="font-bold text-lg text-[#4A2C1B] line-clamp-1">
+                  <h3 className="font-bold text-lg text-[#14433B] line-clamp-1">
                     {fruit.name}
                   </h3>
                   
                   {fruit.description && (
-                    <p className="text-[#4A2C1B]/70 text-sm line-clamp-2 min-h-[2.5rem]">
+                    <p className="text-[#14433B]/70 text-sm line-clamp-2 min-h-[2.5rem]">
                       {fruit.description}
                     </p>
                   )}
 
-                  <div className="flex items-center justify-between pt-2 border-t border-[#4A2C1B]/10">
+                  <div className="flex items-center justify-between pt-2 border-t border-[#14433B]/10">
                     <div>
-                      <p className="text-xs text-[#4A2C1B]/50">ราคาต่อหน่วย</p>
-                      <p className="text-xl font-bold text-[#4A2C1B]">
+                      <p className="text-xs text-[#14433B]/50">ราคาต่อหน่วย</p>
+                      <p className="text-xl font-bold text-[#14433B]">
                         {Number(fruit.pricePerUnit).toFixed(2)} บาท
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      <span className="text-xs bg-[#14433B]/20 text-[#14433B] px-2 py-1 rounded-full">
                         ✓ พร้อมใช้งาน
                       </span>
                     </div>
@@ -324,7 +324,7 @@ export default function FruitsPage() {
                 </div>
 
                 {/* Hover effect overlay */}
-                <div className="absolute inset-0 bg-[#4A2C1B]/0 group-hover:bg-[#4A2C1B]/5 transition-colors duration-300 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-[#14433B]/0 group-hover:bg-[#14433B]/5 transition-colors duration-300 pointer-events-none"></div>
               </div>
             ))}
           </div>
@@ -333,11 +333,11 @@ export default function FruitsPage() {
         {/* ข้อมูลเพิ่มเติม */}
         {filteredFruits.length > 0 && (
           <div className="mt-12 text-center">
-            <p className="text-[#4A2C1B]/60 text-sm">
+            <p className="text-[#14433B]/60 text-sm">
               ต้องการสร้างน้ำปั่นด้วยผลไม้เหล่านี้?{" "}
               <a
                 href="/menu"
-                className="text-[#4A2C1B] font-semibold hover:underline"
+                className="text-[#14433B] font-semibold hover:underline"
               >
                 ไปที่หน้าเมนู
               </a>

@@ -174,11 +174,11 @@ export default function Header() {
     <header className="bg-[#FFFFFF] w-full sticky top-0 z-50 shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
         <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition-opacity">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#E8DDCB] flex items-center justify-center flex-shrink-0">
-            <span className="text-[#4A3728] font-bold text-base sm:text-lg">MS</span>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#FFF6F0] flex items-center justify-center flex-shrink-0">
+            <span className="text-[#14433B] font-bold text-base sm:text-lg">MS</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xl sm:text-2xl font-bold text-[#FFFFFF] leading-tight font-serif">Mr.Smoothy</span>
+            <span className="text-xl sm:text-2xl font-bold text-[#000000] leading-tight font-serif">Mr.Smoothy</span>
           </div>
         </Link>
 
@@ -190,6 +190,7 @@ export default function Header() {
                 ? 'bg-[#000000] text-[#FFFFFF] font-semibold'
                 : 'text-[#000000] hover:bg-[#000000]/20 hover:text-[#FFFFFF]'
               }`}
+            style={{ fontFamily: "'Cooper Black', serif" }}
           >
             Home
           </Link>
@@ -199,6 +200,7 @@ export default function Header() {
                 ? 'bg-[#000000] text-[#FFFFFF] font-semibold'
                 : 'text-[#000000] hover:bg-[#000000]/20 hover:text-[#FFFFFF]'
               }`}
+            style={{ fontFamily: "'Cooper Black', serif" }}
           >
             Ready Menu
           </Link>
@@ -208,6 +210,7 @@ export default function Header() {
                 ? 'bg-[#000000] text-[#FFFFFF] font-semibold'
                 : 'text-[#000000] hover:bg-[#000000]/20 hover:text-[#FFFFFF]'
               }`}
+            style={{ fontFamily: "'Cooper Black', serif" }}
           >
             Custom Menu
           </Link>
@@ -217,6 +220,7 @@ export default function Header() {
                 ? 'bg-[#000000] text-[#FFFFFF] font-semibold'
                 : 'text-[#000000] hover:bg-[#000000]/20 hover:text-[#FFFFFF]'
               }`}
+            style={{ fontFamily: "'Cooper Black', serif" }}
           >
             Contact
           </Link>
@@ -261,14 +265,14 @@ export default function Header() {
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg bg-[#000000]/10 hover:bg-[#000000]/20 transition-colors"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#E8DDCB] flex items-center justify-center">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#FFF6F0] flex items-center justify-center">
                   <UserCircle className="w-4 h-4 sm:w-5 sm:h-5 text-[#000000]" />
                 </div>
                 <span className="text-[#000000] font-medium font-sans hidden xl:inline">{user.fullName || user.username}</span>
                 <ChevronDown className={`w-4 h-4 text-[#000000] transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
               </button>
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-[#4A3728]/20 overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-[#14433B]/20 overflow-hidden z-50">
                   <div className="p-4 border-b border-[#000000]/10">
                     <p className="font-semibold text-[#000000] font-sans">{user.fullName || user.username}</p>
                     <p className="text-sm text-[#000000]/70 font-sans">{user.email}</p>
@@ -277,7 +281,7 @@ export default function Header() {
                     <Link
                       href="/profile"
                       onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-[#000000] hover:bg-[#E8DDCB]/50 transition-colors font-sans"
+                      className="flex items-center gap-3 px-4 py-3 text-[#000000] hover:bg-[#FFF6F0]/50 transition-colors font-sans"
                     >
                       <UserCircle className="w-5 h-5" />
                       <span>โปรไฟล์ของฉัน</span>
@@ -286,10 +290,10 @@ export default function Header() {
                       <Link
                         href="/admin/dashboard"
                         onClick={() => setShowUserMenu(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-[#000000] hover:bg-[#E8DDCB]/50 transition-colors font-sans"
+                        className="flex items-center gap-3 px-4 py-3 text-[#000000] hover:bg-[#FFF6F0]/50 transition-colors font-sans"
                       >
                         <User className="w-5 h-5" />
-                        <span>แดชบอร์ด Admin</span>
+                        <span>Admin Menu</span>
                       </Link>
                     )}
                     <button
@@ -310,27 +314,33 @@ export default function Header() {
             <>
               <Link
                 href="/login"
-                className="text-[#000000] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+                className={`px-3 py-2 rounded transition-all font-medium ${pathname === '/login' || pathname?.startsWith('/login/')
+                    ? 'bg-[#000000] text-[#FFFFFF] font-semibold'
+                    : 'text-[#000000] hover:bg-[#000000]/20 hover:text-[#FFFFFF]'
+                  }`}
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="text-[#000000] hover:opacity-80 transition-opacity font-medium px-3 py-2"
+                className={`px-3 py-2 rounded transition-all font-medium ${pathname === '/register' || pathname?.startsWith('/register/')
+                    ? 'bg-[#000000] text-[#FFFFFF] font-semibold'
+                    : 'text-[#000000] hover:bg-[#000000]/20 hover:text-[#FFFFFF]'
+                  }`}
               >
                 Register
               </Link>
             </>
           )}
         </nav>
-
+        
         {/* Mobile Navigation - Right side icons */}
         <div className="flex lg:hidden items-center gap-2">
           <Link
             href="/cart"
             className={`relative p-2 rounded transition-all inline-flex items-center justify-center ${pathname === '/cart' || pathname?.startsWith('/cart/')
-                ? 'bg-[#E8DDCB]'
-                : 'hover:bg-[#E8DDCB]/20'
+                ? 'bg-[#FFF6F0]'
+                : 'hover:bg-[#FFF6F0]/20'
               }`}
           >
             {pathname === '/cart' || pathname?.startsWith('/cart/') ? (
@@ -340,7 +350,7 @@ export default function Header() {
               />
             ) : (
               <ShoppingCart
-                className="w-5 h-5 text-[#E8DDCB]"
+                className="w-5 h-5 text-[#FFF6F0]"
                 strokeWidth={2}
               />
             )}
@@ -352,7 +362,7 @@ export default function Header() {
           </Link>
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="p-2 text-[#000000] hover:bg-[#E8DDCB]/20 rounded transition-colors"
+            className="p-2 text-[#000000] hover:bg-[#FFF6F0]/20 rounded transition-colors"
             aria-label="Toggle menu"
           >
             {showMobileMenu ? (
@@ -366,15 +376,16 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {showMobileMenu && (
-        <div className="lg:hidden border-t border-[#E8DDCB]/20 bg-[#4A3728]">
+        <div className="lg:hidden border-t border-[#FFF6F0]/20 bg-[#14433B]">
           <nav className="px-4 py-4 space-y-2">
             <Link
               href="/"
               onClick={() => setShowMobileMenu(false)}
               className={`block px-4 py-3 rounded transition-all font-medium ${pathname === '/'
-                  ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold'
-                  : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20'
+                  ? 'bg-[#FFF6F0] text-[#14433B] font-semibold'
+                  : 'text-[#FFF6F0] hover:bg-[#FFF6F0]/20'
                 }`}
+              style={{ fontFamily: "'Cooper Black', serif" }}
             >
               Home
             </Link>
@@ -382,9 +393,10 @@ export default function Header() {
               href="/menu"
               onClick={() => setShowMobileMenu(false)}
               className={`block px-4 py-3 rounded transition-all font-medium ${pathname === '/menu' || pathname?.startsWith('/menu/')
-                  ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold'
-                  : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20'
+                  ? 'bg-[#FFF6F0] text-[#14433B] font-semibold'
+                  : 'text-[#FFF6F0] hover:bg-[#FFF6F0]/20'
                 }`}
+              style={{ fontFamily: "'Cooper Black', serif" }}
             >
               Ready Menu
             </Link>
@@ -392,9 +404,10 @@ export default function Header() {
               href="/build"
               onClick={() => setShowMobileMenu(false)}
               className={`block px-4 py-3 rounded transition-all font-medium ${pathname === '/build' || pathname?.startsWith('/build/')
-                  ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold'
-                  : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20'
+                  ? 'bg-[#FFF6F0] text-[#14433B] font-semibold'
+                  : 'text-[#FFF6F0] hover:bg-[#FFF6F0]/20'
                 }`}
+              style={{ fontFamily: "'Cooper Black', serif" }}
             >
               Custom Menu
             </Link>
@@ -402,23 +415,24 @@ export default function Header() {
               href="/contact"
               onClick={() => setShowMobileMenu(false)}
               className={`block px-4 py-3 rounded transition-all font-medium ${pathname === '/contact' || pathname?.startsWith('/contact/')
-                  ? 'bg-[#E8DDCB] text-[#4A3728] font-semibold'
-                  : 'text-[#E8DDCB] hover:bg-[#E8DDCB]/20'
+                  ? 'bg-[#FFF6F0] text-[#14433B] font-semibold'
+                  : 'text-[#FFF6F0] hover:bg-[#FFF6F0]/20'
                 }`}
+              style={{ fontFamily: "'Cooper Black', serif" }}
             >
               Contact
             </Link>
-            <div className="border-t border-[#E8DDCB]/20 pt-2 mt-2">
+            <div className="border-t border-[#FFF6F0]/20 pt-2 mt-2">
               {user ? (
                 <>
                   <div className="px-4 py-2 mb-2">
-                    <p className="text-[#E8DDCB] font-semibold text-sm">{user.fullName || user.username}</p>
-                    <p className="text-[#E8DDCB]/70 text-xs">{user.email}</p>
+                    <p className="text-[#FFF6F0] font-semibold text-sm">{user.fullName || user.username}</p>
+                    <p className="text-[#FFF6F0]/70 text-xs">{user.email}</p>
                   </div>
                   <Link
                     href="/profile"
                     onClick={() => setShowMobileMenu(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-[#E8DDCB] hover:bg-[#E8DDCB]/20 rounded transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-[#FFF6F0] hover:bg-[#FFF6F0]/20 rounded transition-colors"
                   >
                     <UserCircle className="w-5 h-5" />
                     <span>โปรไฟล์ของฉัน</span>
@@ -427,7 +441,7 @@ export default function Header() {
                     <Link
                       href="/admin/dashboard"
                       onClick={() => setShowMobileMenu(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-[#E8DDCB] hover:bg-[#E8DDCB]/20 rounded transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-[#FFF6F0] hover:bg-[#FFF6F0]/20 rounded transition-colors"
                     >
                       <User className="w-5 h-5" />
                       <span>แดชบอร์ด Admin</span>
@@ -449,14 +463,20 @@ export default function Header() {
                   <Link
                     href="/login"
                     onClick={() => setShowMobileMenu(false)}
-                    className="block px-4 py-3 text-[#E8DDCB] hover:bg-[#E8DDCB]/20 rounded transition-colors text-center font-medium"
+                    className={`block px-4 py-3 rounded transition-all text-center font-medium ${pathname === '/login' || pathname?.startsWith('/login/')
+                        ? 'bg-[#FFF6F0] text-[#14433B] font-semibold'
+                        : 'text-[#FFF6F0] hover:bg-[#FFF6F0]/20'
+                      }`}
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setShowMobileMenu(false)}
-                    className="block px-4 py-3 bg-[#E8DDCB] text-[#4A3728] rounded transition-colors text-center font-medium hover:opacity-90"
+                    className={`block px-4 py-3 rounded transition-all text-center font-medium ${pathname === '/register' || pathname?.startsWith('/register/')
+                        ? 'bg-[#FFF6F0] text-[#14433B] font-semibold'
+                        : 'bg-[#FFF6F0] text-[#14433B] hover:bg-[#FFF6F0]/80 hover:scale-105'
+                      }`}
                   >
                     Register
                   </Link>
@@ -464,7 +484,7 @@ export default function Header() {
               )}
             </div>
             {pendingOrdersCount > 0 && (
-              <div className="px-4 py-2 mt-2 border-t border-[#E8DDCB]/20">
+              <div className="px-4 py-2 mt-2 border-t border-[#FFF6F0]/20">
                 <Link
                   href="/orders"
                   onClick={() => setShowMobileMenu(false)}

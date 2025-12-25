@@ -206,8 +206,8 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen flex items-center justify-center">
-        <div className="text-[#4A2C1B] text-xl">กำลังโหลด...</div>
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
+        <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
       </div>
     );
   }
@@ -226,7 +226,7 @@ export default function CartPage() {
       case "PREPARING":
         return <Package className="w-4 h-4 text-blue-500" />;
       case "READY":
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-[#14433B]" />;
       case "CANCELLED":
         return <XCircle className="w-4 h-4 text-red-500" />;
       default:
@@ -264,9 +264,9 @@ export default function CartPage() {
 
   if (!loading && items.length === 0 && pendingOrders.length === 0) {
     return (
-      <div className="bg-[#F5EFE6] min-h-screen py-12">
+      <div className="bg-[#FFF6F0] min-h-screen py-12">
         <div className="mx-auto max-w-4xl px-6">
-          <h1 className="text-4xl font-bold text-[#4A2C1B] mb-8">ตะกร้าสินค้า</h1>
+          <h1 className="text-4xl font-bold text-[#14433B] mb-8">ตะกร้าสินค้า</h1>
           {!user && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
               <div className="flex items-center gap-2 text-yellow-800">
@@ -278,7 +278,7 @@ export default function CartPage() {
               </p>
               <button
                 onClick={() => router.push("/login?redirect=/cart")}
-                className="mt-3 bg-[#4A2C1B] text-white px-4 py-2 rounded-md text-sm hover:opacity-90 transition-opacity"
+                className="mt-3 bg-[#14433B] text-white px-4 py-2 rounded-md text-sm hover:opacity-90 transition-opacity"
               >
                 เข้าสู่ระบบ
               </button>
@@ -286,10 +286,10 @@ export default function CartPage() {
           )}
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-            <p className="text-[#4A2C1B] text-xl mb-6">ตะกร้าของคุณยังว่างอยู่</p>
+            <p className="text-[#14433B] text-xl mb-6">ตะกร้าของคุณยังว่างอยู่</p>
             <button
               onClick={() => router.push("/build")}
-              className="bg-[#4A2C1B] text-[#F5EFE6] px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+              className="bg-[#14433B] text-[#FFF6F0] px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
             >
               ไปสร้าง Smoothy
             </button>
@@ -300,7 +300,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-[#F5EFE6] min-h-screen py-6 sm:py-8 md:py-12">
+    <div className="bg-[#FFF6F0] min-h-screen py-6 sm:py-8 md:py-12">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         {/* Pending Orders Section */}
         {pendingOrders.length > 0 && (
@@ -308,13 +308,13 @@ export default function CartPage() {
             <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <Package className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
-                <h2 className="text-xl sm:text-2xl font-bold text-[#4A2C1B] font-sans">คำสั่งซื้อที่กำลังดำเนินการ</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-[#14433B] font-sans">คำสั่งซื้อที่กำลังดำเนินการ</h2>
               </div>
               <div className="space-y-4">
                 {pendingOrders.map((order) => (
                   <div
                     key={order.orderId}
-                    className="border border-[#4A2C1B]/20 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
+                    className="border border-[#14433B]/20 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div>
@@ -324,39 +324,39 @@ export default function CartPage() {
                           </span>
                           <div className="flex items-center gap-1">
                             {getStatusIcon(order.status || "PENDING")}
-                            <span className="text-sm font-medium text-[#4A2C1B] font-sans">
+                            <span className="text-sm font-medium text-[#14433B] font-sans">
                               {getStatusText(order.status || "PENDING")}
                             </span>
                           </div>
                         </div>
-                        <p className="text-sm text-[#4A2C1B]/70 font-sans">
+                        <p className="text-sm text-[#14433B]/70 font-sans">
                           เวลารับ: {order.pickupTime ? formatDateTime(order.pickupTime) : "-"}
                         </p>
                         {order.customerName && (
-                          <p className="text-sm text-[#4A2C1B]/70 font-sans">
+                          <p className="text-sm text-[#14433B]/70 font-sans">
                             ชื่อ: {order.customerName}
                           </p>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-green-600 font-sans">
+                        <p className="text-lg font-bold text-[#14433B] font-sans">
                           ฿{Number(order.totalPrice || 0).toFixed(2)}
                         </p>
-                        <p className="text-xs text-[#4A2C1B]/60 font-sans">
+                        <p className="text-xs text-[#14433B]/60 font-sans">
                           {order.items?.length || 0} รายการ
                         </p>
                       </div>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-[#4A2C1B]/10">
-                      <p className="text-xs text-[#4A2C1B]/60 font-sans mb-2">รายการสินค้า:</p>
+                    <div className="mt-3 pt-3 border-t border-[#14433B]/10">
+                      <p className="text-xs text-[#14433B]/60 font-sans mb-2">รายการสินค้า:</p>
                       <div className="space-y-1">
                         {order.items?.slice(0, 3).map((item, idx) => (
-                          <div key={idx} className="text-sm text-[#4A2C1B]/80 font-sans">
+                          <div key={idx} className="text-sm text-[#14433B]/80 font-sans">
                             • {item.predefinedDrinkName || "น้ำปั่นแบบกำหนดเอง"} x{item.quantity} ({item.cupSizeName})
                           </div>
                         ))}
                         {order.items && order.items.length > 3 && (
-                          <p className="text-xs text-[#4A2C1B]/60 font-sans">
+                          <p className="text-xs text-[#14433B]/60 font-sans">
                             และอีก {order.items.length - 3} รายการ...
                           </p>
                         )}
@@ -377,7 +377,7 @@ export default function CartPage() {
           </div>
         )}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A2C1B]">ตะกร้าสินค้า</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B]">ตะกร้าสินค้า</h1>
           <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
             {!user && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-yellow-800">
@@ -393,7 +393,7 @@ export default function CartPage() {
                 }
               }}
               disabled={loading}
-              className="text-[#4A2C1B] hover:text-[#5A3C2B] font-medium flex items-center gap-2 disabled:opacity-50"
+              className="text-[#14433B] hover:text-[#1a5444] font-medium flex items-center gap-2 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               รีเฟรช
@@ -416,7 +416,7 @@ export default function CartPage() {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="border-b border-[#4A3728]/20 pb-4 sm:pb-6 last:border-b-0 last:pb-0"
+                    className="border-b border-[#14433B]/20 pb-4 sm:pb-6 last:border-b-0 last:pb-0"
                   >
                     <div className="flex items-start gap-3 sm:gap-4">
                       {/* Product Image */}
@@ -425,7 +425,7 @@ export default function CartPage() {
                           <img
                             src={getImageUrl(item.predefinedDrinkImageUrl)}
                             alt={item.predefinedDrinkName || "น้ำปั่น"}
-                            className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 object-cover rounded-lg border border-[#4A3728]/20 shadow-sm"
+                            className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 object-cover rounded-lg border border-[#14433B]/20 shadow-sm"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = "none";
@@ -434,27 +434,27 @@ export default function CartPage() {
                             }}
                           />
                         ) : null}
-                        <div className={`w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gradient-to-br from-[#E8DDCB] to-[#D4C5B0] rounded-lg border border-[#4A3728]/20 flex items-center justify-center shadow-sm ${item.type === "PREDEFINED" && item.predefinedDrinkImageUrl ? "hidden" : ""}`}>
+                        <div className={`w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gradient-to-br from-[#FFF6F0] to-[#D4C5B0] rounded-lg border border-[#14433B]/20 flex items-center justify-center shadow-sm ${item.type === "PREDEFINED" && item.predefinedDrinkImageUrl ? "hidden" : ""}`}>
                           <span className="text-2xl sm:text-3xl md:text-4xl">🥤</span>
                         </div>
                       </div>
 
                       {/* Product Details */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg sm:text-xl font-semibold text-[#4A3728] mb-1 sm:mb-2 font-serif">
+                        <h3 className="text-lg sm:text-xl font-semibold text-[#14433B] mb-1 sm:mb-2 font-serif">
                           {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
                         </h3>
                         <div className="space-y-1 mb-3">
-                          <p className="text-[#4A3728]/70 font-sans">ขนาด: {item.cupSizeName}</p>
-                          <p className="text-[#4A3728]/70 font-sans">จำนวน: {item.quantity} แก้ว</p>
+                          <p className="text-[#14433B]/70 font-sans">ขนาด: {item.cupSizeName}</p>
+                          <p className="text-[#14433B]/70 font-sans">จำนวน: {item.quantity} แก้ว</p>
                           {item.fruits && item.fruits.length > 0 && (
                             <div className="mt-2">
-                              <p className="text-sm text-[#4A3728]/60 mb-1 font-sans">ส่วนผสม:</p>
+                              <p className="text-sm text-[#14433B]/60 mb-1 font-sans">ส่วนผสม:</p>
                               <div className="flex flex-wrap gap-2">
                                 {item.fruits.map((fruit, idx) => (
                                   <span
                                     key={idx}
-                                    className="bg-[#E8DDCB] text-[#4A3728] px-2 py-1 rounded text-xs font-sans"
+                                    className="bg-[#FFF6F0] text-[#14433B] px-2 py-1 rounded text-xs font-sans"
                                   >
                                     {fruit.fruitName} x{fruit.quantity}
                                   </span>
@@ -463,7 +463,7 @@ export default function CartPage() {
                             </div>
                           )}
                         </div>
-                        <p className="text-xl font-bold text-[#4A3728] font-serif">
+                        <p className="text-xl font-bold text-[#14433B] font-serif">
                           {Number(item.totalPrice).toFixed(2)} บาท
                         </p>
                       </div>
@@ -483,10 +483,10 @@ export default function CartPage() {
               </div>
             </div>
 
-            <div className="bg-[#4A2C1B] rounded-lg shadow-md p-4 sm:p-6 mt-4 sm:mt-6">
+            <div className="bg-[#14433B] rounded-lg shadow-md p-4 sm:p-6 mt-4 sm:mt-6">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <span className="text-xl sm:text-2xl font-bold text-[#F5EFE6]">ยอดรวม</span>
-                <span className="text-2xl sm:text-3xl font-bold text-[#F5EFE6]">
+                <span className="text-xl sm:text-2xl font-bold text-[#FFF6F0]">ยอดรวม</span>
+                <span className="text-2xl sm:text-3xl font-bold text-[#FFF6F0]">
                   {Number(displayCart?.totalPrice || 0).toFixed(2)} บาท
                 </span>
               </div>
@@ -498,7 +498,7 @@ export default function CartPage() {
                     router.push("/payment");
                   }
                 }}
-                className="w-full bg-black text-[#F5EFE6] py-3 sm:py-4 rounded-md font-semibold text-base sm:text-lg hover:opacity-90 transition-opacity"
+                className="w-full bg-black text-[#FFF6F0] py-3 sm:py-4 rounded-md font-semibold text-base sm:text-lg hover:opacity-90 transition-opacity"
               >
                 ดำเนินการสั่งซื้อ
               </button>
@@ -511,13 +511,13 @@ export default function CartPage() {
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
             <Package className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-[#4A2C1B] mb-2 font-sans">ไม่มีสินค้าในตะกร้า</h3>
-            <p className="text-[#4A2C1B]/70 mb-6 font-sans">
+            <h3 className="text-xl font-bold text-[#14433B] mb-2 font-sans">ไม่มีสินค้าในตะกร้า</h3>
+            <p className="text-[#14433B]/70 mb-6 font-sans">
               คุณมีคำสั่งซื้อที่กำลังดำเนินการอยู่ {pendingOrders.length} รายการ
             </p>
             <button
               onClick={() => router.push("/orders")}
-              className="bg-[#4A2C1B] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity font-sans"
+              className="bg-[#14433B] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity font-sans"
             >
               ดูคำสั่งซื้อทั้งหมด
             </button>

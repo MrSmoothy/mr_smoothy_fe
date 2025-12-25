@@ -40,10 +40,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="bg-[#E8DDCB] min-h-screen flex items-center justify-center">
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3728] mx-auto mb-4"></div>
-          <div className="text-[#4A3728] text-xl">กำลังโหลด...</div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
+          <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
         </div>
       </div>
     );
@@ -54,7 +54,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex min-h-screen bg-[#E8DDCB]">
+    <div className="flex min-h-screen bg-[#FFF6F0]">
       <AdminSidebar />
       <main className="flex-1 overflow-auto">
         {children}

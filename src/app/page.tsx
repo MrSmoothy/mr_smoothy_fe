@@ -265,13 +265,19 @@ export default function Home() {
 
   function scrollLeft() {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -320, behavior: "smooth" });
+      const cardWidth = 256; // w-64 = 256px
+      const gap = 24; // gap-6 = 24px
+      const scrollAmount = cardWidth + gap;
+      scrollContainerRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     }
   }
 
   function scrollRight() {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 320, behavior: "smooth" });
+      const cardWidth = 256; // w-64 = 256px
+      const gap = 24; // gap-6 = 24px
+      const scrollAmount = cardWidth + gap;
+      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   }
   
@@ -282,7 +288,7 @@ export default function Home() {
     : fruits.slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-[#E8DDCB]">
+    <div className="min-h-screen bg-[#FFF6F0]">
       {/* Hero Section */}
       <section 
         className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6 min-h-[400px] sm:min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden"
@@ -294,11 +300,11 @@ export default function Home() {
         }}
       >
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-[#4A3728]/20"></div>
+        <div className="absolute inset-0 bg-[#14433B]/20"></div>
         
         {/* Content */}
         <div className="relative z-10 mx-auto max-w-4xl text-center px-4">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 font-serif drop-shadow-lg">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 drop-shadow-lg" style={{ fontFamily: "'Cooper Black', serif" }}>
             Welcome to Mr.Smoothy
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-white mb-6 sm:mb-8 max-w-2xl mx-auto font-sans drop-shadow-md px-4">
@@ -307,13 +313,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link
               href="/menu"
-              className="bg-[#4A3728] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
+              className="bg-[#14433B] text-[#FFF6F0] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
             >
               Explore Ready Menu
             </Link>
             <Link
               href="/build"
-              className="bg-white/90 text-[#4A3728] border-2 border-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg text-sm sm:text-base"
+              className="bg-white/90 text-[#14433B] border-2 border-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-white transition-colors shadow-lg text-sm sm:text-base"
             >
               Build Your Own
             </Link>
@@ -322,36 +328,35 @@ export default function Home() {
       </section>
 
       {/* Popular Smoothies Section */}
-      <section className="bg-[#E8DDCB] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
+      <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] font-serif">Popular Smoothies</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B]" style={{ fontFamily: "'Cooper Black', serif" }}>Popular Smoothies</h2>
             </div>
-
           </div>
 
           {/* Carousel Container */}
-          <div className="relative">
+          <div className="relative px-8 sm:px-12 md:px-16">
             {/* Left Arrow */}
             <button
               onClick={scrollLeft}
-              className="hidden sm:block absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#14433B] text-[#14433B] hover:text-white rounded-full p-3 shadow-xl transition-all items-center justify-center hover:scale-110 active:scale-95"
               aria-label="เลื่อนซ้าย"
             >
-              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#4A3728]" />
+              <ChevronLeft className="w-6 h-6" />
             </button>
 
             {/* Scrollable Container */}
             <div
               ref={scrollContainerRef}
-              className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-2 sm:px-0"
+              className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {loading ? (
-                <div className="w-full text-center text-[#4A3728]/60 py-8">กำลังโหลด...</div>
+                <div className="w-full text-center text-[#14433B]/60 py-8">กำลังโหลด...</div>
               ) : popularDrinks.length === 0 ? (
-                <div className="w-full text-center text-[#4A3728]/60 py-8">ยังไม่มีเมนูน้ำปั่นในหมวดหมู่นี้</div>
+                <div className="w-full text-center text-[#14433B]/60 py-8">ยังไม่มีเมนูน้ำปั่นในหมวดหมู่นี้</div>
               ) : (
                 popularDrinks.map((drink, index) => {
                   // Calculate price from ingredients if available, otherwise use mock prices
@@ -397,7 +402,7 @@ export default function Home() {
                   return (
                     <div
                       key={drink.id}
-                      className="group flex-shrink-0 w-56 sm:w-64 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative"
+                      className="group flex-shrink-0 w-64 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative"
                       onClick={() => openModal(drink)}
                     >
                       {/* Image Area - reduced size */}
@@ -421,7 +426,7 @@ export default function Home() {
                         
                         {/* Ingredients Overlay on Hover */}
                         {drinkIngredients.length > 0 && (
-                          <div className="absolute inset-0 bg-[#4A3728]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3">
+                          <div className="absolute inset-0 bg-[#14433B]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3">
                             <p className="text-white text-xs font-semibold mb-2 font-sans">ส่วนผสม</p>
                             <div className="grid grid-cols-3 gap-2 w-full max-h-32 overflow-y-auto">
                               {drinkIngredients.map((ing: any) => (
@@ -461,19 +466,19 @@ export default function Home() {
                       </div>
                       {/* Text Area - reduced padding */}
                       <div className="p-4 bg-white">
-                        <h3 className="text-lg font-bold text-[#4A3728] mb-1 font-sans line-clamp-1">{drink.name}</h3>
-                        <p className="text-xs text-[#4A3728]/70 mb-3 min-h-[2rem] line-clamp-2 font-sans">
+                        <h3 className="text-lg font-bold text-[#14433B] mb-1 font-sans line-clamp-1">{drink.name}</h3>
+                        <p className="text-xs text-[#14433B]/70 mb-3 min-h-[2rem] line-clamp-2 font-sans">
                           {drink.description || "Delicious smoothie blend"}
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-[#4A3728] font-serif">฿{price.toFixed(2)}</span>
+                          <span className="text-xl font-bold text-[#14433B] font-serif">฿{price.toFixed(2)}</span>
                           <button 
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
                               openModal(drink);
                             }}
-                            className="bg-[#4A3728] text-[#E8DDCB] w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#5A3C2B] transition-colors font-bold text-base"
+                            className="bg-[#14433B] text-[#FFF6F0] w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#1a5444] transition-colors font-bold text-base"
                             title="ดูรายละเอียด"
                           >
                             +
@@ -489,58 +494,85 @@ export default function Home() {
             {/* Right Arrow */}
             <button
               onClick={scrollRight}
-              className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#14433B] text-[#14433B] hover:text-white rounded-full p-3 shadow-xl transition-all items-center justify-center hover:scale-110 active:scale-95"
               aria-label="เลื่อนขวา"
             >
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-[#4A3728]" />
+              <ChevronRight className="w-6 h-6" />
             </button>
           </div>
         </div>
       </section>
 
       {/* Seasonal Ingredients Section */}
-      <section className="bg-[#E8DDCB] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
+      <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-2 font-serif">วัตถุดิบตามฤดูกาล</h2>
-            <p className="text-base sm:text-lg text-[#4A3728]/80 font-sans px-4">ผลไม้และผักตามฤดูกาลที่คัดสรรมาอย่างดี</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B] mb-2 font-serif">วัตถุดิบตามฤดูกาล</h2>
+            <p className="text-base sm:text-lg text-[#14433B]/80 font-sans px-4">ผลไม้และผักตามฤดูกาลที่คัดสรรมาอย่างดี</p>
           </div>
           {displaySeasonalIngredients.length === 0 ? (
-            <div className="text-center text-[#4A3728]/60 py-8 font-sans">
+            <div className="text-center text-[#14433B]/60 py-8 font-sans">
               ยังไม่มีวัตถุดิบตามฤดูกาล
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-              {displaySeasonalIngredients.map((ingredient) => (
-                <div key={ingredient.id} className="text-center">
-                  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md overflow-hidden">
-                    {ingredient.imageUrl ? (
-                      <img
-                        src={getImageUrl(ingredient.imageUrl)}
-                        alt={ingredient.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                          const fallback = (e.target as HTMLImageElement).nextElementSibling;
-                          if (fallback) (fallback as HTMLElement).classList.remove("hidden");
-                        }}
-                      />
-                    ) : null}
-                    <div className={`w-full h-full flex items-center justify-center ${ingredient.imageUrl ? "hidden" : ""}`}>
-                      <span className="text-5xl">
-                        {ingredient.category === "FRUIT" ? "🍎" : ingredient.category === "VEGETABLE" ? "🥬" : "🥛"}
-                      </span>
+            <div className="flex justify-center items-center">
+              <div className="flex flex-wrap justify-center gap-8 sm:gap-10 md:gap-12 lg:gap-16 max-w-6xl">
+                {displaySeasonalIngredients.map((ingredient, index) => (
+                  <div 
+                    key={ingredient.id} 
+                    className="text-center group animate-fadeIn"
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                  >
+                    {/* Main Circle with Enhanced Effects */}
+                    <div className="relative w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl overflow-hidden transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl group-hover:rotate-6">
+                      {/* Animated Decorative Rings */}
+                      <div className="absolute inset-0 rounded-full border-4 border-[#14433B]/20 group-hover:border-[#14433B]/50 transition-all duration-500 group-hover:rotate-180"></div>
+                      <div className="absolute inset-2 rounded-full border-2 border-[#14433B]/10 group-hover:border-[#14433B]/30 transition-all duration-500 group-hover:rotate-[-180deg]"></div>
+                      
+                      {/* Pulsing Glow Effect */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#14433B]/20 via-[#14433B]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                      
+                      {/* Sparkle Effect */}
+                      <div className="absolute top-2 right-2 w-2 h-2 bg-[#14433B] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-ping"></div>
+                      <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-[#14433B] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-ping" style={{ animationDelay: '0.2s' }}></div>
+                      
+                      {/* Image */}
+                      {ingredient.imageUrl ? (
+                        <img
+                          src={getImageUrl(ingredient.imageUrl)}
+                          alt={ingredient.name}
+                          className="w-full h-full object-cover relative z-10 group-hover:scale-125 transition-transform duration-500 rounded-full p-2"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                            const fallback = (e.target as HTMLImageElement).nextElementSibling;
+                            if (fallback) (fallback as HTMLElement).classList.remove("hidden");
+                          }}
+                        />
+                      ) : null}
+                      <div className={`w-full h-full flex items-center justify-center relative z-10 ${ingredient.imageUrl ? "hidden" : ""}`}>
+                        <span className="text-5xl sm:text-6xl md:text-7xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-500">
+                          {ingredient.category === "FRUIT" ? "🍎" : ingredient.category === "VEGETABLE" ? "🥬" : "🥛"}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Content with Hover Effects */}
+                    <div className="transition-all duration-300 group-hover:translate-y-[-4px]">
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#14433B] mb-2 font-sans group-hover:text-[#1a5444] transition-colors">
+                        {ingredient.name}
+                      </h3>
+                      <p className="text-sm sm:text-base text-[#14433B]/70 font-sans line-clamp-2 max-w-[180px] mx-auto mb-2">
+                        {ingredient.description || (ingredient.category === "FRUIT" ? "ผลไม้สดใหม่" : ingredient.category === "VEGETABLE" ? "ผักสดใหม่" : "ส่วนเสริม")}
+                      </p>
+                      <div className="inline-block px-4 py-2 bg-[#14433B]/10 rounded-full group-hover:bg-[#14433B]/20 transition-colors duration-300">
+                        <p className="text-base sm:text-lg md:text-xl text-[#14433B] font-bold font-sans group-hover:text-[#1a5444] transition-colors">
+                          ฿{Number(ingredient.pricePerUnit).toFixed(2)}/หน่วย
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-[#4A3728] mb-2 font-sans">{ingredient.name}</h3>
-                  <p className="text-sm text-[#4A3728]/70 font-sans line-clamp-2">
-                    {ingredient.description || (ingredient.category === "FRUIT" ? "ผลไม้สดใหม่" : ingredient.category === "VEGETABLE" ? "ผักสดใหม่" : "ส่วนเสริม")}
-                  </p>
-                  <p className="text-sm text-[#4A3728] font-semibold mt-2 font-sans">
-                    ฿{Number(ingredient.pricePerUnit).toFixed(2)}/หน่วย
-                  </p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -558,11 +590,11 @@ export default function Home() {
         }}
       >
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-[#4A3728]/60"></div>
+        <div className="absolute inset-0 bg-[#14433B]/60"></div>
         
         {/* Content */}
         <div className="relative z-10 mx-auto max-w-4xl text-center px-4">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 font-serif drop-shadow-lg">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 drop-shadow-lg" style={{ fontFamily: "'Cooper Black', serif" }}>
             Ready to Start Your Healthy Journey?
           </h2>
           <p className="text-base sm:text-lg text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto font-sans drop-shadow-md">
@@ -571,7 +603,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link
               href="/register"
-              className="bg-white text-[#4A3728] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
+              className="bg-white text-[#14433B] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
             >
               Get Started Now
             </Link>
@@ -586,15 +618,15 @@ export default function Home() {
       </section>
 
       {/* Special Offer Banner */}
-      <section className="bg-[#4A3728] py-8 sm:py-10 md:py-12 px-4 sm:px-6">
+      <section className="bg-[#FFFFFF] py-8 sm:py-10 md:py-12 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl">
-          <div className="bg-[#E8DDCB] rounded-lg p-6 sm:p-8 text-center shadow-lg">
+          <div className="bg-[#FFF6F0] rounded-lg p-6 sm:p-8 text-center shadow-lg">
             <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
               <span className="text-xl sm:text-2xl">🎉</span>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-sans">Special Offer This Week</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#14433B] font-sans">Special Offer This Week</h3>
             </div>
-            <p className="text-base sm:text-lg text-[#4A3728] mb-2 font-sans">Get 20% off all High-Protein Smoothies!</p>
-            <p className="text-sm sm:text-base text-[#4A3728] font-semibold font-sans">Use code: PROTEIN20</p>
+            <p className="text-base sm:text-lg text-[#14433B] mb-2 font-sans">Get 20% off all High-Protein Smoothies!</p>
+            <p className="text-sm sm:text-base text-[#14433B] font-semibold font-sans">Use code: PROTEIN20</p>
           </div>
         </div>
       </section>
@@ -610,11 +642,11 @@ export default function Home() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-serif pr-2">{selectedDrink.name}</h2>
+            <div className="sticky top-0 bg-white border-b border-[#14433B]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#14433B] font-serif pr-2">{selectedDrink.name}</h2>
               <button
                 onClick={closeModal}
-                className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors flex-shrink-0"
+                className="text-[#14433B] hover:text-[#1a5444] text-2xl font-bold transition-colors flex-shrink-0"
               >
                 ×
               </button>
@@ -643,22 +675,22 @@ export default function Home() {
               {/* Description */}
               {selectedDrink.description && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#4A3728] mb-2 font-serif">คำอธิบาย</h3>
-                  <p className="text-[#4A3728]/80 font-sans whitespace-pre-wrap">{selectedDrink.description}</p>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-serif">คำอธิบาย</h3>
+                  <p className="text-[#14433B]/80 font-sans whitespace-pre-wrap">{selectedDrink.description}</p>
                 </div>
               )}
 
               {/* Ingredients */}
               {selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#4A3728] mb-3 font-serif">วัถุดิบ</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">วัถุดิบ</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {selectedDrink.ingredients.map((ingredient, idx) => {
                       const fruit = fruits.find(f => f.id === ingredient.fruitId);
                       return (
                         <div 
                           key={idx}
-                          className="flex items-center gap-3 p-3 bg-[#E8DDCB]/50 rounded-lg"
+                          className="flex items-center gap-3 p-3 bg-[#FFF6F0]/50 rounded-lg"
                         >
                           {fruit?.imageUrl ? (
                             <img
@@ -675,8 +707,8 @@ export default function Home() {
                             </div>
                           )}
                           <div className="flex-1">
-                            <p className="font-medium text-[#4A3728] font-sans">{ingredient.fruitName}</p>
-                            <p className="text-sm text-[#4A3728]/70 font-sans">จำนวน: {ingredient.quantity} หน่วย</p>
+                            <p className="font-medium text-[#14433B] font-sans">{ingredient.fruitName}</p>
+                            <p className="text-sm text-[#14433B]/70 font-sans">จำนวน: {ingredient.quantity} หน่วย</p>
                           </div>
                         </div>
                       );
@@ -688,7 +720,7 @@ export default function Home() {
               {/* Cup Size Selection */}
               {cupSizes.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#4A3728] mb-3 font-serif">เลือกขนาดแก้ว</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">เลือกขนาดแก้ว</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {cupSizes.map((size) => {
                       const isSelected = modalCupSize?.id === size.id;
@@ -698,8 +730,8 @@ export default function Home() {
                           onClick={() => setModalCupSize(size)}
                           className={`p-3 rounded-lg border-2 transition-all font-sans ${
                             isSelected
-                              ? "border-[#4A3728] bg-[#4A3728] text-[#E8DDCB]"
-                              : "border-[#4A3728]/30 bg-white text-[#4A3728] hover:border-[#4A3728]/50"
+                              ? "border-[#14433B] bg-[#14433B] text-[#FFF6F0]"
+                              : "border-[#14433B]/30 bg-white text-[#14433B] hover:border-[#14433B]/50"
                           }`}
                         >
                           <p className="font-semibold">{size.name}</p>
@@ -715,7 +747,7 @@ export default function Home() {
               )}
 
               {/* Price */}
-              <div className="mb-6 p-4 bg-[#E8DDCB] rounded-lg">
+              <div className="mb-6 p-4 bg-[#FFF6F0] rounded-lg">
                 {(() => {
                   let basePrice = 100;
                   if (selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && fruits.length > 0) {
@@ -734,8 +766,8 @@ export default function Home() {
                   const totalPrice = basePrice + cupSizePrice;
                   return (
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-[#4A3728] font-sans">ราคารวม:</span>
-                      <span className="text-2xl font-bold text-[#4A3728] font-serif">${totalPrice.toFixed(2)}</span>
+                      <span className="text-lg font-semibold text-[#14433B] font-sans">ราคารวม:</span>
+                      <span className="text-2xl font-bold text-[#14433B] font-serif">${totalPrice.toFixed(2)}</span>
                     </div>
                   );
                 })()}
@@ -749,7 +781,7 @@ export default function Home() {
                   }
                 }}
                 disabled={addingToCart || !modalCupSize || cupSizes.length === 0}
-                className="w-full bg-[#4A3728] text-[#E8DDCB] px-6 py-3 rounded-lg font-semibold hover:bg-[#5A3C2B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-sans"
+                className="w-full bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:bg-[#1a5444] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-sans"
               >
                 {addingToCart ? "กำลังเพิ่ม..." : "เพิ่มลงตะกร้า"}
               </button>

@@ -126,8 +126,8 @@ export default function HomeEditorPage() {
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3728] mx-auto mb-4"></div>
-            <div className="text-[#4A3728] text-xl">กำลังโหลด...</div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
+            <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
           </div>
         </div>
       </div>
@@ -135,24 +135,24 @@ export default function HomeEditorPage() {
   }
 
   return (
-    <div className="p-8 bg-[#E8DDCB] min-h-screen">
+    <div className="p-8 bg-[#FFF6F0] min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#4A3728] mb-2 font-serif">Home Editor</h1>
-          <p className="text-[#4A3728]/70 font-sans">จัดการวัตถุดิบตามฤดูกาลที่จะแสดงในหน้าแรก</p>
+          <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-serif">Home Editor</h1>
+          <p className="text-[#14433B]/70 font-sans">จัดการวัตถุดิบตามฤดูกาลที่จะแสดงในหน้าแรก</p>
         </div>
 
         {/* Category Filter */}
         <div className="mb-6">
           <div className="flex items-center gap-4 flex-wrap">
-            <span className="text-[#4A3728] font-semibold font-sans">หมวดหมู่:</span>
+            <span className="text-[#14433B] font-semibold font-sans">หมวดหมู่:</span>
             <button
               onClick={() => setSelectedCategory("ALL")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
                 selectedCategory === "ALL"
-                  ? "bg-[#4A3728] text-[#E8DDCB]"
-                  : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
               ทั้งหมด
@@ -161,8 +161,8 @@ export default function HomeEditorPage() {
               onClick={() => setSelectedCategory("FRUIT")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
                 selectedCategory === "FRUIT"
-                  ? "bg-[#4A3728] text-[#E8DDCB]"
-                  : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
               ผลไม้
@@ -171,8 +171,8 @@ export default function HomeEditorPage() {
               onClick={() => setSelectedCategory("VEGETABLE")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
                 selectedCategory === "VEGETABLE"
-                  ? "bg-[#4A3728] text-[#E8DDCB]"
-                  : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
               ผัก
@@ -181,8 +181,8 @@ export default function HomeEditorPage() {
               onClick={() => setSelectedCategory("ADDON")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
                 selectedCategory === "ADDON"
-                  ? "bg-[#4A3728] text-[#E8DDCB]"
-                  : "bg-white text-[#4A3728] hover:bg-[#E8DDCB]"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
               ส่วนเสริม
@@ -192,14 +192,14 @@ export default function HomeEditorPage() {
 
         {/* Action Buttons */}
         <div className="flex items-center justify-between mb-6">
-          <div className="text-[#4A3728]/70 font-sans">
+          <div className="text-[#14433B]/70 font-sans">
             เลือกวัตถุดิบที่จะแสดงในหน้าแรก (สูงสุด 4 รายการ)
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={loadIngredients}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-white text-[#4A3728] rounded-lg hover:bg-[#E8DDCB] transition-colors disabled:opacity-50 font-sans"
+              className="flex items-center gap-2 px-4 py-2 bg-white text-[#14433B] rounded-lg hover:bg-[#FFF6F0] transition-colors disabled:opacity-50 font-sans"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               รีเฟรช
@@ -207,7 +207,7 @@ export default function HomeEditorPage() {
             <button
               onClick={handleSave}
               disabled={saving || loading}
-              className="flex items-center gap-2 px-6 py-2 bg-[#4A3728] text-[#E8DDCB] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-sans"
+              className="flex items-center gap-2 px-6 py-2 bg-[#14433B] text-[#FFF6F0] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-sans"
             >
               <Save className="w-4 h-4" />
               {saving ? "กำลังบันทึก..." : "บันทึก"}
@@ -217,12 +217,12 @@ export default function HomeEditorPage() {
 
         {/* Ingredients Grid */}
         {loading ? (
-          <div className="text-center text-[#4A3728]/60 py-12 font-sans">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3728] mx-auto mb-4"></div>
+          <div className="text-center text-[#14433B]/60 py-12 font-sans">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
             กำลังโหลดข้อมูล...
           </div>
         ) : filteredIngredients.length === 0 ? (
-          <div className="text-center text-[#4A3728]/60 py-12 font-sans">
+          <div className="text-center text-[#14433B]/60 py-12 font-sans">
             ไม่พบวัตถุดิบในหมวดหมู่นี้
           </div>
         ) : (
@@ -237,8 +237,8 @@ export default function HomeEditorPage() {
                   key={ingredient.id}
                   className={`bg-white rounded-lg border-2 p-4 transition-all ${
                     isSeasonal
-                      ? "border-[#4A3728] shadow-lg"
-                      : "border-[#4A3728]/20 hover:border-[#4A3728]/40"
+                      ? "border-[#14433B] shadow-lg"
+                      : "border-[#14433B]/20 hover:border-[#14433B]/40"
                   }`}
                 >
                   {/* Image */}
@@ -265,22 +265,22 @@ export default function HomeEditorPage() {
                     
                     {/* Seasonal Badge */}
                     {isSeasonal && (
-                      <div className="absolute top-2 right-2 bg-[#4A3728] text-[#E8DDCB] px-2 py-1 rounded-full text-xs font-semibold font-sans">
+                      <div className="absolute top-2 right-2 bg-[#14433B] text-[#FFF6F0] px-2 py-1 rounded-full text-xs font-semibold font-sans">
                         ตามฤดูกาล
                       </div>
                     )}
                   </div>
 
                   {/* Info */}
-                  <h3 className="font-bold text-[#4A3728] mb-1 font-sans line-clamp-1">
+                  <h3 className="font-bold text-[#14433B] mb-1 font-sans line-clamp-1">
                     {ingredient.name}
                   </h3>
                   {ingredient.description && (
-                    <p className="text-xs text-[#4A3728]/70 mb-2 line-clamp-2 font-sans">
+                    <p className="text-xs text-[#14433B]/70 mb-2 line-clamp-2 font-sans">
                       {ingredient.description}
                     </p>
                   )}
-                  <p className="text-sm text-[#4A3728] font-semibold mb-3 font-sans">
+                  <p className="text-sm text-[#14433B] font-semibold mb-3 font-sans">
                     ฿{Number(ingredient.pricePerUnit).toFixed(2)}/หน่วย
                   </p>
 
@@ -292,12 +292,12 @@ export default function HomeEditorPage() {
                       checked={isSeasonal}
                       onChange={() => toggleSeasonal(ingredient.id)}
                       disabled={!canSelect}
-                      className="w-5 h-5 text-[#4A3728] rounded focus:ring-[#4A3728] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-5 h-5 text-[#14433B] rounded focus:ring-[#14433B] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <label
                       htmlFor={`seasonal-${ingredient.id}`}
                       className={`text-sm font-medium font-sans ${
-                        canSelect ? "text-[#4A3728] cursor-pointer" : "text-[#4A3728]/50 cursor-not-allowed"
+                        canSelect ? "text-[#14433B] cursor-pointer" : "text-[#14433B]/50 cursor-not-allowed"
                       }`}
                     >
                       {isSeasonal ? "แสดงในหน้าแรก" : "ไม่แสดง"}
@@ -316,12 +316,12 @@ export default function HomeEditorPage() {
         )}
 
         {/* Info Box */}
-        <div className="mt-8 bg-white rounded-lg p-6 border border-[#4A3728]/20">
+        <div className="mt-8 bg-white rounded-lg p-6 border border-[#14433B]/20">
           <div className="flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-[#4A3728] mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-[#14433B] mt-0.5 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-[#4A3728] mb-2 font-sans">คำแนะนำ</h3>
-              <ul className="text-sm text-[#4A3728]/70 space-y-1 font-sans">
+              <h3 className="font-semibold text-[#14433B] mb-2 font-sans">คำแนะนำ</h3>
+              <ul className="text-sm text-[#14433B]/70 space-y-1 font-sans">
                 <li>• เลือกวัตถุดิบที่จะแสดงในหน้าแรกได้สูงสุด 4 รายการ</li>
                 <li>• วัตถุดิบที่เลือกจะแสดงในส่วน "วัตถุดิบตามฤดูกาล" ในหน้าแรก</li>
                 <li>• กดปุ่ม "บันทึก" เพื่อบันทึกการเปลี่ยนแปลง</li>

@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { getFruits, getDrinks, getCupSizes, addToCart, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
 
-export default function MenuPage() {
+function MenuContent() {
+  const searchParams = useSearchParams();
   const [fruits, setFruits] = useState<Fruit[]>([]);
   const [drinks, setDrinks] = useState<PredefinedDrink[]>([]);
   const [cupSizes, setCupSizes] = useState<CupSize[]>([]);
@@ -17,6 +19,7 @@ export default function MenuPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedDrink, setSelectedDrink] = useState<PredefinedDrink | null>(null);
   const [modalCupSize, setModalCupSize] = useState<CupSize | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<"ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -40,6 +43,19 @@ export default function MenuPage() {
       window.removeEventListener("authStateChanged", handleAuthChange);
     };
   }, []);
+
+  // Read category from URL query parameter
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) {
+      const validCategories: ("ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT")[] = [
+        "ALL", "SIGNATURE", "CLASSIC", "GREEN_BOOSTER", "HIGH_PROTEIN", "SUPERFRUIT"
+      ];
+      if (validCategories.includes(categoryParam as any)) {
+        setSelectedCategory(categoryParam as "ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT");
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     loadData();
@@ -101,18 +117,25 @@ export default function MenuPage() {
   function openModal(drink: PredefinedDrink) {
     setSelectedDrink(drink);
     setModalCupSize(selectedCupSize || (cupSizes.length > 0 ? cupSizes[0] : null));
+    setQuantity(1);
     setShowModal(true);
   }
 
   function closeModal() {
     setShowModal(false);
     setSelectedDrink(null);
+    setQuantity(1);
   }
 
-  async function handleAddToCart(drinkId: number, cupSize?: CupSize) {
+  async function handleAddToCart(drinkId: number, cupSize?: CupSize, qty: number = 1) {
     const targetCupSize = cupSize || selectedCupSize || (cupSizes.length > 0 ? cupSizes[0] : null);
     if (!targetCupSize) {
       alert("กรุณารอสักครู่เพื่อโหลดข้อมูลขนาดแก้ว");
+      return;
+    }
+
+    if (qty < 1) {
+      alert("กรุณาเลือกจำนวนแก้วอย่างน้อย 1 แก้ว");
       return;
     }
 
@@ -139,23 +162,26 @@ export default function MenuPage() {
 
         const cupSizePrice = targetCupSize.priceExtra || 0;
         const unitPrice = basePrice + cupSizePrice;
-        const totalPrice = unitPrice;
+        const totalPrice = unitPrice * qty;
 
-        const guestItem = {
-          type: "PREDEFINED" as const,
-          cupSizeId: targetCupSize.id,
-          cupSizeName: targetCupSize.name,
-          quantity: 1,
-          predefinedDrinkId: drinkId,
-          predefinedDrinkName: drink.name,
-          predefinedDrinkImageUrl: drink.imageUrl,
-          unitPrice,
-          totalPrice,
-        };
+        // เพิ่มหลายแก้วเป็นรายการแยกกัน
+        for (let i = 0; i < qty; i++) {
+          const guestItem = {
+            type: "PREDEFINED" as const,
+            cupSizeId: targetCupSize.id,
+            cupSizeName: targetCupSize.name,
+            quantity: 1,
+            predefinedDrinkId: drinkId,
+            predefinedDrinkName: drink.name,
+            predefinedDrinkImageUrl: drink.imageUrl,
+            unitPrice,
+            totalPrice: unitPrice,
+          };
+          addToGuestCart(guestItem);
+        }
 
-        addToGuestCart(guestItem);
         window.dispatchEvent(new Event("cartUpdated"));
-        alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉");
+        alert(`เพิ่ม ${qty} แก้วลงตะกร้าเรียบร้อยแล้ว! 🎉`);
         closeModal();
       } catch (err: any) {
         console.error("Error adding to guest cart:", err);
@@ -172,11 +198,11 @@ export default function MenuPage() {
       await addToCart({
         type: "PREDEFINED",
         cupSizeId: targetCupSize.id,
-        quantity: 1,
+        quantity: qty,
         predefinedDrinkId: drinkId,
       });
       window.dispatchEvent(new Event("cartUpdated"));
-      alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉");
+      alert(`เพิ่ม ${qty} แก้วลงตะกร้าเรียบร้อยแล้ว! 🎉`);
       closeModal();
     } catch (err: any) {
       alert(err.message || "ไม่สามารถเพิ่มลงตะกร้าได้");
@@ -294,7 +320,7 @@ export default function MenuPage() {
     return (
       <div
         key={drink.id}
-        className="bg-white rounded-lg border border-[#4A3728]/20 p-4 hover:shadow-xl transition-all duration-300 relative group"
+        className="bg-white rounded-lg border border-[#14433B]/20 p-4 hover:shadow-xl transition-all duration-300 relative group"
       >
         <div 
           onClick={() => openModal(drink)}
@@ -323,7 +349,7 @@ export default function MenuPage() {
             
             {/* Ingredients Overlay on Hover */}
             {drinkIngredients.length > 0 && (
-              <div className="absolute inset-0 bg-[#4A3728]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3 rounded-lg">
+              <div className="absolute inset-0 bg-[#14433B]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3 rounded-lg">
                 <p className="text-white text-xs font-semibold mb-2 font-sans">ส่วนผสม</p>
                 <div className="grid grid-cols-3 gap-2 w-full max-h-32 overflow-y-auto">
                   {drinkIngredients.map((ing: any) => (
@@ -362,11 +388,11 @@ export default function MenuPage() {
             )}
           </div>
           
-          <h4 className="font-semibold text-[#4A3728] mb-1 font-sans">{drink.name}</h4>
+          <h4 className="font-semibold text-[#14433B] mb-1 font-sans">{drink.name}</h4>
           {drink.description && (
-            <p className="text-[#4A3728]/70 text-xs mb-2 line-clamp-2 font-sans">{drink.description}</p>
+            <p className="text-[#14433B]/70 text-xs mb-2 line-clamp-2 font-sans">{drink.description}</p>
           )}
-          <p className="text-[#4A3728] font-bold mb-3 font-sans">{price.toFixed(2)} บาท</p>
+          <p className="text-[#14433B] font-bold mb-3 font-sans">{price.toFixed(2)} บาท</p>
         </div>
         <button
           onClick={(e) => {
@@ -374,7 +400,7 @@ export default function MenuPage() {
             e.stopPropagation();
             openModal(drink);
           }}
-          className="absolute bottom-4 right-4 bg-[#4A3728] text-[#E8DDCB] w-8 h-8 rounded flex items-center justify-center hover:bg-[#5A3C2B] transition-colors z-10"
+          className="absolute bottom-4 right-4 bg-[#14433B] text-[#FFF6F0] w-8 h-8 rounded flex items-center justify-center hover:bg-[#1a5444] transition-colors z-10"
           title="ดูรายละเอียด"
         >
           +
@@ -384,9 +410,9 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="bg-[#E8DDCB] min-h-screen py-6 sm:py-8 md:py-12">
+    <div className="bg-[#FFF6F0] min-h-screen py-6 sm:py-8 md:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#4A3728] mb-6 sm:mb-8 font-serif">smoothies menu</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B] mb-6 sm:mb-8 font-serif">smoothies menu</h1>
 
         {/* Search Bar */}
         <section className="mb-6 sm:mb-8">
@@ -396,10 +422,10 @@ export default function MenuPage() {
               placeholder="ค้นหาเครื่องดื่ม, ส่วนผสม..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-[#4A3728]/30 bg-white text-[#4A3728] placeholder:text-[#4A3728]/50 focus:outline-none focus:border-[#4A3728] focus:ring-2 focus:ring-[#4A3728]/20 transition-all font-sans"
+              className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-[#14433B]/30 bg-white text-[#14433B] placeholder:text-[#14433B]/50 focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all font-sans"
             />
             <svg
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#4A3728]/50"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#14433B]/50"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -414,7 +440,7 @@ export default function MenuPage() {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4A3728]/50 hover:text-[#4A3728] transition-colors"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#14433B]/50 hover:text-[#14433B] transition-colors"
                 aria-label="Clear search"
               >
                 <svg
@@ -442,7 +468,7 @@ export default function MenuPage() {
                 onClick={() => setSelectedCategory("ALL")}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                   selectedCategory === "ALL"
-                    ? "bg-[#4A3728] text-white shadow-md"
+                    ? "bg-[#14433B] text-white shadow-md"
                     : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
@@ -452,7 +478,7 @@ export default function MenuPage() {
                 onClick={() => setSelectedCategory("SIGNATURE")}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                   selectedCategory === "SIGNATURE"
-                    ? "bg-[#4A3728] text-white shadow-md"
+                    ? "bg-[#14433B] text-white shadow-md"
                     : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
@@ -462,7 +488,7 @@ export default function MenuPage() {
                 onClick={() => setSelectedCategory("CLASSIC")}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                   selectedCategory === "CLASSIC"
-                    ? "bg-[#4A3728] text-white shadow-md"
+                    ? "bg-[#14433B] text-white shadow-md"
                     : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
@@ -472,7 +498,7 @@ export default function MenuPage() {
                 onClick={() => setSelectedCategory("GREEN_BOOSTER")}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                   selectedCategory === "GREEN_BOOSTER"
-                    ? "bg-[#4A3728] text-white shadow-md"
+                    ? "bg-[#14433B] text-white shadow-md"
                     : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
@@ -482,7 +508,7 @@ export default function MenuPage() {
                 onClick={() => setSelectedCategory("HIGH_PROTEIN")}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                   selectedCategory === "HIGH_PROTEIN"
-                    ? "bg-[#4A3728] text-white shadow-md"
+                    ? "bg-[#14433B] text-white shadow-md"
                     : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
@@ -492,7 +518,7 @@ export default function MenuPage() {
                 onClick={() => setSelectedCategory("SUPERFRUIT")}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${
                   selectedCategory === "SUPERFRUIT"
-                    ? "bg-[#4A3728] text-white shadow-md"
+                    ? "bg-[#14433B] text-white shadow-md"
                     : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                 }`}
               >
@@ -504,7 +530,7 @@ export default function MenuPage() {
         {/* All Drinks */}
         <section className="mb-8 sm:mb-12">
           <div className="text-center mb-6 sm:mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#4A3728] mb-2 font-serif">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#14433B] mb-2 font-serif">
               {selectedCategory === "ALL" && "All Smoothies"}
               {selectedCategory === "SIGNATURE" && "Signature Smoothies"}
               {selectedCategory === "CLASSIC" && "Classic Smoothies"}
@@ -512,7 +538,7 @@ export default function MenuPage() {
               {selectedCategory === "HIGH_PROTEIN" && "High-Protein Smoothies"}
               {selectedCategory === "SUPERFRUIT" && "Superfruit Smoothies"}
             </h2>
-            <p className="text-base sm:text-lg text-[#4A3728]/80 font-sans">
+            <p className="text-base sm:text-lg text-[#14433B]/80 font-sans">
               {searchQuery 
                 ? filteredDrinks.length > 0 
                   ? `พบ ${filteredDrinks.length} รายการที่ตรงกับ "${searchQuery}"` 
@@ -523,9 +549,9 @@ export default function MenuPage() {
             </p>
           </div>
           {loading ? (
-            <div className="text-center text-[#4A3728]/60 py-8">กำลังโหลด...</div>
+            <div className="text-center text-[#14433B]/60 py-8">กำลังโหลด...</div>
           ) : filteredDrinks.length === 0 ? (
-            <div className="text-center text-[#4A3728]/60 py-8 bg-white rounded-lg shadow-md p-12">
+            <div className="text-center text-[#14433B]/60 py-8 bg-white rounded-lg shadow-md p-12">
               <p className="text-xl mb-4">
                 {searchQuery 
                   ? `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"`
@@ -534,7 +560,7 @@ export default function MenuPage() {
               {searchQuery ? (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="bg-[#4A3728] text-[#E8DDCB] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity mr-2"
+                  className="bg-[#14433B] text-[#FFF6F0] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity mr-2"
                 >
                   ล้างการค้นหา
                 </button>
@@ -544,7 +570,7 @@ export default function MenuPage() {
                   setSelectedCategory("ALL");
                   setSearchQuery("");
                 }}
-                className="bg-[#4A3728] text-[#E8DDCB] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="bg-[#14433B] text-[#FFF6F0] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 ดูเมนูทั้งหมด
               </button>
@@ -559,13 +585,13 @@ export default function MenuPage() {
         {/* Custom Drink Builder - เปลี่ยนเป็นลิงก์ไปหน้า build */}
         <section className="mb-8 sm:mb-12 text-center">
           <div className="bg-white rounded-lg shadow-md p-6 sm:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#4A3728] mb-3 sm:mb-4 font-serif">Want to Create Your Own?</h2>
-            <p className="text-base sm:text-lg text-[#4A3728]/70 mb-4 sm:mb-6 font-sans">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#14433B] mb-3 sm:mb-4 font-serif">Want to Create Your Own?</h2>
+            <p className="text-base sm:text-lg text-[#14433B]/70 mb-4 sm:mb-6 font-sans">
               Customize your perfect smoothie with our build tool
             </p>
             <Link
               href="/build"
-              className="inline-block bg-[#4A3728] text-[#E8DDCB] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm sm:text-base"
+              className="inline-block bg-[#14433B] text-[#FFF6F0] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm sm:text-base"
             >
               Build Your Own Smoothie
             </Link>
@@ -584,11 +610,11 @@ export default function MenuPage() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-[#4A3728]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#4A3728] font-serif pr-2">{selectedDrink.name}</h2>
+            <div className="sticky top-0 bg-white border-b border-[#14433B]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#14433B] font-serif pr-2">{selectedDrink.name}</h2>
               <button
                 onClick={closeModal}
-                className="text-[#4A3728] hover:text-[#5A3C2B] text-2xl font-bold transition-colors flex-shrink-0"
+                className="text-[#14433B] hover:text-[#1a5444] text-2xl font-bold transition-colors flex-shrink-0"
               >
                 ×
               </button>
@@ -617,22 +643,22 @@ export default function MenuPage() {
               {/* Description */}
               {selectedDrink.description && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#4A3728] mb-2 font-serif">คำอธิบาย</h3>
-                  <p className="text-[#4A3728]/80 font-sans whitespace-pre-wrap">{selectedDrink.description}</p>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-serif">คำอธิบาย</h3>
+                  <p className="text-[#14433B]/80 font-sans whitespace-pre-wrap">{selectedDrink.description}</p>
                 </div>
               )}
 
               {/* Ingredients */}
               {selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#4A3728] mb-3 font-serif">วัถุดิบ</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">วัถุดิบ</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {selectedDrink.ingredients.map((ingredient, idx) => {
                       const fruit = fruits.find(f => f.id === ingredient.fruitId);
                       return (
                         <div 
                           key={idx}
-                          className="flex items-center gap-3 p-3 bg-[#E8DDCB]/50 rounded-lg"
+                          className="flex items-center gap-3 p-3 bg-[#FFF6F0]/50 rounded-lg"
                         >
                           {fruit?.imageUrl ? (
                             <img
@@ -649,8 +675,8 @@ export default function MenuPage() {
                             </div>
                           )}
                           <div className="flex-1">
-                            <p className="font-medium text-[#4A3728] font-sans">{ingredient.fruitName}</p>
-                            <p className="text-sm text-[#4A3728]/70 font-sans">จำนวน: {ingredient.quantity} หน่วย</p>
+                            <p className="font-medium text-[#14433B] font-sans">{ingredient.fruitName}</p>
+                            <p className="text-sm text-[#14433B]/70 font-sans">จำนวน: {ingredient.quantity} หน่วย</p>
                           </div>
                         </div>
                       );
@@ -662,7 +688,7 @@ export default function MenuPage() {
               {/* Cup Size Selection */}
               {cupSizes.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#4A3728] mb-3 font-serif">เลือกขนาดแก้ว</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">เลือกขนาดแก้ว</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {cupSizes.map((size) => {
                       const isSelected = modalCupSize?.id === size.id;
@@ -672,8 +698,8 @@ export default function MenuPage() {
                           onClick={() => setModalCupSize(size)}
                           className={`p-3 rounded-lg border-2 transition-all font-sans ${
                             isSelected
-                              ? "border-[#4A3728] bg-[#4A3728] text-[#E8DDCB]"
-                              : "border-[#4A3728]/30 bg-white text-[#4A3728] hover:border-[#4A3728]/50"
+                              ? "border-[#14433B] bg-[#14433B] text-[#FFF6F0]"
+                              : "border-[#14433B]/30 bg-white text-[#14433B] hover:border-[#14433B]/50"
                           }`}
                         >
                           <p className="font-semibold">{size.name}</p>
@@ -688,8 +714,41 @@ export default function MenuPage() {
                 </div>
               )}
 
+              {/* Quantity Selection */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">จำนวนแก้ว</h3>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 rounded-lg border-2 border-[#14433B] bg-white text-[#14433B] font-bold text-lg hover:bg-[#14433B] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={quantity <= 1}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    max="99"
+                    value={quantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 1;
+                      setQuantity(Math.max(1, Math.min(99, val)));
+                    }}
+                    className="w-20 text-center text-2xl font-bold text-[#14433B] border-2 border-[#14433B]/30 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#14433B]/50 font-sans"
+                  />
+                  <button
+                    onClick={() => setQuantity(Math.min(99, quantity + 1))}
+                    className="w-10 h-10 rounded-lg border-2 border-[#14433B] bg-white text-[#14433B] font-bold text-lg hover:bg-[#14433B] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={quantity >= 99}
+                  >
+                    +
+                  </button>
+                  <span className="text-[#14433B]/70 font-sans ml-2">แก้ว</span>
+                </div>
+              </div>
+
               {/* Price */}
-              <div className="mb-6 p-4 bg-[#E8DDCB] rounded-lg">
+              <div className="mb-6 p-4 bg-[#FFF6F0] rounded-lg">
                 {(() => {
                   let basePrice = 100;
                   if (selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && fruits.length > 0) {
@@ -705,11 +764,23 @@ export default function MenuPage() {
                     }
                   }
                   const cupSizePrice = modalCupSize?.priceExtra || 0;
-                  const totalPrice = basePrice + cupSizePrice;
+                  const unitPrice = basePrice + cupSizePrice;
+                  const totalPrice = unitPrice * quantity;
                   return (
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-[#4A3728] font-sans">ราคารวม:</span>
-                      <span className="text-2xl font-bold text-[#4A3728] font-serif">{totalPrice.toFixed(2)} บาท</span>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-[#14433B]/70 font-sans">ราคาต่อแก้ว:</span>
+                        <span className="text-lg font-semibold text-[#14433B] font-sans">{unitPrice.toFixed(2)} บาท</span>
+                      </div>
+                      {quantity > 1 && (
+                        <div className="flex justify-between items-center text-xs text-[#14433B]/60 font-sans">
+                          <span>{quantity} แก้ว × {unitPrice.toFixed(2)} บาท</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center pt-2 border-t border-[#14433B]/20">
+                        <span className="text-lg font-semibold text-[#14433B] font-sans">ราคารวม:</span>
+                        <span className="text-2xl font-bold text-[#14433B] font-serif">{totalPrice.toFixed(2)} บาท</span>
+                      </div>
                     </div>
                   );
                 })()}
@@ -719,19 +790,34 @@ export default function MenuPage() {
               <button
                 onClick={() => {
                   if (selectedDrink && modalCupSize) {
-                    handleAddToCart(selectedDrink.id, modalCupSize);
+                    handleAddToCart(selectedDrink.id, modalCupSize, quantity);
                   }
                 }}
-                disabled={addingToCart || !modalCupSize || cupSizes.length === 0}
-                className="w-full bg-[#4A3728] text-[#E8DDCB] px-6 py-3 rounded-lg font-semibold hover:bg-[#5A3C2B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-sans"
+                disabled={addingToCart || !modalCupSize || cupSizes.length === 0 || quantity < 1}
+                className="w-full bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:bg-[#1a5444] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-sans"
               >
-                {addingToCart ? "กำลังเพิ่ม..." : "เพิ่มลงตะกร้า"}
+                {addingToCart ? "กำลังเพิ่ม..." : `เพิ่ม ${quantity} แก้วลงตะกร้า`}
               </button>
             </div>
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+export default function MenuPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
+          <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
+        </div>
+      </div>
+    }>
+      <MenuContent />
+    </Suspense>
   );
 }
 
