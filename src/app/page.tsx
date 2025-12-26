@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { getFruits, getDrinks, getCupSizes, addToCart, getSeasonalIngredients, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
+import { getFruits, getDrinks, getCupSizes, addToCart, getSeasonalIngredients, calculateDrinkPrice, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -104,9 +104,13 @@ export default function Home() {
       setCupSizes(filteredCupSizes);
       setSeasonalIngredients(filteredSeasonal);
       
-      // Set default cup size for modal
+      // Set default cup size for modal - ใช้ cup size ที่เล็กที่สุด
       if (filteredCupSizes.length > 0) {
-        setModalCupSize(filteredCupSizes[0]);
+        const sortedCupSizes = [...filteredCupSizes].sort((a, b) => 
+          (a.volumeMl || 0) - (b.volumeMl || 0) || 
+          (a.priceExtra || 0) - (b.priceExtra || 0)
+        );
+        setModalCupSize(sortedCupSizes[0]);
       }
     } catch (err: any) {
       console.error("Failed to load data:", err);
@@ -120,7 +124,16 @@ export default function Home() {
 
   function openModal(drink: PredefinedDrink) {
     setSelectedDrink(drink);
-    setModalCupSize(cupSizes.length > 0 ? cupSizes[0] : null);
+    // ใช้ cup size ที่เล็กที่สุด
+    if (cupSizes.length > 0) {
+      const sortedCupSizes = [...cupSizes].sort((a, b) => 
+        (a.volumeMl || 0) - (b.volumeMl || 0) || 
+        (a.priceExtra || 0) - (b.priceExtra || 0)
+      );
+      setModalCupSize(sortedCupSizes[0]);
+    } else {
+      setModalCupSize(null);
+    }
     setShowModal(true);
   }
 
@@ -142,23 +155,8 @@ export default function Home() {
         const drink = drinks.find(d => d.id === drinkId);
         if (!drink) return;
 
-        // Calculate price from ingredients
-        let basePrice = 100;
-        if (drink.ingredients && drink.ingredients.length > 0) {
-          basePrice = drink.ingredients.reduce((sum, ing) => {
-            const fruit = fruits.find(f => f.id === ing.fruitId);
-            if (fruit) {
-              return sum + (Number(fruit.pricePerUnit) * ing.quantity);
-            }
-            return sum;
-          }, 0);
-          if (basePrice > 1000) {
-            basePrice = basePrice / 100;
-          }
-        }
-
-        const cupSizePrice = targetCupSize.priceExtra || 0;
-        const unitPrice = basePrice + cupSizePrice;
+        // ใช้ฟังก์ชันคำนวณราคาร่วมกัน
+        const unitPrice = calculateDrinkPrice(drink, fruits, cupSizes, targetCupSize);
         const totalPrice = unitPrice;
 
         const guestItem = {
@@ -357,28 +355,8 @@ export default function Home() {
                 <div className="w-full text-center text-[#14433B]/60 py-8">ยังไม่มีเมนูน้ำปั่นในหมวดหมู่นี้</div>
               ) : (
                 popularDrinks.map((drink, index) => {
-                  // Calculate price from ingredients if available, otherwise use mock prices
-                  let price = 12.99;
-                  if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
-                    const basePrice = drink.ingredients.reduce((sum, ing) => {
-                      const fruit = fruits.find(f => f.id === ing.fruitId);
-                      if (fruit) {
-                        return sum + (Number(fruit.pricePerUnit) * ing.quantity);
-                      }
-                      return sum;
-                    }, 0);
-                    // Add base cup size price (assuming smallest cup)
-                    const cupPrice = cupSizes.length > 0 ? (cupSizes[0]?.priceExtra || 0) : 0;
-                    price = basePrice + cupPrice;
-                    // If prices seem too high, they might be in cents - divide by 100
-                    if (price > 1000) {
-                      price = price / 100;
-                    }
-                  } else {
-                    // Mock prices matching the design
-                    const prices = [12.99, 11.99, 12.49, 13.99, 11.49, 12.99];
-                    price = prices[index % prices.length] || 12.99;
-                  }
+                  // ใช้ฟังก์ชันคำนวณราคาร่วมกัน
+                  const price = calculateDrinkPrice(drink, fruits, cupSizes);
 
                   // Get ingredients with images for hover display
                   const drinkIngredients = drink.ingredients
@@ -747,25 +725,11 @@ export default function Home() {
               {/* Price */}
               <div className="mb-6 p-4 bg-[#FFF6F0] rounded-lg">
                 {(() => {
-                  let basePrice = 100;
-                  if (selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && fruits.length > 0) {
-                    basePrice = selectedDrink.ingredients.reduce((sum, ing) => {
-                      const fruit = fruits.find(f => f.id === ing.fruitId);
-                      if (fruit) {
-                        return sum + (Number(fruit.pricePerUnit) * ing.quantity);
-                      }
-                      return sum;
-                    }, 0);
-                    if (basePrice > 1000) {
-                      basePrice = basePrice / 100;
-                    }
-                  }
-                  const cupSizePrice = modalCupSize?.priceExtra || 0;
-                  const totalPrice = basePrice + cupSizePrice;
+                  const totalPrice = selectedDrink ? calculateDrinkPrice(selectedDrink, fruits, cupSizes, modalCupSize || undefined) : 0;
                   return (
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-semibold text-[#14433B] font-sans">ราคารวม:</span>
-                      <span className="text-2xl font-bold text-[#14433B] font-serif">${totalPrice.toFixed(2)}</span>
+                      <span className="text-2xl font-bold text-[#14433B] font-serif">฿{totalPrice.toFixed(2)}</span>
                     </div>
                   );
                 })()}

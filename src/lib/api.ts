@@ -73,6 +73,7 @@ export type PredefinedDrink = {
   name: string;
   description?: string;
   imageUrl?: string;
+  basePrice?: number;
   active: boolean;
   ingredients: {
     fruitId: number;
@@ -273,6 +274,56 @@ export async function getDrinks() {
 export async function getSeasonalIngredients() {
   // เพิ่ม cache busting เพื่อให้ได้ข้อมูลล่าสุด
   return request<Fruit[]>(`/api/public/seasonal-ingredients?t=${Date.now()}`);
+}
+
+/**
+ * คำนวณราคาของ drink จาก ingredients และ cup size
+ * ใช้ฟังก์ชันนี้เพื่อให้แน่ใจว่าราคาในทุกที่ตรงกัน
+ */
+export function calculateDrinkPrice(
+  drink: PredefinedDrink,
+  fruits: Fruit[],
+  cupSizes: CupSize[],
+  selectedCupSize?: CupSize
+): number {
+  // ใช้ basePrice จาก drink ถ้ามี ถ้าไม่มีให้คำนวณจาก ingredients
+  let basePrice = 100; // ราคาพื้นฐาน default
+  if (drink.basePrice != null && drink.basePrice !== undefined) {
+    // ใช้ basePrice จาก drink
+    basePrice = Number(drink.basePrice);
+  } else if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
+    // คำนวณจาก ingredients
+    basePrice = drink.ingredients.reduce((sum, ing) => {
+      const fruit = fruits.find(f => f.id === ing.fruitId);
+      if (fruit) {
+        return sum + (Number(fruit.pricePerUnit) * ing.quantity);
+      }
+      return sum;
+    }, 0);
+  }
+
+  // หา cup size ที่จะใช้
+  let cupPrice = 0;
+  if (selectedCupSize) {
+    cupPrice = selectedCupSize.priceExtra || 0;
+  } else if (cupSizes.length > 0) {
+    // หา cup size ที่เล็กที่สุด (เรียงตาม volumeMl หรือ priceExtra)
+    const sortedCupSizes = [...cupSizes].sort((a, b) => 
+      (a.volumeMl || 0) - (b.volumeMl || 0) || 
+      (a.priceExtra || 0) - (b.priceExtra || 0)
+    );
+    cupPrice = sortedCupSizes[0]?.priceExtra || 0;
+  }
+
+  // คำนวณราคารวม
+  let totalPrice = basePrice + cupPrice;
+  
+  // If prices seem too high, they might be in cents - divide by 100
+  if (totalPrice > 1000) {
+    totalPrice = totalPrice / 100;
+  }
+
+  return totalPrice;
 }
 
 // Cart APIs
@@ -636,6 +687,7 @@ export type PredefinedDrinkCreateRequest = {
   name: string;
   description: string;
   imageUrl?: string;
+  basePrice?: number | null;
   active?: boolean;
   ingredients: {
     fruitId: number;
@@ -647,6 +699,7 @@ export type PredefinedDrinkUpdateRequest = {
   name?: string;
   description?: string;
   imageUrl?: string;
+  basePrice?: number | null;
   active?: boolean;
   ingredients?: {
     fruitId: number;

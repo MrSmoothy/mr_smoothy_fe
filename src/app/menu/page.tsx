@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { getFruits, getDrinks, getCupSizes, addToCart, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
+import { getFruits, getDrinks, getCupSizes, addToCart, calculateDrinkPrice, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
 
@@ -97,10 +97,14 @@ function MenuContent() {
       setDrinks(filteredDrinks);
       setCupSizes(filteredCupSizes);
       
-      // Set default cup size
+      // Set default cup size - ใช้ cup size ที่เล็กที่สุด
       if (filteredCupSizes.length > 0) {
-        setSelectedCupSize(filteredCupSizes[0]);
-        setModalCupSize(filteredCupSizes[0]);
+        const sortedCupSizes = [...filteredCupSizes].sort((a, b) => 
+          (a.volumeMl || 0) - (b.volumeMl || 0) || 
+          (a.priceExtra || 0) - (b.priceExtra || 0)
+        );
+        setSelectedCupSize(sortedCupSizes[0]);
+        setModalCupSize(sortedCupSizes[0]);
       }
     } catch (err: any) {
       console.error("Failed to load data:", err);
@@ -116,7 +120,18 @@ function MenuContent() {
 
   function openModal(drink: PredefinedDrink) {
     setSelectedDrink(drink);
-    setModalCupSize(selectedCupSize || (cupSizes.length > 0 ? cupSizes[0] : null));
+    // ใช้ cup size ที่เล็กที่สุด
+    if (selectedCupSize) {
+      setModalCupSize(selectedCupSize);
+    } else if (cupSizes.length > 0) {
+      const sortedCupSizes = [...cupSizes].sort((a, b) => 
+        (a.volumeMl || 0) - (b.volumeMl || 0) || 
+        (a.priceExtra || 0) - (b.priceExtra || 0)
+      );
+      setModalCupSize(sortedCupSizes[0]);
+    } else {
+      setModalCupSize(null);
+    }
     setQuantity(1);
     setShowModal(true);
   }
@@ -146,22 +161,8 @@ function MenuContent() {
         const drink = drinks.find(d => d.id === drinkId);
         if (!drink) return;
 
-        // คำนวณราคาจาก ingredients
-        let basePrice = 0;
-        if (drink.ingredients && drink.ingredients.length > 0) {
-          basePrice = drink.ingredients.reduce((sum, ing) => {
-            const fruit = fruits.find(f => f.id === ing.fruitId);
-            if (fruit) {
-              return sum + (Number(fruit.pricePerUnit) * ing.quantity);
-            }
-            return sum;
-          }, 0);
-        } else {
-          basePrice = 100; // ราคาพื้นฐานถ้าไม่มี ingredients
-        }
-
-        const cupSizePrice = targetCupSize.priceExtra || 0;
-        const unitPrice = basePrice + cupSizePrice;
+        // ใช้ฟังก์ชันคำนวณราคาร่วมกัน
+        const unitPrice = calculateDrinkPrice(drink, fruits, cupSizes, targetCupSize);
         const totalPrice = unitPrice * qty;
 
         // เพิ่มหลายแก้วเป็นรายการแยกกัน
@@ -281,24 +282,8 @@ function MenuContent() {
     : categoryFilteredDrinks;
 
   function renderDrinkCard(drink: PredefinedDrink) {
-    // คำนวณราคาจาก ingredients
-    let price = 100; // ราคาพื้นฐาน
-    if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
-      const basePrice = drink.ingredients.reduce((sum, ing) => {
-        const fruit = fruits.find(f => f.id === ing.fruitId);
-        if (fruit) {
-          return sum + (Number(fruit.pricePerUnit) * ing.quantity);
-        }
-        return sum;
-      }, 0);
-      // Add base cup size price (assuming smallest cup)
-      const cupPrice = cupSizes.length > 0 ? (cupSizes[0]?.priceExtra || 0) : 0;
-      price = basePrice + cupPrice;
-      // If prices seem too high, they might be in cents - divide by 100
-      if (price > 1000) {
-        price = price / 100;
-      }
-    }
+    // ใช้ฟังก์ชันคำนวณราคาร่วมกัน
+    const price = calculateDrinkPrice(drink, fruits, cupSizes);
 
     // Get ingredients with images for hover display
     const drinkIngredients = drink.ingredients
@@ -750,21 +735,7 @@ function MenuContent() {
               {/* Price */}
               <div className="mb-6 p-4 bg-[#FFF6F0] rounded-lg">
                 {(() => {
-                  let basePrice = 100;
-                  if (selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && fruits.length > 0) {
-                    basePrice = selectedDrink.ingredients.reduce((sum, ing) => {
-                      const fruit = fruits.find(f => f.id === ing.fruitId);
-                      if (fruit) {
-                        return sum + (Number(fruit.pricePerUnit) * ing.quantity);
-                      }
-                      return sum;
-                    }, 0);
-                    if (basePrice > 1000) {
-                      basePrice = basePrice / 100;
-                    }
-                  }
-                  const cupSizePrice = modalCupSize?.priceExtra || 0;
-                  const unitPrice = basePrice + cupSizePrice;
+                  const unitPrice = selectedDrink ? calculateDrinkPrice(selectedDrink, fruits, cupSizes, modalCupSize || undefined) : 0;
                   const totalPrice = unitPrice * quantity;
                   return (
                     <div className="space-y-2">

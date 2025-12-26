@@ -82,19 +82,27 @@ export default function AdminDrinksPage() {
       const descriptionValue = drink.description !== null && drink.description !== undefined 
         ? String(drink.description) 
         : "";
-      // Calculate base price from ingredients
-      let calculatedPrice = 0;
-      if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
-        calculatedPrice = drink.ingredients.reduce((sum, ing) => {
-          const fruit = fruits.find(f => f.id === ing.fruitId);
-          if (fruit) {
-            return sum + (Number(fruit.pricePerUnit) * ing.quantity);
+      // ใช้ basePrice จาก drink ถ้ามี ถ้าไม่มีให้คำนวณจาก ingredients
+      let basePriceValue = "";
+      if (drink.basePrice != null && drink.basePrice !== undefined) {
+        // ใช้ basePrice จาก drink
+        basePriceValue = Number(drink.basePrice).toFixed(2);
+      } else {
+        // คำนวณจาก ingredients
+        let calculatedPrice = 0;
+        if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
+          calculatedPrice = drink.ingredients.reduce((sum, ing) => {
+            const fruit = fruits.find(f => f.id === ing.fruitId);
+            if (fruit) {
+              return sum + (Number(fruit.pricePerUnit) * ing.quantity);
+            }
+            return sum;
+          }, 0);
+          if (calculatedPrice > 1000) {
+            calculatedPrice = calculatedPrice / 100;
           }
-          return sum;
-        }, 0);
-        if (calculatedPrice > 1000) {
-          calculatedPrice = calculatedPrice / 100;
         }
+        basePriceValue = calculatedPrice > 0 ? calculatedPrice.toFixed(2) : "";
       }
       setFormData({
         name: drink.name,
@@ -102,7 +110,7 @@ export default function AdminDrinksPage() {
         imageUrl: drink.imageUrl || "",
         active: drink.active,
         ingredients: drink.ingredients.map(i => ({ fruitId: i.fruitId, quantity: i.quantity })),
-        basePrice: calculatedPrice > 0 ? calculatedPrice.toFixed(2) : "",
+        basePrice: basePriceValue,
       });
       console.log("Form data set:", { description: descriptionValue });
     } else {
@@ -262,6 +270,9 @@ export default function AdminDrinksPage() {
           imageUrl: formData.imageUrl?.trim() || undefined,
           active: formData.active,
           ingredients: formData.ingredients,
+          basePrice: formData.basePrice && formData.basePrice.trim() !== "" 
+            ? parseFloat(formData.basePrice.trim()) 
+            : null,
         };
         console.log("Updating drink:", editingDrink.id, "with data:", JSON.stringify(updateData, null, 2));
         const response = await adminUpdateDrink(editingDrink.id, updateData);
@@ -294,7 +305,14 @@ export default function AdminDrinksPage() {
       alert("ลบข้อมูลสำเร็จ");
       loadData();
     } catch (err: any) {
-      alert(err.message || "ไม่สามารถลบข้อมูลได้");
+      console.error("Failed to delete drink:", err);
+      // แสดง error message ที่เข้าใจง่าย
+      const errorMessage = err.message || "ไม่สามารถลบข้อมูลได้";
+      if (errorMessage.includes("ออเดอร์") || errorMessage.includes("order") || errorMessage.includes("foreign key")) {
+        alert("ไม่สามารถลบเมนูนี้ได้ เนื่องจากมีออเดอร์ที่ใช้เมนูนี้อยู่\n\nกรุณาปิดการใช้งาน (Active = false) แทนการลบ");
+      } else {
+        alert(errorMessage);
+      }
     }
   }
 
@@ -442,8 +460,20 @@ export default function AdminDrinksPage() {
                   ไม่มีรูปภาพ
                 </div>
               )}
-              <h3 className="text-xl font-semibold text-[#14433B] mb-2">{drink.name}</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-semibold text-[#14433B]">{drink.name}</h3>
+                {!drink.active && (
+                  <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-semibold">
+                    ปิดการใช้งาน
+                  </span>
+                )}
+              </div>
               <p className="text-[#14433B]/70 text-sm mb-3 line-clamp-2">{drink.description}</p>
+              {drink.basePrice != null && (
+                <p className="text-sm text-[#14433B] mb-2">
+                  <span className="font-semibold">ราคาพื้นฐาน:</span> ฿{Number(drink.basePrice).toFixed(2)}
+                </p>
+              )}
               <div className="mb-4">
                 <p className="text-sm text-[#14433B]/70 mb-2">ส่วนผสม:</p>
                 <div className="flex flex-wrap gap-2">
