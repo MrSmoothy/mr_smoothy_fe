@@ -37,7 +37,7 @@ export type UserUpdateRequest = {
   password?: string;
 };
 
-export type FruitCategory = "FRUIT" | "VEGETABLE" | "ADDON";
+export type FruitCategory = "ORGANIC_FRUITS" | "ORGANIC_VEGETABLE" | "BASE" | "SUPERFRUITS" | "PROTEIN" | "TOPPING" | "SWEETENER";
 
 export type Fruit = {
   id: number;

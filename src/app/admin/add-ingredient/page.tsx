@@ -19,7 +19,7 @@ export default function AddIngredientPage() {
     description: "",
     imageUrl: "",
     pricePerUnit: 0,
-    category: "FRUIT",
+    category: "ORGANIC_FRUITS",
     active: true,
     seasonal: false,
     fetchNutrition: true, // Default to true
@@ -134,9 +134,13 @@ export default function AddIngredientPage() {
                 }
                 className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
               >
-                <option value="FRUIT">🍎 ผลไม้</option>
-                <option value="VEGETABLE">🥬 ผัก</option>
-                <option value="ADDON">🥛 ส่วนเสริม</option>
+                <option value="ORGANIC_FRUITS">🍎 ผลไม้ออร์แกนิก</option>
+                <option value="ORGANIC_VEGETABLE">🥬 ผักออร์แกนิก</option>
+                <option value="BASE">🥛 ฐาน</option>
+                <option value="SUPERFRUITS">🌟 ซูเปอร์ฟรุต</option>
+                <option value="PROTEIN">💪 โปรตีน</option>
+                <option value="TOPPING">🍒 ท็อปปิ้ง</option>
+                <option value="SWEETENER">🍯 สารให้ความหวาน</option>
               </select>
             </div>
 

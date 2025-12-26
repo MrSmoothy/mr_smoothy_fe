@@ -73,8 +73,8 @@ export default function BuildPage() {
           .filter(f => f && f.active)
           .map(f => ({
             ...f,
-            // ถ้าไม่มี category ให้ตั้งเป็น FRUIT (default)
-            category: (f.category || "FRUIT") as FruitCategory
+            // ถ้าไม่มี category ให้ตั้งเป็น ORGANIC_FRUITS (default)
+            category: (f.category || "ORGANIC_FRUITS") as FruitCategory
           }))
         : [];
       const filteredCupSizes = Array.isArray(cupSizesRes.data)
@@ -399,31 +399,67 @@ export default function BuildPage() {
                     ทั้งหมด
                   </button>
                   <button
-                    onClick={() => setSelectedCategory("FRUIT")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "FRUIT"
+                    onClick={() => setSelectedCategory("ORGANIC_FRUITS")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "ORGANIC_FRUITS"
                       ? "bg-[#14433B] text-white shadow-md"
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ผลไม้
+                    ผลไม้ออร์แกนิก
                   </button>
                   <button
-                    onClick={() => setSelectedCategory("VEGETABLE")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "VEGETABLE"
+                    onClick={() => setSelectedCategory("ORGANIC_VEGETABLE")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "ORGANIC_VEGETABLE"
                       ? "bg-[#14433B] text-white shadow-md"
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ผัก
+                    ผักออร์แกนิก
                   </button>
                   <button
-                    onClick={() => setSelectedCategory("ADDON")}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "ADDON"
+                    onClick={() => setSelectedCategory("SUPERFRUITS")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "SUPERFRUITS"
                       ? "bg-[#14433B] text-white shadow-md"
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ส่วนเสริม
+                    ซูเปอร์ฟรุต
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("BASE")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "BASE"
+                      ? "bg-[#14433B] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
+                  >
+                    ฐาน
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("PROTEIN")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "PROTEIN"
+                      ? "bg-[#14433B] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
+                  >
+                    โปรตีน
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("TOPPING")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "TOPPING"
+                      ? "bg-[#14433B] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
+                  >
+                    ท็อปปิ้ง
+                  </button>
+                  <button
+                    onClick={() => setSelectedCategory("SWEETENER")}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all duration-200 font-sans text-xs sm:text-sm shadow-sm ${selectedCategory === "SWEETENER"
+                      ? "bg-[#14433B] text-white shadow-md"
+                      : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
+                      }`}
+                  >
+                    สารให้ความหวาน
                   </button>
                 </div>
               </div>
@@ -454,7 +490,7 @@ export default function BuildPage() {
               {searchQuery && (
                 <div className="text-sm text-[#14433B]/60 mb-4">
                   พบ {fruits.filter(f => {
-                    const matchCategory = selectedCategory === "ALL" || (f.category || "FRUIT") === selectedCategory;
+                    const matchCategory = selectedCategory === "ALL" || (f.category || "ORGANIC_FRUITS") === selectedCategory;
                     const matchSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase());
                     return matchCategory && matchSearch;
                   }).length} รายการ
@@ -465,7 +501,7 @@ export default function BuildPage() {
                 <FruitSelector
                   fruits={fruits.filter(f => {
                     // Filter by category
-                    const fruitCategory = f.category || "FRUIT";
+                    const fruitCategory = f.category || "ORGANIC_FRUITS";
                     const matchCategory = selectedCategory === "ALL" || fruitCategory === selectedCategory;
 
                     // Filter by search query

@@ -26,14 +26,14 @@ export default function AdminFruitsPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "ORGANIC_FRUIT" | "ORGANIC_VEGETABLE" | "BASE" | "SUPERFRUIT" | "PROTEIN" | "TOPPING" | "SWEETENER">("ALL");
+  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "ORGANIC_FRUITS" | "ORGANIC_VEGETABLE" | "BASE" | "SUPERFRUITS" | "PROTEIN" | "TOPPING" | "SWEETENER">("ALL");
   const [editingFruit, setEditingFruit] = useState<Fruit | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     pricePerUnit: "",
     imageUrl: "",
-    category: "FRUIT" as FruitCategory,
+    category: "ORGANIC_FRUITS" as FruitCategory,
     active: true,
     seasonal: false,
     fetchNutrition: true, // Default to true
@@ -69,7 +69,7 @@ export default function AdminFruitsPage() {
       // Ensure all fruits have category field
       const fruitsWithCategory = fruitsData.map(f => ({
         ...f,
-        category: f.category || "FRUIT" as FruitCategory
+        category: f.category || "ORGANIC_FRUITS" as FruitCategory
       }));
       setFruits(fruitsWithCategory);
       console.log("Loaded fruits with categories:", fruitsWithCategory.map(f => ({ name: f.name, category: f.category })));
@@ -94,7 +94,7 @@ export default function AdminFruitsPage() {
         description: descriptionValue,
         pricePerUnit: fruit.pricePerUnit.toString(),
         imageUrl: fruit.imageUrl || "",
-        category: fruit.category || "FRUIT",
+        category: fruit.category || "ORGANIC_FRUITS",
         active: fruit.active !== undefined ? fruit.active : true,
         seasonal: fruit.seasonal !== undefined ? fruit.seasonal : false,
         fetchNutrition: true, // Not applicable for editing
@@ -107,7 +107,7 @@ export default function AdminFruitsPage() {
         description: "",
         pricePerUnit: "",
         imageUrl: "",
-        category: "FRUIT" as FruitCategory,
+        category: "ORGANIC_FRUITS" as FruitCategory,
         active: true,
         seasonal: false,
         fetchNutrition: true, // Default to true
@@ -289,14 +289,14 @@ export default function AdminFruitsPage() {
               All
             </button>
             <button
-              onClick={() => setSelectedCategory("ORGANIC_FRUIT")}
+              onClick={() => setSelectedCategory("ORGANIC_FRUITS")}
               className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                selectedCategory === "ORGANIC_FRUIT"
+                selectedCategory === "ORGANIC_FRUITS"
                   ? "bg-[#14433B] text-white shadow-md"
                   : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
               }`}
             >
-              Organic Fruit
+              Organic Fruits
             </button>
             <button
               onClick={() => setSelectedCategory("ORGANIC_VEGETABLE")}
@@ -319,14 +319,14 @@ export default function AdminFruitsPage() {
               Base
             </button>
             <button
-              onClick={() => setSelectedCategory("SUPERFRUIT")}
+              onClick={() => setSelectedCategory("SUPERFRUITS")}
               className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                selectedCategory === "SUPERFRUIT"
+                selectedCategory === "SUPERFRUITS"
                   ? "bg-[#14433B] text-white shadow-md"
                   : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
               }`}
             >
-              Super fruit
+              SuperFruits
             </button>
             <button
               onClick={() => setSelectedCategory("PROTEIN")}
@@ -371,52 +371,23 @@ export default function AdminFruitsPage() {
                 const name = (f.name || "").toLowerCase();
                 const desc = (f.description || "").toLowerCase();
                 const searchText = `${name} ${desc}`;
-                const fruitCategory = f.category || "FRUIT";
+                const fruitCategory = f.category || "ORGANIC_FRUITS";
 
                 switch (selectedCategory) {
-                  case "ORGANIC_FRUIT":
-                    return fruitCategory === "FRUIT" && !searchText.includes("super");
+                  case "ORGANIC_FRUITS":
+                    return fruitCategory === "ORGANIC_FRUITS";
                   case "ORGANIC_VEGETABLE":
-                    return fruitCategory === "VEGETABLE";
+                    return fruitCategory === "ORGANIC_VEGETABLE";
                   case "BASE":
-                    return fruitCategory === "ADDON" && (
-                      searchText.includes("base") || 
-                      searchText.includes("นม") ||
-                      searchText.includes("milk") ||
-                      searchText.includes("yogurt") ||
-                      searchText.includes("โยเกิร์ต")
-                    );
-                  case "SUPERFRUIT":
-                    return fruitCategory === "FRUIT" && (
-                      searchText.includes("super") ||
-                      searchText.includes("berry") ||
-                      searchText.includes("เบอร์รี่") ||
-                      searchText.includes("goji") ||
-                      searchText.includes("acai")
-                    );
+                    return fruitCategory === "BASE";
+                  case "SUPERFRUITS":
+                    return fruitCategory === "SUPERFRUITS";
                   case "PROTEIN":
-                    return fruitCategory === "ADDON" && (
-                      searchText.includes("protein") ||
-                      searchText.includes("โปรตีน") ||
-                      searchText.includes("whey") ||
-                      searchText.includes("collagen")
-                    );
+                    return fruitCategory === "PROTEIN";
                   case "TOPPING":
-                    return fruitCategory === "ADDON" && (
-                      searchText.includes("topping") ||
-                      searchText.includes("topping") ||
-                      searchText.includes("chia") ||
-                      searchText.includes("flax")
-                    );
+                    return fruitCategory === "TOPPING";
                   case "SWEETENER":
-                    return fruitCategory === "ADDON" && (
-                      searchText.includes("sweet") ||
-                      searchText.includes("honey") ||
-                      searchText.includes("น้ำผึ้ง") ||
-                      searchText.includes("sugar") ||
-                      searchText.includes("น้ำตาล") ||
-                      searchText.includes("syrup")
-                    );
+                    return fruitCategory === "SWEETENER";
                   default:
                     return true;
                 }
@@ -469,13 +440,23 @@ export default function AdminFruitsPage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                    fruit.category === "FRUIT" ? "bg-yellow-100 text-yellow-700" :
-                    fruit.category === "VEGETABLE" ? "bg-[#14433B]/20 text-[#14433B]" :
-                    "bg-blue-100 text-blue-700"
+                    fruit.category === "ORGANIC_FRUITS" ? "bg-yellow-100 text-yellow-700" :
+                    fruit.category === "ORGANIC_VEGETABLE" ? "bg-[#14433B]/20 text-[#14433B]" :
+                    fruit.category === "SUPERFRUITS" ? "bg-purple-100 text-purple-700" :
+                    fruit.category === "BASE" ? "bg-blue-100 text-blue-700" :
+                    fruit.category === "PROTEIN" ? "bg-red-100 text-red-700" :
+                    fruit.category === "TOPPING" ? "bg-pink-100 text-pink-700" :
+                    fruit.category === "SWEETENER" ? "bg-amber-100 text-amber-700" :
+                    "bg-gray-100 text-gray-700"
                   }`}>
-                    {fruit.category === "FRUIT" ? "🍎 ผลไม้" :
-                     fruit.category === "VEGETABLE" ? "🥬 ผัก" :
-                     "🥛 ส่วนเสริม"}
+                    {fruit.category === "ORGANIC_FRUITS" ? "🍎 ผลไม้ออร์แกนิก" :
+                     fruit.category === "ORGANIC_VEGETABLE" ? "🥬 ผักออร์แกนิก" :
+                     fruit.category === "SUPERFRUITS" ? "🌟 ซูเปอร์ฟรุต" :
+                     fruit.category === "BASE" ? "🥛 ฐาน" :
+                     fruit.category === "PROTEIN" ? "💪 โปรตีน" :
+                     fruit.category === "TOPPING" ? "🍒 ท็อปปิ้ง" :
+                     fruit.category === "SWEETENER" ? "🍯 สารให้ความหวาน" :
+                     "❓ ไม่ระบุ"}
                   </span>
                   {/* Nutrition Status Badge - แสดงเฉพาะเมื่อมีข้อมูล */}
                   {fruit.calorie && fruit.protein && fruit.fiber && (
@@ -566,9 +547,13 @@ export default function AdminFruitsPage() {
                     className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                     required
                   >
-                    <option value="FRUIT">🍎 ผลไม้</option>
-                    <option value="VEGETABLE">🥬 ผัก</option>
-                    <option value="ADDON">🥛 ส่วนเสริม (โยเกิร์ต, น้ำผึ้ง, นม, ฯลฯ)</option>
+                    <option value="ORGANIC_FRUITS">🍎 ผลไม้ออร์แกนิก</option>
+                    <option value="ORGANIC_VEGETABLE">🥬 ผักออร์แกนิก</option>
+                    <option value="BASE">🥛 ฐาน</option>
+                    <option value="SUPERFRUITS">🌟 ซูเปอร์ฟรุต</option>
+                    <option value="PROTEIN">💪 โปรตีน</option>
+                    <option value="TOPPING">🍒 ท็อปปิ้ง</option>
+                    <option value="SWEETENER">🍯 สารให้ความหวาน</option>
                   </select>
                 </div>
 

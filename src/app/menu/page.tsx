@@ -90,7 +90,7 @@ function MenuContent() {
       // Ensure all fruits have category field
       const fruitsWithCategory = filteredFruits.map(f => ({
         ...f,
-        category: (f.category || "FRUIT") as FruitCategory
+        category: (f.category || "ORGANIC_FRUITS") as FruitCategory
       }));
       
       setFruits(fruitsWithCategory);
@@ -372,7 +372,7 @@ function MenuContent() {
                       ) : null}
                       <div className={`w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/30 ${ing.imageUrl ? "hidden" : ""}`}>
                         <span className="text-lg">
-                          {ing.category === "FRUIT" ? "🍎" : ing.category === "VEGETABLE" ? "🥬" : "🥛"}
+                          {ing.category === "ORGANIC_FRUITS" || ing.category === "SUPERFRUITS" ? "🍎" : ing.category === "ORGANIC_VEGETABLE" ? "🥬" : ing.category === "PROTEIN" ? "💪" : ing.category === "TOPPING" ? "🍒" : ing.category === "SWEETENER" ? "🍯" : ing.category === "BASE" ? "🥛" : "🍎"}
                         </span>
                       </div>
                       <span className="text-[10px] text-white font-medium mt-1 text-center line-clamp-1 font-sans">

@@ -50,7 +50,7 @@ export default function HomeEditorPage() {
           .filter(f => f && f.active)
           .map(f => ({
             ...f,
-            category: (f.category || "FRUIT") as FruitCategory
+            category: (f.category || "ORGANIC_FRUITS") as FruitCategory
           }));
         setIngredients(filtered);
         
@@ -158,34 +158,74 @@ export default function HomeEditorPage() {
               ทั้งหมด
             </button>
             <button
-              onClick={() => setSelectedCategory("FRUIT")}
+              onClick={() => setSelectedCategory("ORGANIC_FRUITS")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
-                selectedCategory === "FRUIT"
+                selectedCategory === "ORGANIC_FRUITS"
                   ? "bg-[#14433B] text-[#FFF6F0]"
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ผลไม้
+              ผลไม้ออร์แกนิก
             </button>
             <button
-              onClick={() => setSelectedCategory("VEGETABLE")}
+              onClick={() => setSelectedCategory("ORGANIC_VEGETABLE")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
-                selectedCategory === "VEGETABLE"
+                selectedCategory === "ORGANIC_VEGETABLE"
                   ? "bg-[#14433B] text-[#FFF6F0]"
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ผัก
+              ผักออร์แกนิก
             </button>
             <button
-              onClick={() => setSelectedCategory("ADDON")}
+              onClick={() => setSelectedCategory("SUPERFRUITS")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
-                selectedCategory === "ADDON"
+                selectedCategory === "SUPERFRUITS"
                   ? "bg-[#14433B] text-[#FFF6F0]"
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ส่วนเสริม
+              ซูเปอร์ฟรุต
+            </button>
+            <button
+              onClick={() => setSelectedCategory("BASE")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                selectedCategory === "BASE"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
+              }`}
+            >
+              ฐาน
+            </button>
+            <button
+              onClick={() => setSelectedCategory("PROTEIN")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                selectedCategory === "PROTEIN"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
+              }`}
+            >
+              โปรตีน
+            </button>
+            <button
+              onClick={() => setSelectedCategory("TOPPING")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                selectedCategory === "TOPPING"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
+              }`}
+            >
+              ท็อปปิ้ง
+            </button>
+            <button
+              onClick={() => setSelectedCategory("SWEETENER")}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+                selectedCategory === "SWEETENER"
+                  ? "bg-[#14433B] text-[#FFF6F0]"
+                  : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
+              }`}
+            >
+              สารให้ความหวาน
             </button>
           </div>
         </div>
@@ -258,7 +298,7 @@ export default function HomeEditorPage() {
                       ) : null}
                       <div className={`w-full h-full flex items-center justify-center ${ingredient.imageUrl ? "hidden" : ""}`}>
                         <span className="text-4xl">
-                          {ingredient.category === "FRUIT" ? "🍎" : ingredient.category === "VEGETABLE" ? "🥬" : "🥛"}
+                          {ingredient.category === "ORGANIC_FRUITS" || ingredient.category === "SUPERFRUITS" ? "🍎" : ingredient.category === "ORGANIC_VEGETABLE" ? "🥬" : ingredient.category === "PROTEIN" ? "💪" : ingredient.category === "TOPPING" ? "🍒" : ingredient.category === "SWEETENER" ? "🍯" : ingredient.category === "BASE" ? "🥛" : "🍎"}
                         </span>
                       </div>
                     </div>

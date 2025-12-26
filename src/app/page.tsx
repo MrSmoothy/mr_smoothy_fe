@@ -79,8 +79,8 @@ export default function Home() {
             .filter(f => f && f.active)
             .map(f => ({
               ...f,
-              // Ensure category is set, default to FRUIT
-              category: (f.category || "FRUIT") as FruitCategory
+              // Ensure category is set, default to ORGANIC_FRUITS
+              category: (f.category || "ORGANIC_FRUITS") as FruitCategory
             }))
         : [];
       const filteredDrinks = Array.isArray(drinksRes.data) 
@@ -95,7 +95,7 @@ export default function Home() {
             .filter(f => f && f.active)
             .map(f => ({
               ...f,
-              category: (f.category || "FRUIT") as FruitCategory
+              category: (f.category || "ORGANIC_FRUITS") as FruitCategory
             }))
         : [];
       
@@ -226,30 +226,30 @@ export default function Home() {
       const ingredientCategories: FruitCategory[] = drink.ingredients.map(ing => {
         const fruit = fruits.find(f => f.id === ing.fruitId);
         if (!fruit) {
-          return "FRUIT" as FruitCategory;
+          return "ORGANIC_FRUITS" as FruitCategory;
         }
-        // ใช้ category จาก fruit หรือ default เป็น FRUIT
-        const fruitCategory: FruitCategory = (fruit.category || "FRUIT") as FruitCategory;
+        // ใช้ category จาก fruit หรือ default เป็น ORGANIC_FRUITS
+        const fruitCategory: FruitCategory = (fruit.category || "ORGANIC_FRUITS") as FruitCategory;
         return fruitCategory;
       });
 
       // ตรวจสอบว่ามีประเภทอะไรบ้าง
-      const hasFruit = ingredientCategories.some(cat => cat === "FRUIT");
-      const hasVegetable = ingredientCategories.some(cat => cat === "VEGETABLE");
-      const hasAddon = ingredientCategories.some(cat => cat === "ADDON");
+      const hasOrganicFruits = ingredientCategories.some(cat => cat === "ORGANIC_FRUITS" || cat === "SUPERFRUITS");
+      const hasOrganicVegetable = ingredientCategories.some(cat => cat === "ORGANIC_VEGETABLE");
+      const hasOther = ingredientCategories.some(cat => !["ORGANIC_FRUITS", "ORGANIC_VEGETABLE", "SUPERFRUITS"].includes(cat));
       const uniqueCategories = new Set(ingredientCategories);
 
       let matches = false;
 
       if (category === "FRUIT") {
-        // น้ำผลไม้ล้วน: มีเฉพาะผลไม้เท่านั้น (ไม่มีผักและส่วนเสริม)
-        matches = hasFruit && !hasVegetable && !hasAddon && uniqueCategories.size === 1 && uniqueCategories.has("FRUIT");
+        // น้ำผลไม้ล้วน: มีเฉพาะผลไม้ออร์แกนิกหรือซูเปอร์ฟรุตเท่านั้น
+        matches = hasOrganicFruits && !hasOrganicVegetable && !hasOther && uniqueCategories.size === 1 && (uniqueCategories.has("ORGANIC_FRUITS") || uniqueCategories.has("SUPERFRUITS"));
       } else if (category === "VEGETABLE") {
-        // น้ำผัก: มีเฉพาะผักเท่านั้น (ไม่มีผลไม้และส่วนเสริม)
-        matches = hasVegetable && !hasFruit && !hasAddon && uniqueCategories.size === 1 && uniqueCategories.has("VEGETABLE");
+        // น้ำผัก: มีเฉพาะผักออร์แกนิกเท่านั้น
+        matches = hasOrganicVegetable && !hasOrganicFruits && !hasOther && uniqueCategories.size === 1 && uniqueCategories.has("ORGANIC_VEGETABLE");
       } else if (category === "MIXED") {
         // น้ำผสม: มีทั้งผลไม้และผัก หรือมีส่วนเสริม หรือมีหลายประเภท
-        matches = (hasFruit && hasVegetable) || hasAddon || uniqueCategories.size > 1;
+        matches = (hasOrganicFruits && hasOrganicVegetable) || hasOther || uniqueCategories.size > 1;
       }
 
       return matches;
@@ -449,7 +449,7 @@ export default function Home() {
                                   ) : null}
                                   <div className={`w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/30 ${ing.imageUrl ? "hidden" : ""}`}>
                                     <span className="text-lg">
-                                      {ing.category === "FRUIT" ? "🍎" : ing.category === "VEGETABLE" ? "🥬" : "🥛"}
+                                      {ing.category === "ORGANIC_FRUITS" || ing.category === "SUPERFRUITS" ? "🍎" : ing.category === "ORGANIC_VEGETABLE" ? "🥬" : ing.category === "PROTEIN" ? "💪" : ing.category === "TOPPING" ? "🍒" : ing.category === "SWEETENER" ? "🍯" : ing.category === "BASE" ? "🥛" : "🍎"}
                                     </span>
                                   </div>
                                   <span className="text-[10px] text-white font-medium mt-1 text-center line-clamp-1 font-sans">
@@ -551,7 +551,7 @@ export default function Home() {
                       ) : null}
                       <div className={`w-full h-full flex items-center justify-center relative z-10 ${ingredient.imageUrl ? "hidden" : ""}`}>
                         <span className="text-5xl sm:text-6xl md:text-7xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-500">
-                          {ingredient.category === "FRUIT" ? "🍎" : ingredient.category === "VEGETABLE" ? "🥬" : "🥛"}
+                          {ingredient.category === "ORGANIC_FRUITS" || ingredient.category === "SUPERFRUITS" ? "🍎" : ingredient.category === "ORGANIC_VEGETABLE" ? "🥬" : ingredient.category === "PROTEIN" ? "💪" : ingredient.category === "TOPPING" ? "🍒" : ingredient.category === "SWEETENER" ? "🍯" : ingredient.category === "BASE" ? "🥛" : "🍎"}
                         </span>
                       </div>
                     </div>
@@ -562,7 +562,7 @@ export default function Home() {
                         {ingredient.name}
                       </h3>
                       <p className="text-sm sm:text-base text-[#14433B]/70 font-sans line-clamp-2 max-w-[180px] mx-auto mb-2">
-                        {ingredient.description || (ingredient.category === "FRUIT" ? "ผลไม้สดใหม่" : ingredient.category === "VEGETABLE" ? "ผักสดใหม่" : "ส่วนเสริม")}
+                        {ingredient.description || (ingredient.category === "ORGANIC_FRUITS" ? "ผลไม้ออร์แกนิก" : ingredient.category === "ORGANIC_VEGETABLE" ? "ผักออร์แกนิก" : ingredient.category === "SUPERFRUITS" ? "ซูเปอร์ฟรุต" : ingredient.category === "BASE" ? "ฐาน" : ingredient.category === "PROTEIN" ? "โปรตีน" : ingredient.category === "TOPPING" ? "ท็อปปิ้ง" : ingredient.category === "SWEETENER" ? "สารให้ความหวาน" : "ผลไม้สดใหม่")}
                       </p>
                       <div className="inline-block px-4 py-2 bg-[#14433B]/10 rounded-full group-hover:bg-[#14433B]/20 transition-colors duration-300">
                         <p className="text-base sm:text-lg md:text-xl text-[#14433B] font-bold font-sans group-hover:text-[#1a5444] transition-colors">
