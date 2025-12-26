@@ -70,7 +70,7 @@ export default function BuildPage() {
 
       const filteredFruits = Array.isArray(fruitsRes.data)
         ? fruitsRes.data
-          .filter(f => f && f.active)
+          .filter(f => f && f.active) // แสดงวัตถุดิบทั้งหมดที่ active (รวม seasonal ด้วย)
           .map(f => ({
             ...f,
             // ถ้าไม่มี category ให้ตั้งเป็น ORGANIC_FRUITS (default)

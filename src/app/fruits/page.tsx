@@ -58,7 +58,7 @@ export default function FruitsPage() {
         
         console.log("Fruits data before filter:", fruitsData);
         
-        // กรองเฉพาะผลไม้ที่ active (ถ้ามี field active)
+        // กรองเฉพาะผลไม้ที่ active และไม่ใช่ seasonal (ถ้ามี field active)
         const activeFruits = fruitsData.filter(f => {
           if (!f) return false;
           // ถ้าไม่มี field active ให้แสดงทั้งหมด
@@ -66,7 +66,8 @@ export default function FruitsPage() {
             console.warn("Fruit missing active field:", f);
             return true; // แสดงผลไม้ที่ไม่มี active field
           }
-          return f.active === true;
+          // กรอง seasonal ingredients ออก - แสดงเฉพาะในหน้าแรก
+          return f.active === true && !f.seasonal;
         });
         
         console.log("ผลไม้ที่โหลดได้:", activeFruits.length, "รายการ");

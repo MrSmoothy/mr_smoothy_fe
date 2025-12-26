@@ -147,7 +147,7 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
       {/* รายการผลไม้ที่เลือก */}
       {fruitEntries.length > 0 && (
         <div className="mt-4 w-full max-w-xs">
-          <div className="text-sm font-semibold text-[#14433B] mb-2">ผลไม้ที่เลือก:</div>
+          <div className="text-sm font-semibold text-[#14433B] mb-2">วัตถุดิบที่เลือก:</div>
           <div className="space-y-1">
             {fruitEntries.map(([fruitId, { fruit, quantity }]) => (
               <div

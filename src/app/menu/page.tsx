@@ -78,7 +78,7 @@ function MenuContent() {
       ]);
 
       const filteredFruits = Array.isArray(fruitsRes.data) 
-        ? fruitsRes.data.filter(f => f && f.active) 
+        ? fruitsRes.data.filter(f => f && f.active) // แสดงวัตถุดิบทั้งหมดที่ active (รวม seasonal ด้วย)
         : [];
       const filteredDrinks = Array.isArray(drinksRes.data) 
         ? drinksRes.data.filter(d => d && d.active) 

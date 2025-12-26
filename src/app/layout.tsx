@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ToastContainer from "./components/Toast";
+import SnowAnimation from "./components/SnowAnimation";
 
 const playfairDisplay = Playfair_Display({
   variable: "--font-serif",
@@ -40,6 +41,7 @@ export default function RootLayout({
         <main className="flex-grow">{children}</main>
         <Footer />
         <ToastContainer />
+        <SnowAnimation />
       </body>
     </html>
   );

@@ -76,7 +76,7 @@ export default function Home() {
 
       const filteredFruits = Array.isArray(fruitsRes.data) 
         ? fruitsRes.data
-            .filter(f => f && f.active)
+            .filter(f => f && f.active && !f.seasonal) // กรอง seasonal ingredients ออก - แสดงเฉพาะในส่วน seasonal section
             .map(f => ({
               ...f,
               // Ensure category is set, default to ORGANIC_FRUITS
@@ -281,11 +281,9 @@ export default function Home() {
     }
   }
   
-  // Seasonal ingredients - ใช้ข้อมูลจาก API
-  // ถ้าไม่มี seasonal ingredients ให้แสดง 4 ตัวแรกของ fruits
-  const displaySeasonalIngredients = seasonalIngredients.length > 0 
-    ? seasonalIngredients.slice(0, 4)
-    : fruits.slice(0, 4);
+  // Seasonal ingredients - ใช้ข้อมูลจาก API เท่านั้น
+  // แสดงเฉพาะวัตถุดิบที่ถูกตั้งค่าเป็น seasonal = true
+  const displaySeasonalIngredients = seasonalIngredients.slice(0, 4);
 
   return (
     <div className="min-h-screen bg-[#FFF6F0]">

@@ -271,7 +271,8 @@ export async function getDrinks() {
 }
 
 export async function getSeasonalIngredients() {
-  return request<Fruit[]>("/api/public/seasonal-ingredients");
+  // เพิ่ม cache busting เพื่อให้ได้ข้อมูลล่าสุด
+  return request<Fruit[]>(`/api/public/seasonal-ingredients?t=${Date.now()}`);
 }
 
 // Cart APIs

@@ -109,7 +109,7 @@ export default function AdminOrdersPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-serif">Order Management</h1>
+            <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-sans">Order Management</h1>
             <p className="text-[#14433B]/70 font-sans">จัดการคำสั่งซื้อทั้งหมด</p>
           </div>
           <button

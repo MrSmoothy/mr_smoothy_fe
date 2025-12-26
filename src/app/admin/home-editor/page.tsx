@@ -14,6 +14,7 @@ export default function HomeEditorPage() {
   const [saving, setSaving] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<FruitCategory | "ALL">("ALL");
   const [seasonalMap, setSeasonalMap] = useState<Map<number, boolean>>(new Map());
+  const [snowAnimation, setSnowAnimation] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -22,6 +23,9 @@ export default function HomeEditorPage() {
   useEffect(() => {
     if (user) {
       loadIngredients();
+      // โหลดการตั้งค่าอนิเมชั่นหิมะ
+      const snowEnabled = localStorage.getItem("snowAnimation") === "true";
+      setSnowAnimation(snowEnabled);
     }
   }, [user]);
 
@@ -106,7 +110,7 @@ export default function HomeEditorPage() {
 
       await Promise.all(updatePromises);
       
-      alert("บันทึกข้อมูลสำเร็จ!");
+      alert("บันทึกข้อมูลสำเร็จ! กรุณารีเฟรชหน้าแรกเพื่อดูการเปลี่ยนแปลง");
       await loadIngredients(); // Reload to get updated data
     } catch (err: any) {
       console.error("Failed to save:", err);
@@ -141,6 +145,31 @@ export default function HomeEditorPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-serif">Home Editor</h1>
           <p className="text-[#14433B]/70 font-sans">จัดการวัตถุดิบตามฤดูกาลที่จะแสดงในหน้าแรก</p>
+        </div>
+
+        {/* Snow Animation Toggle */}
+        <div className="mb-6 p-4 bg-white rounded-lg shadow-md">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-[#14433B] mb-1 font-sans">❄️ อนิเมชั่นหิมะตก</h3>
+              <p className="text-sm text-[#14433B]/70 font-sans">เปิด/ปิดอนิเมชั่นหิมะตกในเว็บไซต์</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={snowAnimation}
+                onChange={(e) => {
+                  const enabled = e.target.checked;
+                  setSnowAnimation(enabled);
+                  localStorage.setItem("snowAnimation", enabled.toString());
+                  // Trigger custom event เพื่ออัปเดต component อื่นๆ
+                  window.dispatchEvent(new Event("snowAnimationChanged"));
+                }}
+                className="sr-only peer"
+              />
+              <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#14433B]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#14433B]"></div>
+            </label>
+          </div>
         </div>
 
         {/* Category Filter */}

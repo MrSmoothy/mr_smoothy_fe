@@ -324,9 +324,9 @@ export default function AdminDrinksPage() {
         </div>
 
         {/* Search Bar and Category Filter */}
-        <div className="mb-6 flex items-center gap-4">
-          {/* Search Bar - 990x45 */}
-          <div className="relative flex-shrink-0" style={{ width: '990px', height: '45px' }}>
+        <div className="mb-6 flex flex-col gap-4">
+          {/* Search Bar */}
+          <div className="relative w-full" style={{ height: '45px' }}>
             <input
               type="text"
               placeholder="ค้นหาเมนู, คำอธิบาย, ส่วนผสม..."
@@ -359,7 +359,7 @@ export default function AdminDrinksPage() {
           </div>
 
           {/* Category Filter - Horizontal Scrollable */}
-          <div className="flex-1 overflow-x-auto scrollbar-hide">
+          <div className="w-full overflow-x-auto scrollbar-hide">
             <div className="flex gap-2 min-w-max">
             <button
               onClick={() => setSelectedCategory("ALL")}

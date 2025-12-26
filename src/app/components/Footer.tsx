@@ -29,7 +29,7 @@ export default function Footer() {
                 <span>thy</span>
               </h2>
             </div>
-            <p className="text-white text-sm font-sans italic">
+            <p className="text-white text-sm font-sans">
               "Healthy Smoothies for Your Everyday Energy"
             </p>
           </div>

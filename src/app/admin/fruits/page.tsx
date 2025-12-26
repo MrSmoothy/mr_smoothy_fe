@@ -148,7 +148,7 @@ export default function AdminFruitsPage() {
           imageUrl: formData.imageUrl?.trim() || undefined,
           category: formData.category,
           active: formData.active,
-          seasonal: formData.seasonal,
+          // ไม่ส่งค่า seasonal ตอนแก้ไข - จัดการผ่านหน้า Home Editor เท่านั้น
         };
         console.log("Updating fruit:", editingFruit.id, "with data:", JSON.stringify(updateData, null, 2));
         const response = await adminUpdateFruit(editingFruit.id, updateData);
@@ -241,9 +241,9 @@ export default function AdminFruitsPage() {
         </div>
 
         {/* Search Bar and Category Filter */}
-        <div className="mb-6 flex items-center gap-4">
-          {/* Search Bar - 990x45 */}
-          <div className="relative flex-shrink-0" style={{ width: '990px', height: '45px' }}>
+        <div className="mb-6 flex flex-col gap-4">
+          {/* Search Bar */}
+          <div className="relative w-full" style={{ height: '45px' }}>
             <input
               type="text"
               placeholder="ค้นหาวัตถุดิบ, คำอธิบาย..."
@@ -276,7 +276,7 @@ export default function AdminFruitsPage() {
           </div>
 
           {/* Category Filter - Horizontal Scrollable */}
-          <div className="flex-1 overflow-x-auto scrollbar-hide">
+          <div className="w-full overflow-x-auto scrollbar-hide">
             <div className="flex gap-2 min-w-max">
             <button
               onClick={() => setSelectedCategory("ALL")}
@@ -634,18 +634,21 @@ export default function AdminFruitsPage() {
                   </label>
                   </div>
                   
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="seasonal"
-                      checked={formData.seasonal}
-                      onChange={(e) => setFormData({ ...formData, seasonal: e.target.checked })}
-                      className="w-5 h-5"
-                    />
-                    <label htmlFor="seasonal" className="text-[#14433B] font-semibold">
-                      วัตถุดิบตามฤดูกาล
-                    </label>
-                  </div>
+                  {/* แสดง checkbox seasonal เฉพาะตอนเพิ่มวัตถุดิบใหม่ ไม่แสดงตอนแก้ไข */}
+                  {!editingFruit && (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="seasonal"
+                        checked={formData.seasonal}
+                        onChange={(e) => setFormData({ ...formData, seasonal: e.target.checked })}
+                        className="w-5 h-5"
+                      />
+                      <label htmlFor="seasonal" className="text-[#14433B] font-semibold">
+                        วัตถุดิบตามฤดูกาล
+                      </label>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-4 pt-4">

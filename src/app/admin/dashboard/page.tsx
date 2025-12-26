@@ -72,7 +72,7 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-serif">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-sans">Dashboard</h1>
           <p className="text-[#14433B]/70 font-sans">ภาพรวมการขายและข้อมูลระบบ</p>
         </div>
 
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
               <h3 className="text-[#14433B]/70 font-semibold font-sans">Total Orders</h3>
               <ShoppingCart className="w-5 h-5 text-[#14433B]" />
             </div>
-            <div className="text-4xl font-bold text-[#14433B] mb-2 font-serif">
+            <div className="text-4xl font-bold text-[#14433B] mb-2 font-sans">
               {formatNumber(stats.totalOrders)}
             </div>
             <div className="flex items-center gap-1 text-[#14433B] text-sm font-sans">
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
               <h3 className="text-[#14433B]/70 font-semibold font-sans">Revenue</h3>
               <DollarSign className="w-5 h-5 text-[#14433B]" />
             </div>
-            <div className="text-4xl font-bold text-[#14433B] mb-2 font-serif">
+            <div className="text-4xl font-bold text-[#14433B] mb-2 font-sans">
               {formatCurrency(stats.revenue)}
             </div>
             <div className="flex items-center gap-1 text-[#14433B] text-sm font-sans">
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
               <h3 className="text-[#14433B]/70 font-semibold font-sans">Best-Sell</h3>
               <Package className="w-5 h-5 text-[#14433B]" />
             </div>
-            <div className="text-4xl font-bold text-[#14433B] mb-2 font-serif">
+            <div className="text-4xl font-bold text-[#14433B] mb-2 font-sans">
               {stats.bestSellingDrink || "N/A"}
             </div>
             <div className="flex items-center gap-1 text-[#14433B] text-sm font-sans">
@@ -128,21 +128,21 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow-md p-4 border border-[#14433B]/10">
             <div className="text-sm text-[#14433B]/70 mb-1 font-sans">Total Users</div>
-            <div className="text-2xl font-bold text-[#14433B] font-serif">{stats.totalUsers}</div>
+            <div className="text-2xl font-bold text-[#14433B] font-sans">{stats.totalUsers}</div>
           </div>
           <div className="bg-white rounded-lg shadow-md p-4 border border-[#14433B]/10">
             <div className="text-sm text-[#14433B]/70 mb-1 font-sans">Active Users</div>
-            <div className="text-2xl font-bold text-[#14433B] font-serif">{stats.activeUsers}</div>
+            <div className="text-2xl font-bold text-[#14433B] font-sans">{stats.activeUsers}</div>
           </div>
           <div className="bg-white rounded-lg shadow-md p-4 border border-[#14433B]/10">
             <div className="text-sm text-[#14433B]/70 mb-1 font-sans">Total Cost</div>
-            <div className="text-2xl font-bold text-[#14433B] font-serif">
+            <div className="text-2xl font-bold text-[#14433B] font-sans">
               {formatCurrency(stats.totalCost)}
             </div>
           </div>
           <div className="bg-white rounded-lg shadow-md p-4 border border-[#14433B]/10">
             <div className="text-sm text-[#14433B]/70 mb-1 font-sans">Profit</div>
-            <div className={`text-2xl font-bold font-serif ${
+            <div className={`text-2xl font-bold font-sans ${
               stats.profit >= 0 ? "text-[#14433B]" : "text-red-600"
             }`}>
               {formatCurrency(stats.profit)}
