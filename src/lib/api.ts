@@ -68,12 +68,15 @@ export type CupSize = {
   active: boolean;
 };
 
+export type DrinkCategory = "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT";
+
 export type PredefinedDrink = {
   id: number;
   name: string;
   description?: string;
   imageUrl?: string;
   basePrice?: number;
+  category?: DrinkCategory;
   active: boolean;
   ingredients: {
     fruitId: number;
@@ -122,7 +125,21 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8
 
 function getAuthToken(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem("auth_token");
+  const token = localStorage.getItem("auth_token");
+  
+  // Validate token format (JWT should have 3 parts separated by dots)
+  if (token) {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      // Invalid token format, clear it
+      console.warn("Invalid token format detected, clearing token");
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+      return null;
+    }
+  }
+  
+  return token;
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
@@ -161,6 +178,21 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<ApiR
     if (!res.ok) {
       let errorMessage = json?.message || `Request failed: ${res.status} ${res.statusText}`;
       
+      // Handle invalid token errors - clear token and redirect to login
+      if (errorMessage.includes("Invalid token format") || 
+          errorMessage.includes("Invalid or expired token") ||
+          errorMessage.includes("Authentication required") ||
+          res.status === 401) {
+        // Clear invalid token
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("auth_user");
+          // Redirect to login page
+          window.location.href = "/login";
+        }
+        errorMessage = "เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง";
+      }
+      
       // กรอง technical error messages
       if (errorMessage.includes("allowCredentials") || 
           errorMessage.includes("allowedOrigins") ||
@@ -178,6 +210,20 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<ApiR
 
     if (json.success === false) {
       let errorMessage = json?.message || "Request failed";
+      
+      // Handle invalid token errors - clear token and redirect to login
+      if (errorMessage.includes("Invalid token format") || 
+          errorMessage.includes("Invalid or expired token") ||
+          errorMessage.includes("Authentication required")) {
+        // Clear invalid token
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("auth_user");
+          // Redirect to login page
+          window.location.href = "/login";
+        }
+        errorMessage = "เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง";
+      }
       
       // กรอง technical error messages
       if (errorMessage.includes("allowCredentials") || 
@@ -198,6 +244,21 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<ApiR
   return json;
   } catch (error: any) {
     if (error.message) {
+      // Handle invalid token errors - clear token and redirect to login
+      if (error.message.includes("Invalid token format") || 
+          error.message.includes("Invalid or expired token") ||
+          error.message.includes("Authentication required")) {
+        // Clear invalid token
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("auth_user");
+          // Redirect to login page
+          window.location.href = "/login";
+        }
+        // Return a user-friendly error that won't show alert (since we're redirecting)
+        throw new Error("เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง");
+      }
+      
       // ไม่ log error สำหรับ /api/users/me (silent fail)
       if (!path.includes("/api/users/me")) {
         console.error("Fetch error:", error.message);
@@ -286,42 +347,40 @@ export function calculateDrinkPrice(
   cupSizes: CupSize[],
   selectedCupSize?: CupSize
 ): number {
-  // ใช้ basePrice จาก drink ถ้ามี ถ้าไม่มีให้คำนวณจาก ingredients
-  let basePrice = 100; // ราคาพื้นฐาน default
+  // ใช้ basePrice ถ้ามี (เหมือน backend) - ถ้าไม่มี basePrice ให้คำนวณจาก ingredients
+  let drinkFruitSum = 0;
   if (drink.basePrice != null && drink.basePrice !== undefined) {
-    // ใช้ basePrice จาก drink
-    basePrice = Number(drink.basePrice);
+    // ใช้ basePrice ที่กำหนดไว้
+    drinkFruitSum = Number(drink.basePrice);
   } else if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
-    // คำนวณจาก ingredients
-    basePrice = drink.ingredients.reduce((sum, ing) => {
+    // คำนวณจาก ingredients (เหมือน backend: drinkFruitSum)
+    drinkFruitSum = drink.ingredients.reduce((sum, ing) => {
       const fruit = fruits.find(f => f.id === ing.fruitId);
       if (fruit) {
         return sum + (Number(fruit.pricePerUnit) * ing.quantity);
       }
       return sum;
     }, 0);
+  } else {
+    // fallback ถ้าไม่มีทั้ง basePrice และ ingredients
+    drinkFruitSum = 100; // default fallback
   }
 
   // หา cup size ที่จะใช้
   let cupPrice = 0;
   if (selectedCupSize) {
-    cupPrice = selectedCupSize.priceExtra || 0;
+    cupPrice = Number(selectedCupSize.priceExtra) || 0;
   } else if (cupSizes.length > 0) {
     // หา cup size ที่เล็กที่สุด (เรียงตาม volumeMl หรือ priceExtra)
     const sortedCupSizes = [...cupSizes].sort((a, b) => 
       (a.volumeMl || 0) - (b.volumeMl || 0) || 
       (a.priceExtra || 0) - (b.priceExtra || 0)
     );
-    cupPrice = sortedCupSizes[0]?.priceExtra || 0;
+    cupPrice = Number(sortedCupSizes[0]?.priceExtra) || 0;
   }
 
-  // คำนวณราคารวม
-  let totalPrice = basePrice + cupPrice;
-  
-  // If prices seem too high, they might be in cents - divide by 100
-  if (totalPrice > 1000) {
-    totalPrice = totalPrice / 100;
-  }
+  // คำนวณราคารวม (เหมือน backend: drinkFruitSum + cupPrice)
+  const totalPrice = drinkFruitSum + cupPrice;
 
   return totalPrice;
 }
@@ -688,6 +747,7 @@ export type PredefinedDrinkCreateRequest = {
   description: string;
   imageUrl?: string;
   basePrice?: number | null;
+  category?: DrinkCategory;
   active?: boolean;
   ingredients: {
     fruitId: number;
@@ -700,6 +760,7 @@ export type PredefinedDrinkUpdateRequest = {
   description?: string;
   imageUrl?: string;
   basePrice?: number | null;
+  category?: DrinkCategory;
   active?: boolean;
   ingredients?: {
     fruitId: number;
@@ -767,6 +828,12 @@ export async function adminUpdateOrderStatus(orderId: number, status: string) {
   return request<OrderResponse>("/api/admin/orders/" + orderId + "/status", {
     method: "PUT",
     body: JSON.stringify({ status }),
+  });
+}
+
+export async function adminDeleteOrder(orderId: number) {
+  return request<void>("/api/admin/orders/" + orderId, {
+    method: "DELETE",
   });
 }
 

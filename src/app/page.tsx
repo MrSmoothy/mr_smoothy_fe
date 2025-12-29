@@ -355,8 +355,14 @@ export default function Home() {
                 <div className="w-full text-center text-[#14433B]/60 py-8">ยังไม่มีเมนูน้ำปั่นในหมวดหมู่นี้</div>
               ) : (
                 popularDrinks.map((drink, index) => {
-                  // ใช้ฟังก์ชันคำนวณราคาร่วมกัน
-                  const price = calculateDrinkPrice(drink, fruits, cupSizes);
+                  // ใช้ฟังก์ชันคำนวณราคาร่วมกัน - ใช้ cup size ที่เล็กที่สุดสำหรับราคาเริ่มต้น
+                  const smallestCupSize = cupSizes.length > 0 
+                    ? [...cupSizes].sort((a, b) => 
+                        (a.volumeMl || 0) - (b.volumeMl || 0) || 
+                        (a.priceExtra || 0) - (b.priceExtra || 0)
+                      )[0]
+                    : undefined;
+                  const price = calculateDrinkPrice(drink, fruits, cupSizes, smallestCupSize);
 
                   // Get ingredients with images for hover display
                   const drinkIngredients = drink.ingredients
@@ -447,7 +453,7 @@ export default function Home() {
                           {drink.description || "Delicious smoothie blend"}
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-[#14433B] font-serif">฿{price.toFixed(2)}</span>
+                          <span className="text-xl font-bold text-[#14433B] font-sans">฿{price.toFixed(2)}</span>
                           <button 
                             onClick={(e) => {
                               e.preventDefault();
@@ -725,11 +731,16 @@ export default function Home() {
               {/* Price */}
               <div className="mb-6 p-4 bg-[#FFF6F0] rounded-lg">
                 {(() => {
-                  const totalPrice = selectedDrink ? calculateDrinkPrice(selectedDrink, fruits, cupSizes, modalCupSize || undefined) : 0;
+                  // Force recalculation when modalCupSize changes
+                  const totalPrice = selectedDrink && modalCupSize 
+                    ? calculateDrinkPrice(selectedDrink, fruits, cupSizes, modalCupSize) 
+                    : selectedDrink 
+                      ? calculateDrinkPrice(selectedDrink, fruits, cupSizes, undefined)
+                      : 0;
                   return (
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-semibold text-[#14433B] font-sans">ราคารวม:</span>
-                      <span className="text-2xl font-bold text-[#14433B] font-serif">฿{totalPrice.toFixed(2)}</span>
+                      <span className="text-2xl font-bold text-[#14433B] font-sans">฿{totalPrice.toFixed(2)}</span>
                     </div>
                   );
                 })()}

@@ -249,7 +249,7 @@ export default function FruitSelector({
       {selectedFruits.size > 0 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-[#C9A78B]/20 to-[#C9A78B]/10 rounded-lg border border-[#14433B]/20">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-[#14433B]">ผลไม้ที่เลือก:</span>
+            <span className="text-sm font-semibold text-[#14433B]">วัตถุดิบที่เลือก:</span>
             <span className="text-sm text-[#14433B]/70">
               {totalFruits} / {maxFruits} ผลไม้
             </span>

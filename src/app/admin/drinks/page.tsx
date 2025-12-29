@@ -14,6 +14,7 @@ import {
   type PredefinedDrinkCreateRequest,
   type PredefinedDrinkUpdateRequest,
   type Fruit,
+  type DrinkCategory,
 } from "@/lib/api";
 import { getImageUrl } from "@/lib/image";
 
@@ -31,6 +32,7 @@ export default function AdminDrinksPage() {
     name: "",
     description: "",
     imageUrl: "",
+    category: "SIGNATURE" as DrinkCategory,
     active: true,
     ingredients: [] as { fruitId: number; quantity: number }[],
     basePrice: "",
@@ -82,43 +84,27 @@ export default function AdminDrinksPage() {
       const descriptionValue = drink.description !== null && drink.description !== undefined 
         ? String(drink.description) 
         : "";
-      // ใช้ basePrice จาก drink ถ้ามี ถ้าไม่มีให้คำนวณจาก ingredients
-      let basePriceValue = "";
-      if (drink.basePrice != null && drink.basePrice !== undefined) {
-        // ใช้ basePrice จาก drink
-        basePriceValue = Number(drink.basePrice).toFixed(2);
-      } else {
-        // คำนวณจาก ingredients
-        let calculatedPrice = 0;
-        if (drink.ingredients && drink.ingredients.length > 0 && fruits.length > 0) {
-          calculatedPrice = drink.ingredients.reduce((sum, ing) => {
-            const fruit = fruits.find(f => f.id === ing.fruitId);
-            if (fruit) {
-              return sum + (Number(fruit.pricePerUnit) * ing.quantity);
-            }
-            return sum;
-          }, 0);
-          if (calculatedPrice > 1000) {
-            calculatedPrice = calculatedPrice / 100;
-          }
-        }
-        basePriceValue = calculatedPrice > 0 ? calculatedPrice.toFixed(2) : "";
-      }
+      // Use basePrice from backend if available
+      const basePriceValue = drink.basePrice != null 
+        ? String(drink.basePrice) 
+        : "";
       setFormData({
         name: drink.name,
         description: descriptionValue,
         imageUrl: drink.imageUrl || "",
+        category: drink.category || "SIGNATURE",
         active: drink.active,
         ingredients: drink.ingredients.map(i => ({ fruitId: i.fruitId, quantity: i.quantity })),
         basePrice: basePriceValue,
       });
-      console.log("Form data set:", { description: descriptionValue });
+      console.log("Form data set:", { description: descriptionValue, basePrice: basePriceValue });
     } else {
       setEditingDrink(null);
       setFormData({
         name: "",
         description: "",
         imageUrl: "",
+        category: "SIGNATURE" as DrinkCategory,
         active: true,
         ingredients: [],
         basePrice: "",
@@ -196,42 +182,25 @@ export default function AdminDrinksPage() {
       return drinks;
     }
 
-    const filtered = drinks.filter(drink => {
-      const name = (drink.name || "").toLowerCase();
-      const description = (drink.description || "").toLowerCase();
-      const searchText = `${name} ${description}`;
+    return drinks.filter(drink => drink.category === category);
+  }
 
-      switch (category) {
-        case "SIGNATURE":
-          return searchText.includes("signature") || 
-                 searchText.includes("พิเศษ") || 
-                 searchText.includes("premium");
-        case "CLASSIC":
-          return searchText.includes("classic") || 
-                 searchText.includes("คลาสสิก") || 
-                 searchText.includes("ดั้งเดิม");
-        case "GREEN_BOOSTER":
-          return searchText.includes("green") || 
-                 searchText.includes("booster") || 
-                 searchText.includes("ผัก") ||
-                 searchText.includes("เขียว");
-        case "HIGH_PROTEIN":
-          return searchText.includes("protein") || 
-                 searchText.includes("โปรตีน") || 
-                 searchText.includes("high") ||
-                 searchText.includes("whey");
-        case "SUPERFRUIT":
-          return searchText.includes("superfruit") || 
-                 searchText.includes("super") || 
-                 searchText.includes("superfood") ||
-                 searchText.includes("เบอร์รี่") ||
-                 searchText.includes("berry");
-        default:
-          return true;
-      }
-    });
-
-    return filtered;
+  // Helper to get category display info
+  function getCategoryInfo(category?: DrinkCategory): { label: string; className: string } {
+    switch (category) {
+      case "SIGNATURE":
+        return { label: "⭐ Signature", className: "bg-amber-100 text-amber-700" };
+      case "CLASSIC":
+        return { label: "🍹 Classic", className: "bg-blue-100 text-blue-700" };
+      case "GREEN_BOOSTER":
+        return { label: "🥬 Green Booster", className: "bg-green-100 text-green-700" };
+      case "HIGH_PROTEIN":
+        return { label: "💪 High-Protein", className: "bg-red-100 text-red-700" };
+      case "SUPERFRUIT":
+        return { label: "🍇 Superfruit", className: "bg-purple-100 text-purple-700" };
+      default:
+        return { label: "❓ ไม่ระบุ", className: "bg-gray-100 text-gray-700" };
+    }
   }
 
   // Get filtered drinks
@@ -262,12 +231,12 @@ export default function AdminDrinksPage() {
     try {
       if (editingDrink) {
         // Use PredefinedDrinkUpdateRequest for update
-        // Always send description field (even if empty string) to ensure it gets updated
         const trimmedDescription = formData.description.trim();
         const updateData: PredefinedDrinkUpdateRequest = {
           name: formData.name.trim(),
-          description: trimmedDescription, // Always send description (empty string is valid)
+          description: trimmedDescription,
           imageUrl: formData.imageUrl?.trim() || undefined,
+          category: formData.category,
           active: formData.active,
           ingredients: formData.ingredients,
           basePrice: formData.basePrice && formData.basePrice.trim() !== "" 
@@ -284,18 +253,24 @@ export default function AdminDrinksPage() {
           name: formData.name.trim(),
           description: formData.description.trim(),
           imageUrl: formData.imageUrl?.trim() || undefined,
+          category: formData.category,
           active: formData.active,
           ingredients: formData.ingredients,
+          basePrice: formData.basePrice && formData.basePrice.trim() !== "" 
+            ? parseFloat(formData.basePrice.trim()) 
+            : null,
         };
         await adminCreateDrink(createData);
         alert("เพิ่มข้อมูลสำเร็จ");
       }
+      window.dispatchEvent(new Event("drinkUpdated"));
 
       closeModal();
       loadData();
     } catch (err: any) {
+      console.error(err);
       alert(err.message || "ไม่สามารถบันทึกข้อมูลได้");
-    }
+    }    
   }
 
   async function handleDelete(id: number) {
@@ -305,14 +280,7 @@ export default function AdminDrinksPage() {
       alert("ลบข้อมูลสำเร็จ");
       loadData();
     } catch (err: any) {
-      console.error("Failed to delete drink:", err);
-      // แสดง error message ที่เข้าใจง่าย
-      const errorMessage = err.message || "ไม่สามารถลบข้อมูลได้";
-      if (errorMessage.includes("ออเดอร์") || errorMessage.includes("order") || errorMessage.includes("foreign key")) {
-        alert("ไม่สามารถลบเมนูนี้ได้ เนื่องจากมีออเดอร์ที่ใช้เมนูนี้อยู่\n\nกรุณาปิดการใช้งาน (Active = false) แทนการลบ");
-      } else {
-        alert(errorMessage);
-      }
+      alert(err.message || "ไม่สามารถลบข้อมูลได้");
     }
   }
 
@@ -427,7 +395,7 @@ export default function AdminDrinksPage() {
                   : "bg-white text-[#14433B] border border-[#14433B]/30 hover:border-[#14433B]/50"
               }`}
             >
-              High Protein
+              High-Protein
             </button>
             <button
               onClick={() => setSelectedCategory("SUPERFRUIT")}
@@ -460,20 +428,15 @@ export default function AdminDrinksPage() {
                   ไม่มีรูปภาพ
                 </div>
               )}
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-semibold text-[#14433B]">{drink.name}</h3>
-                {!drink.active && (
-                  <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-semibold">
-                    ปิดการใช้งาน
-                  </span>
-                )}
-              </div>
-              <p className="text-[#14433B]/70 text-sm mb-3 line-clamp-2">{drink.description}</p>
-              {drink.basePrice != null && (
-                <p className="text-sm text-[#14433B] mb-2">
-                  <span className="font-semibold">ราคาพื้นฐาน:</span> ฿{Number(drink.basePrice).toFixed(2)}
-                </p>
-              )}
+              <h3 className="text-xl font-semibold text-[#14433B] mb-2">{drink.name}</h3>
+              <p className="text-[#14433B]/70 text-sm mb-2 line-clamp-2">{drink.description}</p>
+              <p className="text-sm text-[#14433B] mb-3">
+                <span className="font-semibold">ราคาพื้นฐาน:</span>{" "}
+                {drink.basePrice != null 
+                  ? `฿${Number(drink.basePrice).toFixed(2)}`
+                  : "คำนวณอัตโนมัติจากส่วนผสม"
+                }
+              </p>
               <div className="mb-4">
                 <p className="text-sm text-[#14433B]/70 mb-2">ส่วนผสม:</p>
                 <div className="flex flex-wrap gap-2">
@@ -493,15 +456,20 @@ export default function AdminDrinksPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between mb-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    drink.active
-                      ? "bg-[#14433B]/20 text-[#14433B]"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {drink.active ? "ใช้งาน" : "ไม่ใช้งาน"}
-                </span>
+                <div className="flex flex-wrap gap-2">
+                  <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getCategoryInfo(drink.category).className}`}>
+                    {getCategoryInfo(drink.category).label}
+                  </span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      drink.active
+                        ? "bg-[#14433B]/20 text-[#14433B]"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {drink.active ? "ใช้งาน" : "ไม่ใช้งาน"}
+                  </span>
+                </div>
               </div>
               <div className="flex gap-2">
                 <button
@@ -562,6 +530,22 @@ export default function AdminDrinksPage() {
                 </div>
 
                 <div>
+                  <label className="block text-[#14433B] font-semibold mb-2">หมวดหมู่ *</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as DrinkCategory })}
+                    className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
+                    required
+                  >
+                    <option value="SIGNATURE">⭐ Signature</option>
+                    <option value="CLASSIC">🍹 Classic</option>
+                    <option value="GREEN_BOOSTER">🥬 Green Booster</option>
+                    <option value="HIGH_PROTEIN">💪 High-Protein</option>
+                    <option value="SUPERFRUIT">🍇 Superfruit</option>
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-[#14433B] font-semibold mb-2">ราคาพื้นฐาน (บาท)</label>
                   <input
                     type="number"
@@ -569,11 +553,11 @@ export default function AdminDrinksPage() {
                     min="0"
                     value={formData.basePrice}
                     onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
-                    placeholder="คำนวณอัตโนมัติจากส่วนผสม"
+                    placeholder="ปล่อยว่างเพื่อคำนวณอัตโนมัติจากส่วนผสม"
                     className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                   />
                   <p className="text-sm text-[#14433B]/70 mt-1">
-                    ราคาจะคำนวณจากส่วนผสม หากต้องการกำหนดราคาเองให้กรอกที่นี่
+                    กำหนดราคาพื้นฐานของเมนู (ไม่รวมราคาแก้ว) - ถ้าปล่อยว่างจะคำนวณจากส่วนผสม
                   </p>
                 </div>
 
@@ -717,4 +701,3 @@ export default function AdminDrinksPage() {
     </div>
   );
 }
-

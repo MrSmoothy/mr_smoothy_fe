@@ -134,13 +134,13 @@ export default function AddIngredientPage() {
                 }
                 className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
               >
-                <option value="ORGANIC_FRUITS">🍎 ผลไม้ออร์แกนิก</option>
-                <option value="ORGANIC_VEGETABLE">🥬 ผักออร์แกนิก</option>
-                <option value="BASE">🥛 ฐาน</option>
-                <option value="SUPERFRUITS">🌟 ซูเปอร์ฟรุต</option>
-                <option value="PROTEIN">💪 โปรตีน</option>
-                <option value="TOPPING">🍒 ท็อปปิ้ง</option>
-                <option value="SWEETENER">🍯 สารให้ความหวาน</option>
+                <option value="ORGANIC_FRUITS">🍎 ORGANIC FRUITS</option>
+                <option value="ORGANIC_VEGETABLE">🥬 ORGANIC VEGETABLE</option>
+                <option value="BASE">🥛 BASE</option>
+                <option value="SUPERFRUITS">🌟 SUPERFRUITS</option>
+                <option value="PROTEIN">💪 PROTEIN</option>
+                <option value="TOPPING">🍒 TOPPING</option>
+                <option value="SWEETENER">🍯 SWEETENER</option>
               </select>
             </div>
 

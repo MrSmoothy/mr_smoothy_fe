@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { adminGetAllOrders, adminUpdateOrderStatus, type OrderResponse } from "@/lib/api";
-import { RefreshCw, CheckCircle, XCircle, Clock, Package, ChevronDown, ChevronUp, User } from "lucide-react";
+import { adminGetAllOrders, adminUpdateOrderStatus, adminDeleteOrder, type OrderResponse } from "@/lib/api";
+import { RefreshCw, CheckCircle, XCircle, Clock, Package, ChevronDown, ChevronUp, User, Trash2 } from "lucide-react";
+
+type FilterStatus = "ALL" | "PENDING" | "CONFIRMED" | "CANCELLED";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<number | null>(null);
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>("ALL");
+  const [selectedOrders, setSelectedOrders] = useState<Set<number>>(new Set());
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     loadOrders();
@@ -90,6 +95,81 @@ export default function AdminOrdersPage() {
     });
   }
 
+  // Filter orders by status
+  const filteredOrders = filterStatus === "ALL"
+    ? orders
+    : orders.filter(order => {
+        const status = (order.status || "PENDING").toUpperCase();
+        if (filterStatus === "PENDING") return status === "PENDING";
+        if (filterStatus === "CONFIRMED") return status === "CONFIRMED";
+        if (filterStatus === "CANCELLED") return status === "CANCELLED";
+        return true;
+      });
+
+  // Count orders by status
+  const statusCounts = {
+    ALL: orders.length,
+    PENDING: orders.filter(o => (o.status || "PENDING").toUpperCase() === "PENDING").length,
+    CONFIRMED: orders.filter(o => (o.status || "PENDING").toUpperCase() === "CONFIRMED").length,
+    CANCELLED: orders.filter(o => (o.status || "PENDING").toUpperCase() === "CANCELLED").length,
+  };
+
+  // Handle select/deselect order
+  function toggleSelectOrder(orderId: number) {
+    const newSelected = new Set(selectedOrders);
+    if (newSelected.has(orderId)) {
+      newSelected.delete(orderId);
+    } else {
+      newSelected.add(orderId);
+    }
+    setSelectedOrders(newSelected);
+  }
+
+  // Handle select all
+  function toggleSelectAll() {
+    if (selectedOrders.size === filteredOrders.length) {
+      setSelectedOrders(new Set());
+    } else {
+      setSelectedOrders(new Set(filteredOrders.map(o => o.orderId!)));
+    }
+  }
+
+  // Handle delete order(s)
+  async function handleDeleteOrder(orderId: number) {
+    if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบออเดอร์นี้?")) {
+      return;
+    }
+    try {
+      setDeleting(orderId);
+      await adminDeleteOrder(orderId);
+      await loadOrders();
+      setSelectedOrders(new Set());
+    } catch (err: any) {
+      alert(err.message || "ไม่สามารถลบออเดอร์ได้");
+    } finally {
+      setDeleting(null);
+    }
+  }
+
+  // Handle delete selected orders
+  async function handleDeleteSelected() {
+    if (selectedOrders.size === 0) {
+      alert("กรุณาเลือกออเดอร์ที่ต้องการลบ");
+      return;
+    }
+    if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบ ${selectedOrders.size} ออเดอร์?`)) {
+      return;
+    }
+    try {
+      const deletePromises = Array.from(selectedOrders).map(orderId => adminDeleteOrder(orderId));
+      await Promise.all(deletePromises);
+      await loadOrders();
+      setSelectedOrders(new Set());
+    } catch (err: any) {
+      alert(err.message || "ไม่สามารถลบออเดอร์ได้");
+    }
+  }
+
   if (loading) {
     return (
       <div className="p-8">
@@ -107,11 +187,21 @@ export default function AdminOrdersPage() {
     <div className="p-8 bg-[#FFF6F0] min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-[#14433B] mb-2 font-sans">Order Management</h1>
             <p className="text-[#14433B]/70 font-sans">จัดการคำสั่งซื้อทั้งหมด</p>
           </div>
+          <div className="flex items-center gap-3">
+            {selectedOrders.size > 0 && (
+              <button
+                onClick={handleDeleteSelected}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:opacity-90 transition-opacity font-sans"
+              >
+                <Trash2 className="w-4 h-4" />
+                ลบที่เลือก ({selectedOrders.size})
+              </button>
+            )}
           <button
             onClick={loadOrders}
             disabled={loading}
@@ -119,6 +209,51 @@ export default function AdminOrdersPage() {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             รีเฟรช
+            </button>
+          </div>
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="mb-6 flex items-center gap-3 flex-wrap">
+          <button
+            onClick={() => setFilterStatus("ALL")}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+              filterStatus === "ALL"
+                ? "bg-white text-[#14433B] shadow-md"
+                : "bg-gray-200 text-[#14433B] hover:bg-gray-300"
+            }`}
+          >
+            ทั้งหมด ({statusCounts.ALL})
+          </button>
+          <button
+            onClick={() => setFilterStatus("PENDING")}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+              filterStatus === "PENDING"
+                ? "bg-white text-[#14433B] shadow-md"
+                : "bg-gray-200 text-[#14433B] hover:bg-gray-300"
+            }`}
+          >
+            รออนุมัติ ({statusCounts.PENDING})
+          </button>
+          <button
+            onClick={() => setFilterStatus("CONFIRMED")}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+              filterStatus === "CONFIRMED"
+                ? "bg-white text-[#14433B] shadow-md"
+                : "bg-gray-200 text-[#14433B] hover:bg-gray-300"
+            }`}
+          >
+            อนุมัติแล้ว ({statusCounts.CONFIRMED})
+          </button>
+          <button
+            onClick={() => setFilterStatus("CANCELLED")}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
+              filterStatus === "CANCELLED"
+                ? "bg-white text-[#14433B] shadow-md"
+                : "bg-gray-200 text-[#14433B] hover:bg-gray-300"
+            }`}
+          >
+            ปฏิเสธ ({statusCounts.CANCELLED})
           </button>
         </div>
 
@@ -128,6 +263,14 @@ export default function AdminOrdersPage() {
             <table className="w-full">
               <thead className="bg-[#14433B] text-[#FFF6F0]">
                 <tr>
+                  <th className="px-6 py-4 text-left font-semibold font-sans">
+                    <input
+                      type="checkbox"
+                      checked={filteredOrders.length > 0 && selectedOrders.size === filteredOrders.length}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 text-[#14433B] rounded focus:ring-[#14433B] cursor-pointer"
+                    />
+                  </th>
                   <th className="px-6 py-4 text-left font-semibold font-sans">Order ID</th>
                   <th className="px-6 py-4 text-left font-semibold font-sans">Item Name</th>
                   <th className="px-6 py-4 text-left font-semibold font-sans">Quantity</th>
@@ -138,16 +281,24 @@ export default function AdminOrdersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#14433B]/10">
-                {orders.length === 0 ? (
+                {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-[#14433B]/70 font-sans">
+                    <td colSpan={8} className="px-6 py-12 text-center text-[#14433B]/70 font-sans">
                       ไม่มีคำสั่งซื้อ
                     </td>
                   </tr>
                 ) : (
-                  orders.map((order) => (
+                  filteredOrders.map((order) => (
                     <>
                       <tr key={order.orderId} className="hover:bg-[#FFF6F0]/30">
+                        <td className="px-6 py-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedOrders.has(order.orderId!)}
+                            onChange={() => toggleSelectOrder(order.orderId!)}
+                            className="w-4 h-4 text-[#14433B] rounded focus:ring-[#14433B] cursor-pointer"
+                          />
+                        </td>
                         <td className="px-6 py-4">
                           <span className="text-blue-600 font-semibold font-sans">
                             #{String(order.orderId).padStart(3, "0")}
@@ -217,29 +368,38 @@ export default function AdminOrdersPage() {
                               <option value="COMPLETED">Completed</option>
                               <option value="CANCELLED">Cancelled</option>
                             </select>
+                            <div className="flex gap-1">
                             <button
                               onClick={() => setExpandedOrderId(expandedOrderId === order.orderId ? null : order.orderId!)}
-                              className="px-3 py-1 bg-[#14433B] text-[#FFF6F0] rounded text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1 font-sans"
+                                className="flex-1 px-3 py-1 bg-[#14433B] text-[#FFF6F0] rounded text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1 font-sans"
                             >
                               {expandedOrderId === order.orderId ? (
                                 <>
                                   <ChevronUp className="w-3 h-3" />
-                                  ซ่อนรายละเอียด
+                                    ซ่อน
                                 </>
                               ) : (
                                 <>
                                   <ChevronDown className="w-3 h-3" />
-                                  ดูรายละเอียด
+                                    ดู
                                 </>
                               )}
                             </button>
+                              <button
+                                onClick={() => handleDeleteOrder(order.orderId!)}
+                                disabled={deleting === order.orderId}
+                                className="px-3 py-1 bg-red-600 text-white rounded text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center font-sans"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
                           </div>
                         </td>
                       </tr>
                       {/* Expanded Row with Order Details */}
                       {expandedOrderId === order.orderId && (
                         <tr className="bg-[#FFF6F0]">
-                          <td colSpan={7} className="px-6 py-6">
+                          <td colSpan={8} className="px-6 py-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               {/* Customer/User Information */}
                               <div className="bg-white rounded-lg p-4 border border-[#14433B]/20">

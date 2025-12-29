@@ -212,54 +212,13 @@ function MenuContent() {
     }
   }
 
-  // Filter drinks by category
+  // Filter drinks by category (uses actual category field from backend)
   function getDrinksByCategory(category: "ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT"): PredefinedDrink[] {
     if (category === "ALL") {
       return drinks;
     }
 
-    // Filter by category keywords in name or description
-    const filtered = drinks.filter(drink => {
-      const name = (drink.name || "").toLowerCase();
-      const description = (drink.description || "").toLowerCase();
-      const searchText = `${name} ${description}`;
-
-      switch (category) {
-        case "SIGNATURE":
-          // Signature drinks - typically premium or special drinks
-          return searchText.includes("signature") || 
-                 searchText.includes("พิเศษ") || 
-                 searchText.includes("premium");
-        case "CLASSIC":
-          // Classic drinks - traditional or standard recipes
-          return searchText.includes("classic") || 
-                 searchText.includes("คลาสสิก") || 
-                 searchText.includes("ดั้งเดิม");
-        case "GREEN_BOOSTER":
-          // Green Booster - drinks with vegetables or green ingredients
-          return searchText.includes("green") || 
-                 searchText.includes("booster") || 
-                 searchText.includes("ผัก") ||
-                 searchText.includes("เขียว");
-        case "HIGH_PROTEIN":
-          // High-Protein drinks
-          return searchText.includes("protein") || 
-                 searchText.includes("โปรตีน") || 
-                 searchText.includes("high") ||
-                 searchText.includes("whey");
-        case "SUPERFRUIT":
-          // Superfruit - drinks with superfoods or exotic fruits
-          return searchText.includes("superfruit") || 
-                 searchText.includes("super") || 
-                 searchText.includes("superfood") ||
-                 searchText.includes("เบอร์รี่") ||
-                 searchText.includes("berry");
-        default:
-          return true;
-      }
-    });
-
-    return filtered;
+    return drinks.filter(drink => drink.category === category);
   }
 
   // Get filtered drinks based on selected category
@@ -636,7 +595,7 @@ function MenuContent() {
               {/* Ingredients */}
               {selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">วัถุดิบ</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">วัตถุดิบ</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {selectedDrink.ingredients.map((ingredient, idx) => {
                       const fruit = fruits.find(f => f.id === ingredient.fruitId);
@@ -750,7 +709,7 @@ function MenuContent() {
                       )}
                       <div className="flex justify-between items-center pt-2 border-t border-[#14433B]/20">
                         <span className="text-lg font-semibold text-[#14433B] font-sans">ราคารวม:</span>
-                        <span className="text-2xl font-bold text-[#14433B] font-serif">{totalPrice.toFixed(2)} บาท</span>
+                        <span className="text-2xl font-bold text-[#14433B] font-sans">{totalPrice.toFixed(2)} บาท</span>
                       </div>
                     </div>
                   );
@@ -791,4 +750,3 @@ export default function MenuPage() {
     </Suspense>
   );
 }
-
