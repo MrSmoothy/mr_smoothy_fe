@@ -29,9 +29,10 @@ export default function Footer() {
                 <span>thy</span>
               </h2>
             </div>
-            <p className="text-white text-sm font-sans">
+            <p className="text-white text-sm font-sans md:whitespace-nowrap">
               "Healthy Smoothies for Your Everyday Energy"
             </p>
+
           </div>
 
           {/* Quick Links Section */}
@@ -138,7 +139,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-white/20 text-center">
-          <p className="text-white/70 text-sm font-sans">© 2024 Mr. Smoothy. All rights reserved.</p>
+          <p className="text-white/70 text-sm font-sans">© 2025 Mr. Smoothy. All rights reserved.</p>
         </div>
       </div>
     </footer>

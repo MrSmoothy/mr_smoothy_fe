@@ -79,7 +79,7 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-[#14433B]/30 text-xs text-center">
-                  เลือกผลไม้
+                  Select Ingredients
                 </div>
               </div>
             )}
@@ -122,16 +122,16 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
         )}
         
         <div className="text-lg font-bold text-[#14433B]">
-          {totalFruits} / {maxFruits} ผลไม้
+          {totalFruits} / {maxFruits} ingredients
         </div>
         
         {remainingSlots > 0 ? (
           <div className="text-sm text-[#14433B] font-medium">
-            สามารถเพิ่มได้อีก {remainingSlots} อย่าง
+            You can add {remainingSlots} more
           </div>
         ) : (
           <div className="text-sm text-orange-600 font-medium">
-            ✓ เต็มแล้ว
+            ✓ Full
           </div>
         )}
         
@@ -147,7 +147,7 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
       {/* รายการผลไม้ที่เลือก */}
       {fruitEntries.length > 0 && (
         <div className="mt-4 w-full max-w-xs">
-          <div className="text-sm font-semibold text-[#14433B] mb-2">วัตถุดิบที่เลือก:</div>
+          <div className="text-sm font-semibold text-[#14433B] mb-2">Selected Ingredients:</div>
           <div className="space-y-1">
             {fruitEntries.map(([fruitId, { fruit, quantity }]) => (
               <div

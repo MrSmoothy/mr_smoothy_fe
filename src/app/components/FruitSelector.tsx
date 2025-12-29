@@ -55,9 +55,9 @@ export default function FruitSelector({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-bold text-[#14433B]">เลือกส่วนผสม</h3>
+        <h3 className="text-xl font-bold text-[#14433B]">Select Ingredients</h3>
         <div className="text-sm text-[#14433B]/70">
-          {totalFruits} / {maxFruits} ผลไม้
+          {totalFruits} / {maxFruits} Ingredients
         </div>
       </div>
 
@@ -249,9 +249,9 @@ export default function FruitSelector({
       {selectedFruits.size > 0 && (
         <div className="mt-6 p-4 bg-gradient-to-r from-[#C9A78B]/20 to-[#C9A78B]/10 rounded-lg border border-[#14433B]/20">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-[#14433B]">วัตถุดิบที่เลือก:</span>
+            <span className="text-sm font-semibold text-[#14433B]">Selected Ingredients:</span>
             <span className="text-sm text-[#14433B]/70">
-              {totalFruits} / {maxFruits} ผลไม้
+              {totalFruits} / {maxFruits} Ingredients
             </span>
           </div>
           <div className="flex flex-wrap gap-2">

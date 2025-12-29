@@ -294,7 +294,7 @@ function MenuContent() {
             {/* Ingredients Overlay on Hover */}
             {drinkIngredients.length > 0 && (
               <div className="absolute inset-0 bg-[#14433B]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3 rounded-lg">
-                <p className="text-white text-xs font-semibold mb-2 font-sans">ส่วนผสม</p>
+                <p className="text-white text-xs font-semibold mb-2 font-sans">Ingredients</p>
                 <div className="grid grid-cols-3 gap-2 w-full max-h-32 overflow-y-auto">
                   {drinkIngredients.map((ing: any) => (
                     <div
@@ -356,7 +356,7 @@ function MenuContent() {
   return (
     <div className="bg-[#FFF6F0] min-h-screen py-6 sm:py-8 md:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B] mb-6 sm:mb-8 font-serif">smoothies menu</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B] mb-6 sm:mb-8 font-serif">Smoothies Menu</h1>
 
         {/* Search Bar */}
         <section className="mb-6 sm:mb-8">
@@ -555,7 +555,7 @@ function MenuContent() {
           >
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-[#14433B]/20 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#14433B] font-serif pr-2">{selectedDrink.name}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#14433B] font-sans pr-2">{selectedDrink.name}</h2>
               <button
                 onClick={closeModal}
                 className="text-[#14433B] hover:text-[#1a5444] text-2xl font-bold transition-colors flex-shrink-0"
@@ -587,7 +587,7 @@ function MenuContent() {
               {/* Description */}
               {selectedDrink.description && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-serif">คำอธิบาย</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-serif">Instructions:</h3>
                   <p className="text-[#14433B]/80 font-sans whitespace-pre-wrap">{selectedDrink.description}</p>
                 </div>
               )}

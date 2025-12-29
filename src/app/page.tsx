@@ -409,7 +409,7 @@ export default function Home() {
                         {/* Ingredients Overlay on Hover */}
                         {drinkIngredients.length > 0 && (
                           <div className="absolute inset-0 bg-[#14433B]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3">
-                            <p className="text-white text-xs font-semibold mb-2 font-sans">ส่วนผสม</p>
+                            <p className="text-white text-xs font-semibold mb-2 font-sans">Ingredients</p>
                             <div className="grid grid-cols-3 gap-2 w-full max-h-32 overflow-y-auto">
                               {drinkIngredients.map((ing: any) => (
                                 <div
@@ -489,12 +489,12 @@ export default function Home() {
       <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B] mb-2 font-serif">วัตถุดิบตามฤดูกาล</h2>
-            <p className="text-base sm:text-lg text-[#14433B]/80 font-sans px-4">ผลไม้และผักตามฤดูกาลที่คัดสรรมาอย่างดี</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B] mb-2 font-serif">Seasonal Ingredients</h2>
+            <p className="text-base sm:text-lg text-[#14433B]/80 font-sans px-4">Carefully Selected Seasonal Fruits and Vegetables</p>
           </div>
           {displaySeasonalIngredients.length === 0 ? (
             <div className="text-center text-[#14433B]/60 py-8 font-sans">
-              ยังไม่มีวัตถุดิบตามฤดูกาล
+            No seasonal ingredients available
             </div>
           ) : (
             <div className="flex justify-center items-center">
@@ -657,7 +657,7 @@ export default function Home() {
               {/* Description */}
               {selectedDrink.description && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-serif">คำอธิบาย</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-serif">Instructions:</h3>
                   <p className="text-[#14433B]/80 font-sans whitespace-pre-wrap">{selectedDrink.description}</p>
                 </div>
               )}
@@ -665,7 +665,7 @@ export default function Home() {
               {/* Ingredients */}
               {selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">วัถุดิบ</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">Ingredients:</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {selectedDrink.ingredients.map((ingredient, idx) => {
                       const fruit = fruits.find(f => f.id === ingredient.fruitId);
@@ -702,7 +702,7 @@ export default function Home() {
               {/* Cup Size Selection */}
               {cupSizes.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">เลือกขนาดแก้ว</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">Select Cup Size</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {cupSizes.map((size) => {
                       const isSelected = modalCupSize?.id === size.id;
@@ -719,7 +719,7 @@ export default function Home() {
                           <p className="font-semibold">{size.name}</p>
                           <p className="text-sm">{size.volumeMl} ml</p>
                           {size.priceExtra > 0 && (
-                            <p className="text-xs mt-1">+{size.priceExtra.toFixed(2)} บาท</p>
+                            <p className="text-xs mt-1">+{size.priceExtra.toFixed(2)} ฿</p>
                           )}
                         </button>
                       );
@@ -739,7 +739,7 @@ export default function Home() {
                       : 0;
                   return (
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-[#14433B] font-sans">ราคารวม:</span>
+                      <span className="text-lg font-semibold text-[#14433B] font-sans">Total Price:</span>
                       <span className="text-2xl font-bold text-[#14433B] font-sans">฿{totalPrice.toFixed(2)}</span>
                     </div>
                   );
@@ -756,7 +756,7 @@ export default function Home() {
                 disabled={addingToCart || !modalCupSize || cupSizes.length === 0}
                 className="w-full bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:bg-[#1a5444] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-sans"
               >
-                {addingToCart ? "กำลังเพิ่ม..." : "เพิ่มลงตะกร้า"}
+                {addingToCart ? "Adding..." : "Add to Cart"}
               </button>
             </div>
           </div>

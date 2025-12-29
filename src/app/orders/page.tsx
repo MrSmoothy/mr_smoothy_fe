@@ -264,7 +264,7 @@ function OrdersContent() {
                         </p>
                         {item.fruits && item.fruits.length > 0 && (
                           <div className="mt-3">
-                            <p className="text-sm font-medium text-[#14433B] mb-2">ส่วนผสม:</p>
+                            <p className="text-sm font-medium text-[#14433B] mb-2 font-sans">Ingredients:</p>
                             <div className="flex flex-wrap gap-2">
                               {item.fruits.map((fruit, idx) => (
                                 <span
@@ -451,7 +451,7 @@ function OrdersContent() {
                         </p>
                         {item.fruits && item.fruits.length > 0 && (
                           <div className="mt-3">
-                            <p className="text-sm font-medium text-[#14433B] mb-2">ส่วนผสม:</p>
+                            <p className="text-sm font-medium text-[#14433B] mb-2 font-sans">Ingredients:</p>
                             <div className="flex flex-wrap gap-2">
                               {item.fruits.map((fruit, idx) => (
                                 <span
@@ -626,7 +626,7 @@ function OrdersContent() {
                           </p>
                           {item.fruits && item.fruits.length > 0 && (
                             <div className="mt-1">
-                              <p className="text-xs text-[#14433B]/60">ส่วนผสม:</p>
+                              <p className="text-xs text-[#14433B]/60">Ingredients:</p>
                               <div className="flex flex-wrap gap-1 mt-1">
                                 {item.fruits.map((fruit, idx) => (
                                   <span

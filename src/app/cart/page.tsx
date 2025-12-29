@@ -445,11 +445,11 @@ export default function CartPage() {
                           {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
                         </h3>
                         <div className="space-y-1 mb-3">
-                          <p className="text-[#14433B]/70 font-sans">ขนาด: {item.cupSizeName}</p>
-                          <p className="text-[#14433B]/70 font-sans">จำนวน: {item.quantity} แก้ว</p>
+                          <p className="text-[#14433B]/70 font-sans">Size: {item.cupSizeName}</p>
+                          <p className="text-[#14433B]/70 font-sans">Quantity: {item.quantity} แก้ว</p>
                           {item.fruits && item.fruits.length > 0 && (
                             <div className="mt-2">
-                              <p className="text-sm text-[#14433B]/60 mb-1 font-sans">ส่วนผสม:</p>
+                              <p className="text-sm text-[#14433B]/60 mb-1 font-sans">Ingredients</p>
                               <div className="flex flex-wrap gap-2">
                                 {item.fruits.map((fruit, idx) => (
                                   <span

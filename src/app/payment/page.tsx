@@ -474,7 +474,7 @@ export default function PaymentPage() {
                       </div>
                       {item.fruits && item.fruits.length > 0 && (
                         <div className="mt-2">
-                          <div className="text-xs text-[#FFF6F0]/70 mb-1">ส่วนผสม:</div>
+                          <div className="text-xs text-[#FFF6F0]/70 mb-1">Ingredients:</div>
                           <div className="flex flex-wrap gap-1">
                             {item.fruits.map((fruit, idx) => (
                               <span

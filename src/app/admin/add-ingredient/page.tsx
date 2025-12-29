@@ -194,7 +194,7 @@ export default function AddIngredientPage() {
                   className="w-5 h-5"
                 />
                 <label htmlFor="seasonal" className="text-[#14433B] font-semibold">
-                  วัตถุดิบตามฤดูกาล
+                  Seasonal Ingredients
                 </label>
               </div>
             </div>

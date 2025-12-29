@@ -151,8 +151,8 @@ export default function HomeEditorPage() {
         <div className="mb-6 p-4 bg-white rounded-lg shadow-md">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-[#14433B] mb-1 font-sans">❄️ อนิเมชั่นหิมะตก</h3>
-              <p className="text-sm text-[#14433B]/70 font-sans">เปิด/ปิดอนิเมชั่นหิมะตกในเว็บไซต์</p>
+              <h3 className="text-lg font-semibold text-[#14433B] mb-1 font-sans">❄️ Snowfall Effect</h3>
+              <p className="text-sm text-[#14433B]/70 font-sans">Enable / Disable Snowfall Effect</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -175,7 +175,6 @@ export default function HomeEditorPage() {
         {/* Category Filter */}
         <div className="mb-6">
           <div className="flex items-center gap-4 flex-wrap">
-            <span className="text-[#14433B] font-semibold font-sans">หมวดหมู่:</span>
             <button
               onClick={() => setSelectedCategory("ALL")}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors font-sans ${
@@ -184,7 +183,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ทั้งหมด
+              All
             </button>
             <button
               onClick={() => setSelectedCategory("ORGANIC_FRUITS")}
@@ -194,7 +193,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ผลไม้ออร์แกนิก
+              Organic Fruits
             </button>
             <button
               onClick={() => setSelectedCategory("ORGANIC_VEGETABLE")}
@@ -204,7 +203,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ผักออร์แกนิก
+              Organic Vegetable
             </button>
             <button
               onClick={() => setSelectedCategory("SUPERFRUITS")}
@@ -214,7 +213,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ซูเปอร์ฟรุต
+              Superfruits
             </button>
             <button
               onClick={() => setSelectedCategory("BASE")}
@@ -224,7 +223,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ฐาน
+              Base
             </button>
             <button
               onClick={() => setSelectedCategory("PROTEIN")}
@@ -234,7 +233,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              โปรตีน
+              Protein
             </button>
             <button
               onClick={() => setSelectedCategory("TOPPING")}
@@ -244,7 +243,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              ท็อปปิ้ง
+              Topping
             </button>
             <button
               onClick={() => setSelectedCategory("SWEETENER")}
@@ -254,7 +253,7 @@ export default function HomeEditorPage() {
                   : "bg-white text-[#14433B] hover:bg-[#FFF6F0]"
               }`}
             >
-              สารให้ความหวาน
+              Sweetener
             </button>
           </div>
         </div>
@@ -262,7 +261,7 @@ export default function HomeEditorPage() {
         {/* Action Buttons */}
         <div className="flex items-center justify-between mb-6">
           <div className="text-[#14433B]/70 font-sans">
-            เลือกวัตถุดิบที่จะแสดงในหน้าแรก (สูงสุด 4 รายการ)
+          Select ingredients to display on the homepage (up to 4 items)
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -271,7 +270,7 @@ export default function HomeEditorPage() {
               className="flex items-center gap-2 px-4 py-2 bg-white text-[#14433B] rounded-lg hover:bg-[#FFF6F0] transition-colors disabled:opacity-50 font-sans"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              รีเฟรช
+              Refresh
             </button>
             <button
               onClick={handleSave}
@@ -279,7 +278,7 @@ export default function HomeEditorPage() {
               className="flex items-center gap-2 px-6 py-2 bg-[#14433B] text-[#FFF6F0] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-sans"
             >
               <Save className="w-4 h-4" />
-              {saving ? "กำลังบันทึก..." : "บันทึก"}
+              {saving ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
@@ -369,13 +368,13 @@ export default function HomeEditorPage() {
                         canSelect ? "text-[#14433B] cursor-pointer" : "text-[#14433B]/50 cursor-not-allowed"
                       }`}
                     >
-                      {isSeasonal ? "แสดงในหน้าแรก" : "ไม่แสดง"}
+                      {isSeasonal ? "Show on homepage" : "Hide on homepage"}
                     </label>
                   </div>
 
                   {!canSelect && !isSeasonal && (
                     <p className="text-xs text-red-500 mt-1 font-sans">
-                      (เลือกได้สูงสุด 4 รายการ)
+                      (Select up to 4 items)
                     </p>
                   )}
                 </div>
@@ -389,12 +388,12 @@ export default function HomeEditorPage() {
           <div className="flex items-start gap-3">
             <CheckCircle className="w-5 h-5 text-[#14433B] mt-0.5 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-[#14433B] mb-2 font-sans">คำแนะนำ</h3>
+              <h3 className="font-semibold text-[#14433B] mb-2 font-sans">Instructions</h3>
               <ul className="text-sm text-[#14433B]/70 space-y-1 font-sans">
-                <li>• เลือกวัตถุดิบที่จะแสดงในหน้าแรกได้สูงสุด 4 รายการ</li>
-                <li>• วัตถุดิบที่เลือกจะแสดงในส่วน "วัตถุดิบตามฤดูกาล" ในหน้าแรก</li>
-                <li>• กดปุ่ม "บันทึก" เพื่อบันทึกการเปลี่ยนแปลง</li>
-                <li>• สามารถกรองวัตถุดิบตามหมวดหมู่ได้</li>
+                <li>• Select up to 4 ingredients to display on the homepage.</li>
+                <li>• The selected ingredients will appear in the “Seasonal Ingredients” section on the homepage.</li>
+                <li>• Click the “Save” button to save your changes.</li>
+                <li>• You can filter ingredients by category.</li>
               </ul>
             </div>
           </div>

@@ -215,11 +215,11 @@ export default function CheckoutPage() {
                         <h3 className="font-semibold text-[#14433B]">
                           {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
                         </h3>
-                        <p className="text-sm text-[#14433B]/70">ขนาด: {item.cupSizeName}</p>
-                        <p className="text-sm text-[#14433B]/70">จำนวน: {item.quantity}</p>
+                        <p className="text-sm text-[#14433B]/70">Size: {item.cupSizeName}</p>
+                        <p className="text-sm text-[#14433B]/70">Quantity: {item.quantity}</p>
                         {item.fruits && item.fruits.length > 0 && (
                           <div className="mt-2">
-                            <p className="text-xs text-[#14433B]/60">ส่วนผสม:</p>
+                            <p className="text-xs text-[#14433B]/60">Ingredients</p>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {item.fruits.map((fruit, idx) => (
                                 <span
@@ -235,7 +235,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-[#14433B]">
-                          {Number(item.totalPrice).toFixed(2)} บาท
+                          {Number(item.totalPrice).toFixed(2)} ฿
                         </p>
                       </div>
                     </div>

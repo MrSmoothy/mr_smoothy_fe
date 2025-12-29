@@ -482,7 +482,7 @@ export default function AdminOrdersPage() {
                                             </p>
                                             {item.fruits && item.fruits.length > 0 && (
                                               <div className="mt-2">
-                                                <p className="text-xs text-[#14433B]/60 font-sans mb-1">ส่วนผสม:</p>
+                                                <p className="text-xs text-[#14433B]/60 font-sans mb-1">:</p>
                                                 <div className="flex flex-wrap gap-1">
                                                   {item.fruits.map((fruit, fruitIdx) => (
                                                     <span

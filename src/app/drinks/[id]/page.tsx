@@ -126,7 +126,7 @@ export default function DrinkDetailPage() {
             <div className="mt-6">
               <h1 className="text-3xl font-bold text-[#14433B] mb-4">{drink.name.toUpperCase()}</h1>
               <div className="space-y-2">
-                <p className="text-[#14433B] font-medium">ส่วนผสมหลัก:</p>
+                <p className="text-[#14433B] font-medium">Main Ingredients</p>
                 {drink.ingredients && drink.ingredients.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {drink.ingredients.map((ing, idx) => (

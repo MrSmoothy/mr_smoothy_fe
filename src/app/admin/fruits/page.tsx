@@ -514,7 +514,7 @@ export default function AdminFruitsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#14433B] font-semibold mb-2">คำอธิบาย *</label>
+                  <label className="block text-[#14433B] font-semibold mb-2">Instructions *</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -645,7 +645,7 @@ export default function AdminFruitsPage() {
                         className="w-5 h-5"
                       />
                       <label htmlFor="seasonal" className="text-[#14433B] font-semibold">
-                        วัตถุดิบตามฤดูกาล
+                        Seasonal Ingredients
                       </label>
                     </div>
                   )}

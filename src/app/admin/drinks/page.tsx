@@ -220,7 +220,7 @@ export default function AdminDrinksPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (formData.ingredients.length === 0) {
-      alert("กรุณาเพิ่มส่วนผสมอย่างน้อย 1 อย่าง");
+      alert("Please add at least 1 ingredient");
       return;
     }
     const totalQuantity = getTotalQuantity();
@@ -438,7 +438,7 @@ export default function AdminDrinksPage() {
                 }
               </p>
               <div className="mb-4">
-                <p className="text-sm text-[#14433B]/70 mb-2">ส่วนผสม:</p>
+                <p className="text-sm text-[#14433B]/70 mb-2">Ingredients:</p>
                 <div className="flex flex-wrap gap-2">
                   {drink.ingredients.slice(0, 3).map((ing, idx) => (
                     <span
@@ -519,7 +519,7 @@ export default function AdminDrinksPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[#14433B] font-semibold mb-2">คำอธิบาย *</label>
+                  <label className="block text-[#14433B] font-semibold mb-2">Instructions *</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -553,11 +553,11 @@ export default function AdminDrinksPage() {
                     min="0"
                     value={formData.basePrice}
                     onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
-                    placeholder="ปล่อยว่างเพื่อคำนวณอัตโนมัติจากส่วนผสม"
+                    placeholder="ปล่อยว่างเพื่อคำนวณอัตโนมัติจาก"
                     className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                   />
                   <p className="text-sm text-[#14433B]/70 mt-1">
-                    กำหนดราคาพื้นฐานของเมนู (ไม่รวมราคาแก้ว) - ถ้าปล่อยว่างจะคำนวณจากส่วนผสม
+                    กำหนดราคาพื้นฐานของเมนู (ไม่รวมราคาแก้ว) - ถ้าปล่อยว่างจะคำนวณจาก
                   </p>
                 </div>
 
@@ -602,9 +602,9 @@ export default function AdminDrinksPage() {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                    <label className="block text-[#14433B] font-semibold">ส่วนผสม *</label>
+                    <label className="block text-[#14433B] font-semibold">Ingredients *</label>
                       <p className="text-sm text-[#14433B]/70 mt-1">
-                        จำนวนรวม: {getTotalQuantity()}/5
+                      Total Quantity: {getTotalQuantity()}/5
                       </p>
                     </div>
                     <button
@@ -614,7 +614,7 @@ export default function AdminDrinksPage() {
                       className="bg-[#14433B] text-[#FFF6F0] px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4" />
-                      เพิ่มส่วนผสม
+                      Add Ingredients
                     </button>
                   </div>
                   <div className="space-y-2">
@@ -627,7 +627,7 @@ export default function AdminDrinksPage() {
                           }
                           className="flex-1 rounded-md border border-[#14433B]/30 px-4 py-2 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                         >
-                          <option value="">เลือกผลไม้</option>
+                          <option value="">Select Ingredients</option>
                           {fruits.map((fruit) => (
                             <option key={fruit.id} value={fruit.id}>
                               {fruit.name}
@@ -659,7 +659,7 @@ export default function AdminDrinksPage() {
                     ))}
                     {formData.ingredients.length === 0 && (
                       <p className="text-sm text-[#14433B]/70 text-center py-4">
-                        ยังไม่มีส่วนผสม กรุณาเพิ่มส่วนผสม
+                        No ingredients added. Please add ingredients.
                       </p>
                     )}
                   </div>
@@ -674,7 +674,7 @@ export default function AdminDrinksPage() {
                     className="w-5 h-5"
                   />
                   <label htmlFor="active" className="text-[#14433B] font-semibold">
-                    แสดงให้ลูกค้าเห็น
+                  Show to Customers
                   </label>
                 </div>
 
@@ -684,13 +684,13 @@ export default function AdminDrinksPage() {
                     onClick={closeModal}
                     className="flex-1 bg-gray-200 text-[#14433B] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
                   >
-                    ยกเลิก
+                    Cancel
                   </button>
                   <button
                     type="submit"
                     className="flex-1 bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
                   >
-                    {editingDrink ? "อัปเดต" : "เพิ่ม"}
+                    {editingDrink ? "Update" : "Add"}
                   </button>
                 </div>
               </form>

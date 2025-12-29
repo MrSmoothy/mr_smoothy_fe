@@ -166,7 +166,7 @@ export default function BuildPage() {
 
   async function handleAddToCart() {
     if (!selectedCupSize) {
-      alert("กรุณาเลือกขนาดแก้ว");
+      alert("Please select a cup size");
       return;
     }
 
@@ -362,16 +362,17 @@ export default function BuildPage() {
           <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
             <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#14433B]" />
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#14433B]">
-              สร้าง Smoothy ของคุณเอง
+            Create Your Own Smoothie
+
             </h1>
             <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-[#14433B]" />
           </div>
           <p className="text-[#14433B]/70 text-base sm:text-lg px-4">
-            เลือกส่วนผสมที่คุณชื่นชอบ สูงสุด {MAX_FRUITS} อย่าง (ผลไม้ ผัก และส่วนเสริม)
+          Select your favorite ingredients (up to {MAX_FRUITS} items)
           </p>
           {!user && (
             <div className="mt-4 inline-block bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm text-yellow-800">
-              💡 คุณกำลังเป็น Guest User - สามารถเลือกผลไม้ได้ แต่อาจจะไม่ได้รับแต้มหรือสิทธิพิเศษ
+              💡 You are currently a Guest User. You can select fruits, but you may not receive points or special benefits.
             </div>
           )}
         </div>
@@ -383,9 +384,9 @@ export default function BuildPage() {
               {/* Category Filter */}
               <div className="mb-4 sm:mb-6">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-lg sm:text-xl font-bold text-[#14433B]">เลือกหมวดหมู่</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-[#14433B]">Choose Category</h3>
                   <div className="text-xs sm:text-sm text-[#14433B]/70">
-                    {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ส่วนผสม
+                    {Array.from(selectedFruits.values()).reduce((sum, item) => sum + item.quantity, 0)} / {MAX_FRUITS} ingredients
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -396,7 +397,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ทั้งหมด
+                    All
                   </button>
                   <button
                     onClick={() => setSelectedCategory("ORGANIC_FRUITS")}
@@ -405,7 +406,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ผลไม้ออร์แกนิก
+                    Organic Fruits
                   </button>
                   <button
                     onClick={() => setSelectedCategory("ORGANIC_VEGETABLE")}
@@ -414,7 +415,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ผักออร์แกนิก
+                    Organic Vegetable
                   </button>
                   <button
                     onClick={() => setSelectedCategory("SUPERFRUITS")}
@@ -423,7 +424,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ซูเปอร์ฟรุต
+                    Superfruits
                   </button>
                   <button
                     onClick={() => setSelectedCategory("BASE")}
@@ -432,7 +433,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ฐาน
+                    Base
                   </button>
                   <button
                     onClick={() => setSelectedCategory("PROTEIN")}
@@ -441,7 +442,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    โปรตีน
+                    Protein
                   </button>
                   <button
                     onClick={() => setSelectedCategory("TOPPING")}
@@ -450,7 +451,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    ท็อปปิ้ง
+                    Topping
                   </button>
                   <button
                     onClick={() => setSelectedCategory("SWEETENER")}
@@ -459,7 +460,7 @@ export default function BuildPage() {
                       : "bg-[#C9A78B] text-white hover:bg-[#B8967A] shadow-sm"
                       }`}
                   >
-                    สารให้ความหวาน
+                    Sweetener
                   </button>
                 </div>
               </div>
@@ -532,7 +533,7 @@ export default function BuildPage() {
             <div className="lg:sticky lg:top-8">
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-[#14433B]/10 animate-scaleIn">
                 <h2 className="text-xl sm:text-2xl font-bold text-[#14433B] mb-4 sm:mb-6 text-center">
-                  Smoothy ของคุณ
+                  Your Smoothy
                 </h2>
 
                 <SmoothyCup
@@ -545,7 +546,7 @@ export default function BuildPage() {
                 {cupSizes.length > 0 && (
                   <div className="mt-6 space-y-2">
                     <label className="block text-sm font-semibold text-[#14433B]">
-                      ขนาดแก้ว
+                      Cup Size
                     </label>
                     <button
                       onClick={() => setShowCupSizeModal(true)}
@@ -564,7 +565,7 @@ export default function BuildPage() {
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <span className="text-[#14433B]/60">เลือกขนาดแก้ว</span>
+                          <span className="text-[#14433B]/60">Select Cup Size</span>
                           <div className="text-[#14433B]/40">▼</div>
                         </div>
                       )}
@@ -624,7 +625,7 @@ export default function BuildPage() {
                               )}
                             </div>
                             {selectedCupSize?.id === size.id && (
-                              <div className="mt-2 text-white text-sm">✓ เลือกแล้ว</div>
+                              <div className="mt-2 text-white text-sm">✓ Selected</div>
                             )}
                           </button>
                         ))}
@@ -636,7 +637,7 @@ export default function BuildPage() {
                 {/* Quantity */}
                 <div className="mt-6 space-y-3">
                   <label className="block text-sm font-semibold text-[#14433B]">
-                    จำนวน
+                  Quantity
                   </label>
                   <div className="flex items-center gap-3">
                     <button
@@ -673,12 +674,12 @@ export default function BuildPage() {
                   {addingToCart ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span className="text-white">กำลังเพิ่ม...</span>
+                      <span className="text-white">Adding…</span>
                     </>
                   ) : (
                     <>
                       <ShoppingCart className={`w-5 h-5 ${canAddToCart ? "text-white" : "text-gray-500"}`} />
-                      <span className={canAddToCart ? "text-white" : "text-gray-500"}>เพิ่มลงตะกร้า</span>
+                      <span className={canAddToCart ? "text-white" : "text-gray-500"}>Add to Cart</span>
                     </>
                   )}
                 </button>
@@ -760,7 +761,7 @@ export default function BuildPage() {
                       </div>
                           )}
                       <div className="text-xs text-[#14433B]/60 mt-2 pt-2 border-t border-[#14433B]/20">
-                        สำหรับ {quantity} แก้ว ({totalFruits} ส่วนผสม)
+                        สำหรับ {quantity} แก้ว ({totalFruits} Ingredients)
                       </div>
                     </div>
                       </>
