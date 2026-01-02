@@ -145,7 +145,7 @@ export default function Home() {
   async function handleAddDrinkToCart(drinkId: number, cupSize?: CupSize) {
     const targetCupSize = cupSize || (cupSizes.length > 0 ? cupSizes[0] : null);
     if (!targetCupSize) {
-      alert("กรุณารอสักครู่เพื่อโหลดข้อมูลขนาดแก้ว");
+      alert("Please wait a moment to load the cup size data");
       return;
     }
 
@@ -173,11 +173,11 @@ export default function Home() {
 
         addToGuestCart(guestItem);
         window.dispatchEvent(new Event("cartUpdated"));
-        alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉");
+        alert("Added to cart successfully! 🎉");
         closeModal();
       } catch (err: any) {
         console.error("Error adding to guest cart:", err);
-        alert("ไม่สามารถเพิ่มลงตะกร้าได้");
+        alert("Cannot add to cart");  
       } finally {
         setAddingToCart(false);
       }
@@ -194,11 +194,11 @@ export default function Home() {
       });
       
       window.dispatchEvent(new Event("cartUpdated"));
-      alert("เพิ่มลงตะกร้าเรียบร้อยแล้ว! 🎉");
+      alert("Added to cart successfully! 🎉");
       closeModal();
     } catch (err: any) {
       console.error("Error adding to cart:", err);
-      alert(err.message || "ไม่สามารถเพิ่มลงตะกร้าได้");
+      alert(err.message || "Cannot add to cart");
     } finally {
       setAddingToCart(false);
     }
@@ -350,9 +350,9 @@ export default function Home() {
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {loading ? (
-                <div className="w-full text-center text-[#14433B]/60 py-8">กำลังโหลด...</div>
+                <div className="w-full text-center text-[#14433B]/60 py-8">Loading...</div>
               ) : popularDrinks.length === 0 ? (
-                <div className="w-full text-center text-[#14433B]/60 py-8">ยังไม่มีเมนูน้ำปั่นในหมวดหมู่นี้</div>
+                <div className="w-full text-center text-[#14433B]/60 py-8">No smoothies in this category</div>
               ) : (
                 popularDrinks.map((drink, index) => {
                   // ใช้ฟังก์ชันคำนวณราคาร่วมกัน - ใช้ cup size ที่เล็กที่สุดสำหรับราคาเริ่มต้น
@@ -453,7 +453,7 @@ export default function Home() {
                           {drink.description || "Delicious smoothie blend"}
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-[#14433B] font-sans">฿{price.toFixed(2)}</span>
+                          <span className="text-xl font-bold text-[#14433B] font-sans">{price.toFixed(2)}฿</span>
                           <button 
                             onClick={(e) => {
                               e.preventDefault();
@@ -461,7 +461,7 @@ export default function Home() {
                               openModal(drink);
                             }}
                             className="bg-[#14433B] text-[#FFF6F0] w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#1a5444] transition-colors font-bold text-base"
-                            title="ดูรายละเอียด"
+                            title="View details"
                           >
                             +
                           </button>
@@ -477,7 +477,7 @@ export default function Home() {
             <button
               onClick={scrollRight}
               className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#14433B] text-[#14433B] hover:text-white rounded-full p-3 shadow-xl transition-all items-center justify-center hover:scale-110 active:scale-95"
-              aria-label="เลื่อนขวา"
+              aria-label="Scroll right"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -548,7 +548,7 @@ export default function Home() {
                       </p>
                       <div className="inline-block px-4 py-2 bg-[#14433B]/10 rounded-full group-hover:bg-[#14433B]/20 transition-colors duration-300">
                         <p className="text-base sm:text-lg md:text-xl text-[#14433B] font-bold font-sans group-hover:text-[#1a5444] transition-colors">
-                          ฿{Number(ingredient.pricePerUnit).toFixed(2)}/หน่วย
+                          {Number(ingredient.pricePerUnit).toFixed(2)}฿/unit
                         </p>
                       </div>
                     </div>
@@ -719,7 +719,7 @@ export default function Home() {
                           <p className="font-semibold">{size.name}</p>
                           <p className="text-sm">{size.volumeMl} ml</p>
                           {size.priceExtra > 0 && (
-                            <p className="text-xs mt-1">+{size.priceExtra.toFixed(2)} ฿</p>
+                            <p className="text-xs mt-1">+{size.priceExtra.toFixed(2)}฿</p>
                           )}
                         </button>
                       );
@@ -740,7 +740,7 @@ export default function Home() {
                   return (
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-semibold text-[#14433B] font-sans">Total Price:</span>
-                      <span className="text-2xl font-bold text-[#14433B] font-sans">฿{totalPrice.toFixed(2)}</span>
+                      <span className="text-2xl font-bold text-[#14433B] font-sans">{totalPrice.toFixed(2)}฿</span>
                     </div>
                   );
                 })()}

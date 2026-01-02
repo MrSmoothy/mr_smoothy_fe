@@ -258,7 +258,7 @@ export default function PaymentPage() {
   return (
     <div className="bg-[#FFF6F0] min-h-screen py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-[#14433B] mb-8 text-center">ชำระเงิน</h1>
+        <h1 className="text-4xl font-bold text-[#14433B] mb-8 text-center">Payment</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Order Details & Form */}
@@ -267,18 +267,18 @@ export default function PaymentPage() {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-[#14433B] mb-4 flex items-center gap-2">
                 <Shield className="w-6 h-6" />
-                ข้อมูลลูกค้า
+                Customer Information
               </h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-[#14433B] font-semibold mb-2">
-                    ชื่อ-นามสกุล <span className="text-red-500">*</span>
+                    Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.customerName}
                     onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                    placeholder="กรุณากรอกชื่อ-นามสกุล"
+                    placeholder="Please enter your name"
                     className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                     required
                   />
@@ -286,7 +286,7 @@ export default function PaymentPage() {
 
                 <div>
                   <label className="block text-[#14433B] font-semibold mb-2">
-                    เบอร์โทรติดต่อ <span className="text-red-500">*</span>
+                      Phone Number <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
@@ -304,17 +304,17 @@ export default function PaymentPage() {
                   />
                   {formData.phoneNumber && formData.phoneNumber.length !== 10 && (
                     <p className="text-sm text-red-500 mt-1">
-                      กรุณากรอกเบอร์โทรให้ครบ 10 หลัก
+                    Please enter a 10-digit phone number
                     </p>
                   )}
                   <p className="text-sm text-[#14433B]/60 mt-1">
-                    ใช้สำหรับติดต่อเมื่อสินค้าพร้อม
+                    Used for contact when the order is ready
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-[#14433B] font-semibold mb-2">
-                    อีเมล (ไม่บังคับ)
+                    Email (Optional)
                   </label>
                   <input
                     type="email"
@@ -324,7 +324,7 @@ export default function PaymentPage() {
                     className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                   />
                   <p className="text-sm text-[#14433B]/60 mt-1">
-                    ใช้สำหรับส่งใบเสร็จและอัพเดทสถานะ
+                    Used for sending receipts and updating status
                   </p>
                 </div>
               </div>
@@ -334,12 +334,12 @@ export default function PaymentPage() {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-[#14433B] mb-4 flex items-center gap-2">
                 <Clock className="w-6 h-6" />
-                ข้อมูลการรับสินค้า
+                Pickup Information
               </h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-[#14433B] font-semibold mb-2">
-                    เวลารับสินค้า <span className="text-red-500">*</span>
+                  Pickup Time <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="datetime-local"
@@ -369,18 +369,18 @@ export default function PaymentPage() {
                     })()}
                   />
                   <p className="text-sm text-[#14433B]/60 mt-1">
-                    กรุณาเลือกเวลาที่ต้องการมารับสินค้า (ขั้นต่ำ 30 นาทีจากปัจจุบัน และไม่เกิน 3 วัน)
+                    Please select the pickup time (minimum 30 minutes from now and maximum 3 days)
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-[#14433B] font-semibold mb-2">
-                    หมายเหตุเพิ่มเติม (ไม่บังคับ)
+                    Additional Notes (Optional)
                   </label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    placeholder="เช่น ไม่ใส่น้ำตาล, ต้องการน้ำแข็งมาก"
+                    placeholder="e.g. no sugar, want more ice"
                     rows={3}
                     className="w-full rounded-md border border-[#14433B]/30 px-4 py-3 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
                   />
@@ -392,7 +392,7 @@ export default function PaymentPage() {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-[#14433B] mb-4 flex items-center gap-2">
                 <CreditCard className="w-6 h-6" />
-                วิธีการชำระเงิน
+                Payment Method
               </h2>
               <div className="space-y-3">
                 <label className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
@@ -467,10 +467,10 @@ export default function PaymentPage() {
                   {guestCart.items.map((item) => (
                     <div key={item.id} className="bg-[#FFF6F0]/10 rounded-lg p-3 border border-[#FFF6F0]/20">
                       <div className="text-sm text-[#FFF6F0] font-semibold mb-1">
-                        {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
+                        {item.type === "PREDEFINED" ? item.predefinedDrinkName : "Custom Smoothy"}
                       </div>
                       <div className="text-xs text-[#FFF6F0]/80 mb-1">
-                        ขนาด: {item.cupSizeName} | จำนวน: x{item.quantity}
+                        Size: {item.cupSizeName} | Quantity: x{item.quantity}
                       </div>
                       {item.fruits && item.fruits.length > 0 && (
                         <div className="mt-2">
@@ -488,7 +488,7 @@ export default function PaymentPage() {
                         </div>
                       )}
                       <div className="text-sm text-[#FFF6F0] font-bold mt-2 text-right">
-                        {Number(item.totalPrice).toFixed(2)} บาท
+                        {Number(item.totalPrice).toFixed(2)} THB
                       </div>
                     </div>
                   ))}
@@ -497,17 +497,17 @@ export default function PaymentPage() {
 
               <div className="space-y-3 mb-6 border-t border-[#FFF6F0]/20 pt-4">
                 <div className="flex justify-between text-[#FFF6F0]">
-                  <span>ยอดรวมสินค้า:</span>
-                  <span>{Number(guestCart.totalPrice || 0).toFixed(2)} บาท</span>
+                  <span>Total Item Price:</span>
+                  <span>{Number(guestCart.totalPrice || 0).toFixed(2)} THB</span>
                 </div>
                 <div className="flex justify-between text-[#FFF6F0]">
-                  <span>ค่าจัดส่ง:</span>
-                  <span className="text-[#14433B]/80">ฟรี (รับที่ร้าน)</span>
+                  <span>Delivery Fee:</span>
+                  <span className="text-[#14433B]/80">Free (Pick up at the store)</span>
                 </div>
                 <div className="border-t border-[#FFF6F0]/20 pt-3 mt-3">
                   <div className="flex justify-between text-[#FFF6F0] text-xl font-bold">
-                    <span>รวมทั้งสิ้น:</span>
-                    <span>{Number(guestCart.totalPrice || 0).toFixed(2)} บาท</span>
+                    <span>Total:</span>
+                    <span>{Number(guestCart.totalPrice || 0).toFixed(2)} THB</span>
                   </div>
                 </div>
               </div>
@@ -515,10 +515,10 @@ export default function PaymentPage() {
               <div className="bg-yellow-50/10 border border-yellow-200/30 rounded-lg p-3 mb-6">
                 <div className="flex items-center gap-2 text-yellow-200 text-sm mb-1">
                   <Lock className="w-4 h-4" />
-                  <span className="font-semibold">ปลอดภัย 100%</span>
+                  <span className="font-semibold">Secure 100%</span>
                 </div>
                 <p className="text-xs text-[#FFF6F0]/80">
-                  ข้อมูลของคุณจะถูกเก็บรักษาอย่างปลอดภัย
+                  Your information is secure
                 </p>
               </div>
 
@@ -530,12 +530,12 @@ export default function PaymentPage() {
                 {submitting ? (
                   <>
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>กำลังดำเนินการ...</span>
+                    <span>Processing...</span>
                   </>
                 ) : (
                   <>
                     <Lock className="w-5 h-5" />
-                    <span>ยืนยันการชำระเงิน</span>
+                    <span>Confirm Payment</span>
                   </>
                 )}
               </button>
@@ -544,7 +544,7 @@ export default function PaymentPage() {
                 onClick={() => router.back()}
                 className="w-full mt-3 bg-[#FFF6F0]/20 text-[#FFF6F0] py-3 rounded-md font-medium hover:bg-[#FFF6F0]/30 transition-colors"
               >
-                ย้อนกลับ
+                Back
               </button>
             </div>
           </div>

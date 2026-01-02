@@ -472,7 +472,7 @@ export default function BuildPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="ค้นหาวัตถุดิบ..."
+                  placeholder="Search for ingredients..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 border-2 border-[#14433B]/20 rounded-lg focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all duration-200 text-[#14433B] placeholder-[#14433B]/40"
@@ -490,11 +490,11 @@ export default function BuildPage() {
               {/* Results count */}
               {searchQuery && (
                 <div className="text-sm text-[#14433B]/60 mb-4">
-                  พบ {fruits.filter(f => {
+                  Found {fruits.filter(f => {
                     const matchCategory = selectedCategory === "ALL" || (f.category || "ORGANIC_FRUITS") === selectedCategory;
                     const matchSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase());
                     return matchCategory && matchSearch;
-                  }).length} รายการ
+                  }).length} items
                 </div>
               )}
 
@@ -516,12 +516,12 @@ export default function BuildPage() {
                 />
               ) : (
                 <div className="text-center py-12">
-                  <div className="text-[#14433B]/60 text-lg mb-4">ไม่พบข้อมูลผลไม้</div>
+                  <div className="text-[#14433B]/60 text-lg mb-4">No fruit data found</div>
                   <button
                     onClick={loadData}
                     className="bg-[#14433B] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
                   >
-                    ลองโหลดอีกครั้ง
+                    Try again
                   </button>
                 </div>
               )}
@@ -584,7 +584,7 @@ export default function BuildPage() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-xl font-bold text-[#14433B]">เลือกขนาดแก้ว</h3>
+                        <h3 className="text-xl font-bold text-[#14433B]">Select Cup Size</h3>
                         <button
                           onClick={() => setShowCupSizeModal(false)}
                           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -689,7 +689,7 @@ export default function BuildPage() {
                   <div className="mt-4 p-4 bg-[#14433B]/10 rounded-lg border border-[#14433B]/20">
                     <div className="flex items-center gap-2 mb-3">
                       <Apple className="w-5 h-5 text-[#14433B]" />
-                      <h3 className="text-sm font-semibold text-[#14433B]">ข้อมูลโภชนาการ</h3>
+                      <h3 className="text-sm font-semibold text-[#14433B]">Nutrition Information</h3>
                     </div>
 
                     {hasNutritionData ? (
@@ -713,16 +713,16 @@ export default function BuildPage() {
                                 
                           return (
                             <div key={fruit.id} className="text-xs bg-white/50 rounded p-2">
-                              <div className="font-semibold text-[#14433B]">{fruit.name} ({qty} ชิ้น)</div>
+                              <div className="font-semibold text-[#14433B]">{fruit.name} ({qty} pieces)</div>
                                     <div className="text-[#14433B]/70 mt-1 space-x-2">
                                       {calorieValue > 0 && (
-                                        <span>แคลอรี่: {(calorieValue * multiplier).toFixed(1)} kcal</span>
+                                        <span>Calories: {(calorieValue * multiplier).toFixed(1)} kcal</span>
                                 )}
                                       {proteinValue > 0 && (
-                                        <span>โปรตีน: {(proteinValue * multiplier).toFixed(1)} g</span>
+                                        <span>Protein: {(proteinValue * multiplier).toFixed(1)} g</span>
                                       )}
                                       {fiberValue > 0 && (
-                                        <span>ไฟเบอร์: {(fiberValue * multiplier).toFixed(1)} g</span>
+                                        <span>Fiber: {(fiberValue * multiplier).toFixed(1)} g</span>
                                 )}
                               </div>
                             </div>
@@ -734,11 +734,11 @@ export default function BuildPage() {
                     {/* ผลรวมโภชนาการ */}
                     <div className="space-y-2 text-sm pt-3 border-t border-[#14433B]/20">
                       <div className="flex justify-between font-semibold">
-                        <span className="text-[#14433B]">รวมทั้งหมด:</span>
+                        <span className="text-[#14433B]">Total:</span>
                       </div>
                           {nutrition.totalCalorie > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-[#14433B]/70">แคลอรี่:</span>
+                        <span className="text-[#14433B]/70">Calories:</span>
                         <span className="font-semibold text-[#14433B]">
                           {nutrition.totalCalorie.toFixed(1)} kcal
                         </span>
@@ -746,7 +746,7 @@ export default function BuildPage() {
                           )}
                           {nutrition.totalProtein > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-[#14433B]/70">โปรตีน:</span>
+                        <span className="text-[#14433B]/70">Protein:</span>
                         <span className="font-semibold text-[#14433B]">
                           {nutrition.totalProtein.toFixed(1)} g
                         </span>
@@ -754,23 +754,23 @@ export default function BuildPage() {
                           )}
                           {nutrition.totalFiber > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-[#14433B]/70">ไฟเบอร์:</span>
+                        <span className="text-[#14433B]/70">Fiber:</span>
                         <span className="font-semibold text-[#14433B]">
                           {nutrition.totalFiber.toFixed(1)} g
                         </span>
                       </div>
                           )}
                       <div className="text-xs text-[#14433B]/60 mt-2 pt-2 border-t border-[#14433B]/20">
-                        สำหรับ {quantity} แก้ว ({totalFruits} Ingredients)
+                        For {quantity} cup ({totalFruits} Ingredients)
                       </div>
                     </div>
                       </>
                     ) : (
                       <div className="text-sm text-[#14433B]/60 py-2 text-center">
-                        ⚠️ ยังไม่มีข้อมูลโภชนาการสำหรับผลไม้ที่เลือก
+                          ⚠️ No nutrition data found for the selected fruits
                         <br />
                         <span className="text-xs">
-                          กรุณาเพิ่มข้อมูลโภชนาการผ่านหน้า Admin
+                          Please add nutrition data through the Admin page
                         </span>
                       </div>
                     )}
@@ -780,7 +780,7 @@ export default function BuildPage() {
                 {/* Price Calculation */}
                 {canAddToCart && (
                   <div className="mt-4 p-4 bg-[#C9A78B]/10 rounded-lg border border-[#14433B]/20">
-                    <div className="text-sm text-[#14433B]/70 mb-2">ราคาโดยประมาณ:</div>
+                    <div className="text-sm text-[#14433B]/70 mb-2">Estimated Price:</div>
                     <div className="text-2xl font-bold text-[#14433B]">
                       {(
                         Array.from(selectedFruits.values()).reduce(
@@ -788,10 +788,10 @@ export default function BuildPage() {
                           0
                         ) +
                         (selectedCupSize?.priceExtra || 0)
-                      ).toFixed(2)} บาท
+                      ).toFixed(2)}฿
                     </div>
                     <div className="text-xs text-[#14433B]/60 mt-1">
-                      x {quantity} แก้ว
+                      x {quantity} cups 
                     </div>
                   </div>
                 )}
@@ -807,7 +807,7 @@ export default function BuildPage() {
           <div className="flex items-center justify-between gap-4 mb-2">
             {canAddToCart && (
               <div className="flex-1">
-                <div className="text-xs text-[#14433B]/70">ราคาโดยประมาณ:</div>
+                <div className="text-xs text-[#14433B]/70">Estimated Price:</div>
                 <div className="text-lg font-bold text-[#14433B]">
                   {(
                     Array.from(selectedFruits.values()).reduce(
@@ -815,7 +815,7 @@ export default function BuildPage() {
                       0
                     ) +
                     (selectedCupSize?.priceExtra || 0)
-                  ).toFixed(2)} บาท
+                  ).toFixed(2)}฿
                 </div>
               </div>
             )}
@@ -830,19 +830,19 @@ export default function BuildPage() {
               {addingToCart ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span className="text-sm text-white">กำลังเพิ่ม...</span>
+                  <span className="text-sm text-white">Adding...</span>
                 </>
               ) : (
                 <>
                   <ShoppingCart className={`w-5 h-5 ${canAddToCart ? "text-white" : "text-gray-500"}`} />
-                  <span className={canAddToCart ? "text-white" : "text-gray-500"}>เพิ่มลงตะกร้า</span>
+                  <span className={canAddToCart ? "text-white" : "text-gray-500"}>Add to Cart</span>
                 </>
               )}
             </button>
           </div>
           {canAddToCart && (
             <div className="text-xs text-[#14433B]/60 text-center">
-              x {quantity} แก้ว
+              x {quantity} cups
             </div>
           )}
         </div>

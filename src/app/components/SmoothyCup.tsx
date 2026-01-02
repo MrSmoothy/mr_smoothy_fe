@@ -90,7 +90,7 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className="absolute w-2 h-2 bg-white/40 rounded-full animate-bounce"
+                    className="absolute w-5 h-5 bg-blue/70 rounded-full animate-bounce"
                     style={{
                       left: `${20 + i * 15}%`,
                       bottom: `${10 + (i % 3) * 20}%`,
@@ -117,7 +117,7 @@ export default function SmoothyCup({ selectedFruits, maxFruits, cupSize }: Smoot
       <div className="text-center space-y-2 min-w-[200px]">
         {cupSize && (
           <div className="text-sm text-[#14433B]/70">
-            ขนาด: {cupSize.name} ({cupSize.volumeMl}ml)
+            Size: {cupSize.name} ({cupSize.volumeMl}ml)
           </div>
         )}
         

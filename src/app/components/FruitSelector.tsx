@@ -66,7 +66,7 @@ export default function FruitSelector({
           <div className="col-span-full text-center py-12">
             <div className="text-[#14433B]/40 text-6xl mb-4">🔍</div>
             <div className="text-[#14433B]/60 text-lg mb-2">
-              ไม่มีวัตถุดิบในหมวดหมู่นี้
+              ไม่มีในหมวดหมู่นี้
             </div>
           </div>
         ) : (

@@ -336,7 +336,7 @@ function MenuContent() {
           {drink.description && (
             <p className="text-[#14433B]/70 text-xs mb-2 line-clamp-2 font-sans">{drink.description}</p>
           )}
-          <p className="text-[#14433B] font-bold mb-3 font-sans">{price.toFixed(2)} บาท</p>
+          <p className="text-[#14433B] font-bold mb-3 font-sans">{price.toFixed(2)} ฿</p>
         </div>
         <button
           onClick={(e) => {
@@ -345,7 +345,7 @@ function MenuContent() {
             openModal(drink);
           }}
           className="absolute bottom-4 right-4 bg-[#14433B] text-[#FFF6F0] w-8 h-8 rounded flex items-center justify-center hover:bg-[#1a5444] transition-colors z-10"
-          title="ดูรายละเอียด"
+          title="View Details"
         >
           +
         </button>
@@ -363,7 +363,7 @@ function MenuContent() {
           <div className="relative max-w-2xl mx-auto">
             <input
               type="text"
-              placeholder="ค้นหาเครื่องดื่ม, ส่วนผสม..."
+              placeholder="Search for drinks, ingredients..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-[#14433B]/30 bg-white text-[#14433B] placeholder:text-[#14433B]/50 focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all font-sans"
@@ -485,28 +485,28 @@ function MenuContent() {
             <p className="text-base sm:text-lg text-[#14433B]/80 font-sans">
               {searchQuery 
                 ? filteredDrinks.length > 0 
-                  ? `พบ ${filteredDrinks.length} รายการที่ตรงกับ "${searchQuery}"` 
-                  : `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"`
+                  ? `Found ${filteredDrinks.length} items matching "${searchQuery}"` 
+                  : `No results found for "${searchQuery}"`
                 : filteredDrinks.length > 0 
-                  ? `พบ ${filteredDrinks.length} รายการ` 
-                  : "ยังไม่มีเมนูในหมวดหมู่นี้"}
+                  ? `Found ${filteredDrinks.length} items` 
+                  : "No smoothies in this category"}
             </p>
           </div>
           {loading ? (
-            <div className="text-center text-[#14433B]/60 py-8">กำลังโหลด...</div>
+            <div className="text-center text-[#14433B]/60 py-8">Loading...</div>
           ) : filteredDrinks.length === 0 ? (
             <div className="text-center text-[#14433B]/60 py-8 bg-white rounded-lg shadow-md p-12">
               <p className="text-xl mb-4">
                 {searchQuery 
-                  ? `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"`
-                  : "ยังไม่มีเมนูในหมวดหมู่นี้"}
+                  ? `No results found for "${searchQuery}"`  
+                  : "No smoothies in this category"}
               </p>
               {searchQuery ? (
                 <button
                   onClick={() => setSearchQuery("")}
                   className="bg-[#14433B] text-[#FFF6F0] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity mr-2"
                 >
-                  ล้างการค้นหา
+                  Clear search
                 </button>
               ) : null}
               <button
@@ -516,7 +516,7 @@ function MenuContent() {
                 }}
                 className="bg-[#14433B] text-[#FFF6F0] px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
-                ดูเมนูทั้งหมด
+                View all smoothies
               </button>
             </div>
           ) : (
@@ -587,7 +587,7 @@ function MenuContent() {
               {/* Description */}
               {selectedDrink.description && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-serif">Instructions:</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-2 font-sans">Instructions:</h3>
                   <p className="text-[#14433B]/80 font-sans whitespace-pre-wrap">{selectedDrink.description}</p>
                 </div>
               )}
@@ -595,7 +595,7 @@ function MenuContent() {
               {/* Ingredients */}
               {selectedDrink.ingredients && selectedDrink.ingredients.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">วัตถุดิบ</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif"></h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {selectedDrink.ingredients.map((ingredient, idx) => {
                       const fruit = fruits.find(f => f.id === ingredient.fruitId);
@@ -620,7 +620,7 @@ function MenuContent() {
                           )}
                           <div className="flex-1">
                             <p className="font-medium text-[#14433B] font-sans">{ingredient.fruitName}</p>
-                            <p className="text-sm text-[#14433B]/70 font-sans">จำนวน: {ingredient.quantity} หน่วย</p>
+                            <p className="text-sm text-[#14433B]/70 font-sans">Quantity: {ingredient.quantity} units</p>
                           </div>
                         </div>
                       );
@@ -632,7 +632,7 @@ function MenuContent() {
               {/* Cup Size Selection */}
               {cupSizes.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">เลือกขนาดแก้ว</h3>
+                  <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-sans">Select Cup Size:</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {cupSizes.map((size) => {
                       const isSelected = modalCupSize?.id === size.id;
@@ -649,7 +649,7 @@ function MenuContent() {
                           <p className="font-semibold">{size.name}</p>
                           <p className="text-sm">{size.volumeMl} ml</p>
                           {size.priceExtra > 0 && (
-                            <p className="text-xs mt-1">+{size.priceExtra.toFixed(2)} บาท</p>
+                            <p className="text-xs mt-1">+{size.priceExtra.toFixed(2)} ฿</p>
                           )}
                         </button>
                       );
@@ -660,7 +660,7 @@ function MenuContent() {
 
               {/* Quantity Selection */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-serif">จำนวนแก้ว</h3>
+                <h3 className="text-lg font-semibold text-[#14433B] mb-3 font-sans">Quantity:</h3>
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -687,7 +687,7 @@ function MenuContent() {
                   >
                     +
                   </button>
-                  <span className="text-[#14433B]/70 font-sans ml-2">แก้ว</span>
+                  <span className="text-[#14433B]/70 font-sans ml-2">Cup</span>
                 </div>
               </div>
 
@@ -699,17 +699,17 @@ function MenuContent() {
                   return (
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-[#14433B]/70 font-sans">ราคาต่อแก้ว:</span>
-                        <span className="text-lg font-semibold text-[#14433B] font-sans">{unitPrice.toFixed(2)} บาท</span>
+                        <span className="text-sm text-[#14433B]/70 font-sans">Price per Cup:</span>
+                        <span className="text-lg font-semibold text-[#14433B] font-sans">{unitPrice.toFixed(2)}฿</span>
                       </div>
                       {quantity > 1 && (
                         <div className="flex justify-between items-center text-xs text-[#14433B]/60 font-sans">
-                          <span>{quantity} แก้ว × {unitPrice.toFixed(2)} บาท</span>
+                          <span>{quantity} cup × {unitPrice.toFixed(2)}฿</span>
                         </div>
                       )}
                       <div className="flex justify-between items-center pt-2 border-t border-[#14433B]/20">
-                        <span className="text-lg font-semibold text-[#14433B] font-sans">ราคารวม:</span>
-                        <span className="text-2xl font-bold text-[#14433B] font-sans">{totalPrice.toFixed(2)} บาท</span>
+                        <span className="text-lg font-semibold text-[#14433B] font-sans">Total Price:</span>
+                        <span className="text-2xl font-bold text-[#14433B] font-sans">{totalPrice.toFixed(2)}฿</span>
                       </div>
                     </div>
                   );
@@ -726,7 +726,7 @@ function MenuContent() {
                 disabled={addingToCart || !modalCupSize || cupSizes.length === 0 || quantity < 1}
                 className="w-full bg-[#14433B] text-[#FFF6F0] px-6 py-3 rounded-lg font-semibold hover:bg-[#1a5444] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-sans"
               >
-                {addingToCart ? "กำลังเพิ่ม..." : `เพิ่ม ${quantity} แก้วลงตะกร้า`}
+                {addingToCart ? "Adding..." : `Add ${quantity} cup to Cart`}
               </button>
             </div>
           </div>
@@ -742,7 +742,7 @@ export default function MenuPage() {
       <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
-          <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
+          <div className="text-[#14433B] text-xl">Loading...</div>
         </div>
       </div>
     }>

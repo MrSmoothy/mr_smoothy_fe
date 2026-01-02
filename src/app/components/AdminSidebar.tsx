@@ -72,7 +72,7 @@ export default function AdminSidebar() {
                     : "text-[#FFF6F0]/80 hover:bg-[#5A4A3A]"
                 }`}
               >
-                จัดการวัตถุดิบ
+                จัดการ
               </Link>
               <Link
                 href="/admin/drinks"

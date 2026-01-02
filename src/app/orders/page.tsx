@@ -177,12 +177,12 @@ function OrdersContent() {
 
   function getStatusText(status: string) {
     const statusMap: Record<string, string> = {
-      PENDING: "รอการยืนยัน",
-      CONFIRMED: "ยืนยันแล้ว",
-      PREPARING: "กำลังเตรียม",
-      READY: "พร้อมรับ",
-      COMPLETED: "รับแล้ว",
-      CANCELLED: "ยกเลิก",
+      PENDING: "Pending",
+      CONFIRMED: "Confirmed",
+      PREPARING: "Preparing",
+      READY: "Ready",
+      COMPLETED: "Completed",
+      CANCELLED: "Cancelled",
     };
     return statusMap[status.toUpperCase()] || status;
   }
@@ -192,7 +192,7 @@ function OrdersContent() {
       <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
-          <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
+          <div className="text-[#14433B] text-xl">Loading...</div>
         </div>
       </div>
     );
@@ -208,9 +208,9 @@ function OrdersContent() {
               onClick={() => router.push("/orders")}
               className="mb-4 text-[#14433B] hover:text-[#1a5444] font-medium flex items-center gap-2 transition-colors"
             >
-              ← กลับไปรายการคำสั่งซื้อทั้งหมด
+              ← Back to all orders
             </button>
-            <h1 className="text-4xl font-bold text-[#14433B] mb-2">รายละเอียดคำสั่งซื้อ</h1>
+            <h1 className="text-4xl font-bold text-[#14433B] mb-2">Order Details</h1>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-8">
@@ -220,12 +220,12 @@ function OrdersContent() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <h2 className="text-2xl font-bold text-[#14433B]">
-                      คำสั่งซื้อ #{String(selectedOrder.orderId).padStart(3, "0")}
+                      Order #{String(selectedOrder.orderId).padStart(3, "0")}
                     </h2>
                     {getStatusIcon(selectedOrder.status || "PENDING")}
                   </div>
                   <p className="text-sm text-[#14433B]/70">
-                    วันที่สั่ง: {new Date(selectedOrder.createdAt).toLocaleString("th-TH", {
+                    Order Date: {new Date(selectedOrder.createdAt).toLocaleString("th-TH", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -250,17 +250,17 @@ function OrdersContent() {
 
             {/* Order Items */}
             <div className="mb-6">
-              <h3 className="text-xl font-semibold text-[#14433B] mb-4">รายการสินค้า</h3>
+              <h3 className="text-xl font-semibold text-[#14433B] mb-4">Order Items</h3>
               <div className="space-y-4">
                 {selectedOrder.items?.map((item) => (
                   <div key={item.id} className="border border-[#14433B]/10 rounded-lg p-4 bg-[#FFF6F0]/50">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex-1">
                         <h4 className="font-semibold text-[#14433B] text-lg">
-                          {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
+                          {item.type === "PREDEFINED" ? item.predefinedDrinkName : "Custom Smoothy"}
                         </h4>
                         <p className="text-sm text-[#14433B]/70 mt-1">
-                          ขนาด: {item.cupSizeName} | จำนวน: {item.quantity} แก้ว
+                          Size: {item.cupSizeName} | Quantity: {item.quantity} cup
                         </p>
                         {item.fruits && item.fruits.length > 0 && (
                           <div className="mt-3">
@@ -279,12 +279,12 @@ function OrdersContent() {
                         )}
                       </div>
                       <div className="text-right ml-4">
-                        <p className="text-sm text-[#14433B]/70">ราคาต่อหน่วย</p>
+                        <p className="text-sm text-[#14433B]/70">Unit Price</p>
                         <p className="font-semibold text-[#14433B]">
-                          ฿{Number(item.unitPrice).toFixed(2)}
+                          THB{Number(item.unitPrice).toFixed(2)}
                         </p>
                         <p className="text-lg font-bold text-[#14433B] mt-2">
-                          ฿{Number(item.totalPrice).toFixed(2)}
+                          {Number(item.totalPrice).toFixed(2)} THB
                         </p>
                       </div>
                     </div>
@@ -297,9 +297,9 @@ function OrdersContent() {
             <div className="border-t border-[#14433B]/20 pt-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-lg">
-                  <span className="text-[#14433B]/70">ยอดรวมทั้งสิ้น:</span>
+                  <span className="text-[#14433B]/70">Total:</span>
                   <span className="text-2xl font-bold text-[#14433B]">
-                    ฿{Number(selectedOrder.totalPrice).toFixed(2)}
+                    {Number(selectedOrder.totalPrice).toFixed(2)} THB
                   </span>
                 </div>
               </div>
@@ -307,26 +307,26 @@ function OrdersContent() {
 
             {/* Customer Information */}
             <div className="border-t border-[#14433B]/20 pt-6 mt-6">
-              <h3 className="text-xl font-semibold text-[#14433B] mb-4">ข้อมูลการติดต่อ</h3>
+              <h3 className="text-xl font-semibold text-[#14433B] mb-4">Customer Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-[#14433B]/70 mb-1">เบอร์โทรติดต่อ:</p>
+                  <p className="text-sm text-[#14433B]/70 mb-1">Contact Number:</p>
                   <p className="font-semibold text-[#14433B]">{selectedOrder.phoneNumber}</p>
                 </div>
                 {(selectedOrder as any).customerName && (
                   <div>
-                    <p className="text-sm text-[#14433B]/70 mb-1">ชื่อลูกค้า:</p>
+                    <p className="text-sm text-[#14433B]/70 mb-1">Name:</p>
                     <p className="font-semibold text-[#14433B]">{(selectedOrder as any).customerName}</p>
                   </div>
                 )}
                 {(selectedOrder as any).customerEmail && (
                   <div>
-                    <p className="text-sm text-[#14433B]/70 mb-1">อีเมล:</p>
+                    <p className="text-sm text-[#14433B]/70 mb-1">Email:</p>
                     <p className="font-semibold text-[#14433B]">{(selectedOrder as any).customerEmail}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm text-[#14433B]/70 mb-1">เวลารับสินค้า:</p>
+                  <p className="text-sm text-[#14433B]/70 mb-1">Pickup Time:</p>
                   <p className="font-semibold text-[#14433B]">
                     {new Date(selectedOrder.pickupTime).toLocaleString("th-TH", {
                       year: "numeric",
@@ -339,7 +339,7 @@ function OrdersContent() {
                 </div>
                 {selectedOrder.notes && (
                   <div className="md:col-span-2">
-                    <p className="text-sm text-[#14433B]/70 mb-1">หมายเหตุ:</p>
+                    <p className="text-sm text-[#14433B]/70 mb-1">Notes:</p>
                     <p className="font-semibold text-[#14433B] bg-[#FFF6F0]/50 p-3 rounded-lg">
                       {selectedOrder.notes}
                     </p>
@@ -385,7 +385,7 @@ function OrdersContent() {
         updatedAt: go.createdAt,
       }));
 
-  // ถ้ามี orderId parameter ให้แสดงรายละเอียด order เดียว
+  // If there is an orderId parameter, show the details of the order
   if (orderIdParam && !loading && selectedOrder) {
     return (
       <div className="bg-[#FFF6F0] min-h-screen py-12">
@@ -395,9 +395,9 @@ function OrdersContent() {
               onClick={() => router.push("/orders")}
               className="mb-4 text-[#14433B] hover:text-[#1a5444] font-medium flex items-center gap-2 transition-colors"
             >
-              ← กลับไปรายการคำสั่งซื้อทั้งหมด
+              ← Back to all orders
             </button>
-            <h1 className="text-4xl font-bold text-[#14433B] mb-2">รายละเอียดคำสั่งซื้อ</h1>
+            <h1 className="text-4xl font-bold text-[#14433B] mb-2">Order Details</h1>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-8">
@@ -407,12 +407,12 @@ function OrdersContent() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <h2 className="text-2xl font-bold text-[#14433B]">
-                      คำสั่งซื้อ #{String(selectedOrder.orderId).padStart(3, "0")}
+                      Order #{String(selectedOrder.orderId).padStart(3, "0")}
                     </h2>
                     {getStatusIcon(selectedOrder.status || "PENDING")}
                   </div>
                   <p className="text-sm text-[#14433B]/70">
-                    วันที่สั่ง: {new Date(selectedOrder.createdAt).toLocaleString("th-TH", {
+                    Order Date: {new Date(selectedOrder.createdAt).toLocaleString("th-TH", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -437,17 +437,17 @@ function OrdersContent() {
 
             {/* Order Items */}
             <div className="mb-6">
-              <h3 className="text-xl font-semibold text-[#14433B] mb-4">รายการสินค้า</h3>
+              <h3 className="text-xl font-semibold text-[#14433B] mb-4">Order Items</h3>
               <div className="space-y-4">
                 {selectedOrder.items?.map((item) => (
                   <div key={item.id} className="border border-[#14433B]/10 rounded-lg p-4 bg-[#FFF6F0]/50">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex-1">
                         <h4 className="font-semibold text-[#14433B] text-lg">
-                          {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
+                          {item.type === "PREDEFINED" ? item.predefinedDrinkName : "Custom Smoothy"}
                         </h4>
                         <p className="text-sm text-[#14433B]/70 mt-1">
-                          ขนาด: {item.cupSizeName} | จำนวน: {item.quantity} แก้ว
+                          Size: {item.cupSizeName} | Quantity: {item.quantity} cup
                         </p>
                         {item.fruits && item.fruits.length > 0 && (
                           <div className="mt-3">
@@ -466,12 +466,12 @@ function OrdersContent() {
                         )}
                       </div>
                       <div className="text-right ml-4">
-                        <p className="text-sm text-[#14433B]/70">ราคาต่อหน่วย</p>
+                        <p className="text-sm text-[#14433B]/70">Unit Price</p>
                         <p className="font-semibold text-[#14433B]">
-                          ฿{Number(item.unitPrice).toFixed(2)}
+                          {Number(item.unitPrice).toFixed(2)} THB
                         </p>
                         <p className="text-lg font-bold text-[#14433B] mt-2">
-                          ฿{Number(item.totalPrice).toFixed(2)}
+                          {Number(item.totalPrice).toFixed(2)} THB
                         </p>
                       </div>
                     </div>
@@ -484,9 +484,9 @@ function OrdersContent() {
             <div className="border-t border-[#14433B]/20 pt-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-lg">
-                  <span className="text-[#14433B]/70">ยอดรวมทั้งสิ้น:</span>
+                  <span className="text-[#14433B]/70">Total:</span>
                   <span className="text-2xl font-bold text-[#14433B]">
-                    ฿{Number(selectedOrder.totalPrice).toFixed(2)}
+                    {Number(selectedOrder.totalPrice).toFixed(2)} THB
                   </span>
                 </div>
               </div>
@@ -494,26 +494,26 @@ function OrdersContent() {
 
             {/* Customer Information */}
             <div className="border-t border-[#14433B]/20 pt-6 mt-6">
-              <h3 className="text-xl font-semibold text-[#14433B] mb-4">ข้อมูลการติดต่อ</h3>
+              <h3 className="text-xl font-semibold text-[#14433B] mb-4">Customer Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-[#14433B]/70 mb-1">เบอร์โทรติดต่อ:</p>
+                  <p className="text-sm text-[#14433B]/70 mb-1">Contact Number:</p>
                   <p className="font-semibold text-[#14433B]">{selectedOrder.phoneNumber}</p>
                 </div>
                 {selectedOrder.customerName && (
                   <div>
-                    <p className="text-sm text-[#14433B]/70 mb-1">ชื่อลูกค้า:</p>
+                    <p className="text-sm text-[#14433B]/70 mb-1">Name:</p>
                     <p className="font-semibold text-[#14433B]">{selectedOrder.customerName}</p>
                   </div>
                 )}
                 {selectedOrder.customerEmail && (
                   <div>
-                    <p className="text-sm text-[#14433B]/70 mb-1">อีเมล:</p>
+                    <p className="text-sm text-[#14433B]/70 mb-1">Email:</p>
                     <p className="font-semibold text-[#14433B]">{selectedOrder.customerEmail}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm text-[#14433B]/70 mb-1">เวลารับสินค้า:</p>
+                  <p className="text-sm text-[#14433B]/70 mb-1">Pickup Time:</p>
                   <p className="font-semibold text-[#14433B]">
                     {new Date(selectedOrder.pickupTime).toLocaleString("th-TH", {
                       year: "numeric",
@@ -526,7 +526,7 @@ function OrdersContent() {
                 </div>
                 {selectedOrder.notes && (
                   <div className="md:col-span-2">
-                    <p className="text-sm text-[#14433B]/70 mb-1">หมายเหตุ:</p>
+                    <p className="text-sm text-[#14433B]/70 mb-1">Notes:</p>
                     <p className="font-semibold text-[#14433B] bg-[#FFF6F0]/50 p-3 rounded-lg">
                       {selectedOrder.notes}
                     </p>
@@ -545,21 +545,21 @@ function OrdersContent() {
     <div className="bg-[#FFF6F0] min-h-screen py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[#14433B] mb-2">ประวัติการสั่งซื้อ</h1>
+          <h1 className="text-4xl font-bold text-[#14433B] mb-2">Order History</h1>
           {!user && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
               <div className="flex items-center gap-2 text-yellow-800 mb-2">
                 <AlertCircle className="w-5 h-5" />
-                <span className="font-semibold">คุณกำลังเป็น Guest User</span>
+                <span className="font-semibold">You are a Guest User</span>
               </div>
               <p className="text-yellow-700 text-sm">
-                ประวัติการสั่งซื้อถูกเก็บในเบราว์เซอร์ของคุณ เข้าสู่ระบบเพื่อรับแต้มและดูประวัติแบบถาวร
+                Order history is stored in your browser. Login to get rewards and view permanent history
               </p>
               <button
                 onClick={() => router.push("/login?redirect=/orders")}
                 className="mt-3 bg-[#14433B] text-white px-4 py-2 rounded-md text-sm hover:opacity-90 transition-opacity"
               >
-                เข้าสู่ระบบ
+                Login
               </button>
             </div>
           )}
@@ -568,12 +568,12 @@ function OrdersContent() {
         {allOrders.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <Package className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-            <p className="text-[#14433B] text-xl mb-6">ยังไม่มีประวัติการสั่งซื้อ</p>
+            <p className="text-[#14433B] text-xl mb-6">No order history</p>
             <button
               onClick={() => router.push("/build")}
               className="bg-[#14433B] text-[#FFF6F0] px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
             >
-              เริ่มสั่งซื้อ
+              Start Ordering
             </button>
           </div>
         ) : (
@@ -587,12 +587,12 @@ function OrdersContent() {
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="text-xl font-bold text-[#14433B]">
-                        คำสั่งซื้อ #{String(order.orderId).replace("guest_order_", "")}
+                        Order #{String(order.orderId).replace("guest_order_", "")}
                       </h3>
                       {getStatusIcon(order.status)}
                     </div>
                     <p className="text-sm text-[#14433B]/70">
-                      สั่งซื้อเมื่อ: {new Date(order.createdAt).toLocaleString("th-TH")}
+                      Order Date: {new Date(order.createdAt).toLocaleString("th-TH")}
                     </p>
                   </div>
                   <div className="text-right">
@@ -608,7 +608,7 @@ function OrdersContent() {
                       </span>
                     </div>
                     <p className="text-2xl font-bold text-[#14433B]">
-                      {Number(order.totalPrice).toFixed(2)} บาท
+                      {Number(order.totalPrice).toFixed(2)} THB
                     </p>
                   </div>
                 </div>
@@ -619,7 +619,7 @@ function OrdersContent() {
                       <div key={item.id} className="flex justify-between items-start">
                         <div className="flex-1">
                           <h4 className="font-semibold text-[#14433B]">
-                            {item.type === "PREDEFINED" ? item.predefinedDrinkName : "น้ำปั่นแบบกำหนดเอง"}
+                            {item.type === "PREDEFINED" ? item.predefinedDrinkName : "Custom Smoothy"}
                           </h4>
                           <p className="text-sm text-[#14433B]/70">
                             {item.cupSizeName} x{item.quantity}
@@ -642,7 +642,7 @@ function OrdersContent() {
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-[#14433B]">
-                            {Number(item.totalPrice).toFixed(2)} บาท
+                            {Number(item.totalPrice).toFixed(2)} THB
                           </p>
                         </div>
                       </div>
@@ -652,18 +652,18 @@ function OrdersContent() {
 
                 <div className="border-t border-gray-200 pt-4 mt-4 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#14433B]/70">เวลารับสินค้า:</span>
+                    <span className="text-[#14433B]/70">Pickup Time:</span>
                     <span className="text-[#14433B] font-semibold">
                       {new Date(order.pickupTime).toLocaleString("th-TH")}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#14433B]/70">เบอร์โทรติดต่อ:</span>
+                    <span className="text-[#14433B]/70">Phone Number:</span>
                     <span className="text-[#14433B] font-semibold">{order.phoneNumber}</span>
                   </div>
                   {order.notes && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-[#14433B]/70">หมายเหตุ:</span>
+                      <span className="text-[#14433B]/70">Notes:</span>
                       <span className="text-[#14433B]">{order.notes}</span>
                     </div>
                   )}
@@ -683,7 +683,7 @@ export default function OrdersPage() {
       <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#14433B] mx-auto mb-4"></div>
-          <div className="text-[#14433B] text-xl">กำลังโหลด...</div>
+          <div className="text-[#14433B] text-xl">Loading...</div>
         </div>
       </div>
     }>
