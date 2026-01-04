@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { getFruits, getDrinks, getCupSizes, addToCart, getSeasonalIngredients, calculateDrinkPrice, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
+import { getFruits, getPopularDrinks, getCupSizes, addToCart, getSeasonalIngredients, calculateDrinkPrice, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -15,12 +15,12 @@ export default function Home() {
   const [cupSizes, setCupSizes] = useState<CupSize[]>([]);
   const [seasonalIngredients, setSeasonalIngredients] = useState<Fruit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedDrink, setSelectedDrink] = useState<PredefinedDrink | null>(null);
   const [modalCupSize, setModalCupSize] = useState<CupSize | null>(null);
   const [addingToCart, setAddingToCart] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "FRUIT" | "VEGETABLE" | "MIXED">("ALL");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   function loadUser() {
@@ -54,14 +54,15 @@ export default function Home() {
   async function loadData() {
     try {
       setLoading(true);
+      setError(null);
       
       const [fruitsRes, drinksRes, cupSizesRes, seasonalRes] = await Promise.all([
         getFruits().catch(err => {
           console.error("Error loading fruits:", err);
           return { data: [], success: false, message: err.message };
         }),
-        getDrinks().catch(err => {
-          console.error("Error loading drinks:", err);
+        getPopularDrinks().catch(err => {
+          console.error("Error loading popular drinks:", err);
           return { data: [], success: false, message: err.message };
         }),
         getCupSizes().catch(err => {
@@ -83,6 +84,7 @@ export default function Home() {
               category: (f.category || "ORGANIC_FRUITS") as FruitCategory
             }))
         : [];
+      // Popular drinks endpoint already returns only popular drinks, but we still filter by active
       const filteredDrinks = Array.isArray(drinksRes.data) 
         ? drinksRes.data.filter(d => d && d.active) 
         : [];
@@ -114,6 +116,7 @@ export default function Home() {
       }
     } catch (err: any) {
       console.error("Failed to load data:", err);
+      setError(err.message || "ไม่สามารถโหลดข้อมูลได้");
       setFruits([]);
       setDrinks([]);
       setCupSizes([]);
@@ -204,62 +207,8 @@ export default function Home() {
     }
   }
 
-  // Filter drinks by category
-  function getDrinksByCategory(category: "ALL" | "FRUIT" | "VEGETABLE" | "MIXED"): PredefinedDrink[] {
-    if (category === "ALL") {
-      return drinks;
-    }
-
-    if (fruits.length === 0) {
-      return drinks;
-    }
-
-    const filtered = drinks.filter(drink => {
-      if (!drink.ingredients || drink.ingredients.length === 0) {
-        // ถ้าไม่มี ingredients ให้เป็น MIXED
-        return category === "MIXED";
-      }
-
-      // ตรวจสอบว่า ingredients เป็นผลไม้หรือผัก
-      const ingredientCategories: FruitCategory[] = drink.ingredients.map(ing => {
-        const fruit = fruits.find(f => f.id === ing.fruitId);
-        if (!fruit) {
-          return "ORGANIC_FRUITS" as FruitCategory;
-        }
-        // ใช้ category จาก fruit หรือ default เป็น ORGANIC_FRUITS
-        const fruitCategory: FruitCategory = (fruit.category || "ORGANIC_FRUITS") as FruitCategory;
-        return fruitCategory;
-      });
-
-      // ตรวจสอบว่ามีประเภทอะไรบ้าง
-      const hasOrganicFruits = ingredientCategories.some(cat => cat === "ORGANIC_FRUITS" || cat === "SUPERFRUITS");
-      const hasOrganicVegetable = ingredientCategories.some(cat => cat === "ORGANIC_VEGETABLE");
-      const hasOther = ingredientCategories.some(cat => !["ORGANIC_FRUITS", "ORGANIC_VEGETABLE", "SUPERFRUITS"].includes(cat));
-      const uniqueCategories = new Set(ingredientCategories);
-
-      let matches = false;
-
-      if (category === "FRUIT") {
-        // น้ำผลไม้ล้วน: มีเฉพาะผลไม้ออร์แกนิกหรือซูเปอร์ฟรุตเท่านั้น
-        matches = hasOrganicFruits && !hasOrganicVegetable && !hasOther && uniqueCategories.size === 1 && (uniqueCategories.has("ORGANIC_FRUITS") || uniqueCategories.has("SUPERFRUITS"));
-      } else if (category === "VEGETABLE") {
-        // น้ำผัก: มีเฉพาะผักออร์แกนิกเท่านั้น
-        matches = hasOrganicVegetable && !hasOrganicFruits && !hasOther && uniqueCategories.size === 1 && uniqueCategories.has("ORGANIC_VEGETABLE");
-      } else if (category === "MIXED") {
-        // น้ำผสม: มีทั้งผลไม้และผัก หรือมีส่วนเสริม หรือมีหลายประเภท
-        matches = (hasOrganicFruits && hasOrganicVegetable) || hasOther || uniqueCategories.size > 1;
-      }
-
-      return matches;
-    });
-
-    return filtered;
-  }
-
-  // Popular smoothies - filter by category
-  const filteredDrinks = getDrinksByCategory(selectedCategory);
-  // ถ้าไม่มีผลลัพธ์ในหมวดหมู่ที่เลือก ให้แสดงทั้งหมด (เพื่อไม่ให้ว่างเปล่า)
-  const popularDrinks = filteredDrinks.length > 0 ? filteredDrinks : (selectedCategory === "ALL" ? drinks.slice(0, 6) : []);
+  // All drinks from API are already popular drinks
+  const popularDrinks = drinks;
 
   function scrollLeft() {
     if (scrollContainerRef.current) {
@@ -324,36 +273,37 @@ export default function Home() {
       </section>
 
       {/* Popular Smoothies Section */}
-      <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 sm:mb-8">
-            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B]" style={{ fontFamily: "'Cooper Black', serif" }}>Popular Smoothies</h2>
+      {!error && (popularDrinks.length > 0 || loading) && (
+        <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-6 sm:mb-8">
+              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B]" style={{ fontFamily: "'Cooper Black', serif" }}>Popular Smoothies</h2>
+              </div>
             </div>
-          </div>
 
-          {/* Carousel Container */}
-          <div className="relative px-8 sm:px-12 md:px-16">
-            {/* Left Arrow */}
-            <button
-              onClick={scrollLeft}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#14433B] text-[#14433B] hover:text-white rounded-full p-3 shadow-xl transition-all items-center justify-center hover:scale-110 active:scale-95"
-              aria-label="เลื่อนซ้าย"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
+            {/* Carousel Container */}
+            <div className="relative px-8 sm:px-12 md:px-16">
+              {/* Left Arrow */}
+              <button
+                onClick={scrollLeft}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#14433B] text-[#14433B] hover:text-white rounded-full p-3 shadow-xl transition-all items-center justify-center hover:scale-110 active:scale-95"
+                aria-label="เลื่อนซ้าย"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
 
-            {/* Scrollable Container */}
-            <div
-              ref={scrollContainerRef}
-              className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
-              {loading ? (
-                <div className="w-full text-center text-[#14433B]/60 py-8">Loading...</div>
-              ) : popularDrinks.length === 0 ? (
-                <div className="w-full text-center text-[#14433B]/60 py-8">No smoothies in this category</div>
-              ) : (
+              {/* Scrollable Container */}
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {loading ? (
+                  <div className="w-full text-center text-[#14433B]/60 py-8">กำลังโหลด...</div>
+                ) : popularDrinks.length === 0 ? (
+                  <div className="w-full text-center text-[#14433B]/60 py-8">ไม่มีเมนู Popular ในขณะนี้</div>
+                ) : (
                 popularDrinks.map((drink, index) => {
                   // ใช้ฟังก์ชันคำนวณราคาร่วมกัน - ใช้ cup size ที่เล็กที่สุดสำหรับราคาเริ่มต้น
                   const smallestCupSize = cupSizes.length > 0 
@@ -387,6 +337,11 @@ export default function Home() {
                       className="group flex-shrink-0 w-64 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative"
                       onClick={() => openModal(drink)}
                     >
+                      {/* Popular Badge */}
+                      <div className="absolute top-2 right-2 z-20 bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                        <span>⭐</span>
+                        <span>Popular</span>
+                      </div>
                       {/* Image Area - reduced size */}
                       <div className="h-40 bg-[#D4C5B0] flex items-center justify-center relative overflow-hidden">
                         {drink.imageUrl ? (
@@ -473,17 +428,30 @@ export default function Home() {
               )}
             </div>
 
-            {/* Right Arrow */}
-            <button
-              onClick={scrollRight}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#14433B] text-[#14433B] hover:text-white rounded-full p-3 shadow-xl transition-all items-center justify-center hover:scale-110 active:scale-95"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+              {/* Right Arrow */}
+              <button
+                onClick={scrollRight}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#14433B] text-[#14433B] hover:text-white rounded-full p-3 shadow-xl transition-all items-center justify-center hover:scale-110 active:scale-95"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+      
+      {/* Error State */}
+      {error && !loading && (
+        <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
+          <div className="mx-auto max-w-7xl">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+              <p className="text-red-600 font-semibold mb-2">เกิดข้อผิดพลาด</p>
+              <p className="text-red-500 text-sm">{error}</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Seasonal Ingredients Section */}
       <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">

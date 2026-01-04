@@ -78,6 +78,7 @@ export type PredefinedDrink = {
   basePrice?: number;
   category?: DrinkCategory;
   active: boolean;
+  popular?: boolean;
   ingredients: {
     fruitId: number;
     fruitName: string;
@@ -330,6 +331,10 @@ export async function getCupSizes() {
 
 export async function getDrinks() {
   return request<PredefinedDrink[]>("/api/public/drinks");
+}
+
+export async function getPopularDrinks() {
+  return request<PredefinedDrink[]>("/api/public/drinks/popular");
 }
 
 export async function getSeasonalIngredients() {
@@ -793,6 +798,12 @@ export async function adminUpdateDrink(id: number, data: PredefinedDrinkUpdateRe
 export async function adminDeleteDrink(id: number) {
   return request<string>("/api/admin/drinks/" + id, {
     method: "DELETE",
+  });
+}
+
+export async function adminUpdateDrinkPopular(id: number, popular: boolean) {
+  return request<PredefinedDrink>(`/api/admin/drinks/${id}/popular?popular=${popular}`, {
+    method: "PUT",
   });
 }
 

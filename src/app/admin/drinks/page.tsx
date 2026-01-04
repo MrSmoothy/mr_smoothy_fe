@@ -9,6 +9,7 @@ import {
   adminUpdateDrink,
   adminDeleteDrink,
   adminGetFruits,
+  adminUpdateDrinkPopular,
   uploadDrinkImage,
   type PredefinedDrink,
   type PredefinedDrinkCreateRequest,
@@ -285,6 +286,21 @@ export default function AdminDrinksPage() {
     }
   }
 
+  async function handleTogglePopular(drink: PredefinedDrink, newPopularValue: boolean) {
+    try {
+      await adminUpdateDrinkPopular(drink.id, newPopularValue);
+      // Update UI immediately
+      setDrinks(prevDrinks => 
+        prevDrinks.map(d => 
+          d.id === drink.id ? { ...d, popular: newPopularValue } : d
+        )
+      );
+      alert(`อัปเดตสถานะ Popular สำเร็จ`);
+    } catch (err: any) {
+      alert(err.message || "ไม่สามารถอัปเดตสถานะ Popular ได้");
+    }
+  }
+
   if (loading) {
     return (
       <div className="bg-[#FFF6F0] min-h-screen flex items-center justify-center">
@@ -470,6 +486,33 @@ export default function AdminDrinksPage() {
                   >
                     {drink.active ? "ใช้งาน" : "ไม่ใช้งาน"}
                   </span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
+                      drink.popular
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {drink.popular ? "⭐ Popular" : "ไม่ Popular"}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Popular Toggle */}
+              <div className="mb-4 p-3 bg-[#FFF6F0] rounded-lg">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-semibold text-[#14433B] flex items-center gap-2">
+                    <span>⭐ Popular Menu</span>
+                  </label>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={drink.popular || false}
+                      onChange={(e) => handleTogglePopular(drink, e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#14433B]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14433B]"></div>
+                  </label>
                 </div>
               </div>
               <div className="flex gap-2">
