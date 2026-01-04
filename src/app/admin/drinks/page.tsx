@@ -17,6 +17,7 @@ import {
   type DrinkCategory,
 } from "@/lib/api";
 import { getImageUrl } from "@/lib/image";
+import SearchableDropdown, { type DropdownOption } from "@/app/components/SearchableDropdown";
 
 export default function AdminDrinksPage() {
   const router = useRouter();
@@ -124,11 +125,11 @@ export default function AdminDrinksPage() {
 
   function addIngredient() {
     const currentTotal = getTotalQuantity();
-    if (currentTotal >= 5) {
-      alert("จำนวนวัตถุดิบรวมกันต้องไม่เกิน 5");
+    if (currentTotal >= 10) {
+      alert("จำนวนวัตถุดิบรวมกันต้องไม่เกิน 10");
       return;
     }
-    const maxQuantity = 5 - currentTotal;
+    const maxQuantity = 10 - currentTotal;
     setFormData({
       ...formData,
       ingredients: [...formData.ingredients, { fruitId: fruits[0]?.id || 0, quantity: Math.min(1, maxQuantity) }],
@@ -148,9 +149,9 @@ export default function AdminDrinksPage() {
       const currentIngredientQuantity = formData.ingredients[index].quantity;
       const newTotal = currentTotal - currentIngredientQuantity + value;
       
-      if (newTotal > 5) {
-        const maxAllowed = 5 - (currentTotal - currentIngredientQuantity);
-        alert(`จำนวนวัตถุดิบรวมกันต้องไม่เกิน 5 (จำนวนสูงสุดที่สามารถใส่ได้: ${maxAllowed})`);
+      if (newTotal > 10) {
+        const maxAllowed = 10 - (currentTotal - currentIngredientQuantity);
+        alert(`จำนวนวัตถุดิบรวมกันต้องไม่เกิน 10 (จำนวนสูงสุดที่สามารถใส่ได้: ${maxAllowed})`);
         value = Math.max(1, maxAllowed);
       }
       if (value < 1) {
@@ -224,8 +225,8 @@ export default function AdminDrinksPage() {
       return;
     }
     const totalQuantity = getTotalQuantity();
-    if (totalQuantity > 5) {
-      alert("จำนวนวัตถุดิบรวมกันต้องไม่เกิน 5");
+    if (totalQuantity > 10) {
+      alert("จำนวนวัตถุดิบรวมกันต้องไม่เกิน 10");
       return;
     }
     try {
@@ -604,13 +605,13 @@ export default function AdminDrinksPage() {
                     <div>
                     <label className="block text-[#14433B] font-semibold">Ingredients *</label>
                       <p className="text-sm text-[#14433B]/70 mt-1">
-                      Total Quantity: {getTotalQuantity()}/5
+                      Total Quantity: {getTotalQuantity()}/10
                       </p>
                     </div>
                     <button
                       type="button"
                       onClick={addIngredient}
-                      disabled={getTotalQuantity() >= 5}
+                      disabled={getTotalQuantity() >= 10}
                       className="bg-[#14433B] text-[#FFF6F0] px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4" />
@@ -618,45 +619,50 @@ export default function AdminDrinksPage() {
                     </button>
                   </div>
                   <div className="space-y-2">
-                    {formData.ingredients.map((ing, index) => (
-                      <div key={index} className="flex gap-2">
-                        <select
-                          value={ing.fruitId}
-                          onChange={(e) =>
-                            updateIngredient(index, "fruitId", Number(e.target.value))
-                          }
-                          className="flex-1 rounded-md border border-[#14433B]/30 px-4 py-2 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
-                        >
-                          <option value="">Select Ingredients</option>
-                          {fruits.map((fruit) => (
-                            <option key={fruit.id} value={fruit.id}>
-                              {fruit.name}
-                            </option>
-                          ))}
-                        </select>
-                        <input
-                          type="number"
-                          min="1"
-                          max={5 - (getTotalQuantity() - ing.quantity)}
-                          value={ing.quantity}
-                          onChange={(e) => {
-                            const newValue = Number(e.target.value);
-                            if (newValue >= 1) {
-                              updateIngredient(index, "quantity", newValue);
-                          }
-                          }}
-                          placeholder="จำนวน"
-                          className="w-24 rounded-md border border-[#14433B]/30 px-4 py-2 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeIngredient(index)}
-                          className="bg-red-500 text-white px-3 py-2 rounded-md hover:opacity-90 transition-opacity"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
+                    {formData.ingredients.map((ing, index) => {
+                      const fruitOptions: DropdownOption[] = fruits.map((fruit) => ({
+                        id: fruit.id,
+                        name: fruit.name,
+                      }));
+                      
+                      return (
+                        <div key={index} className="flex gap-2">
+                          <div className="flex-1">
+                            <SearchableDropdown
+                              options={fruitOptions}
+                              value={ing.fruitId || null}
+                              onChange={(fruitId) => updateIngredient(index, "fruitId", fruitId)}
+                              config={{
+                                placeholder: "เลือกวัตถุดิบ...",
+                                searchPlaceholder: "พิมพ์เพื่อค้นหาวัตถุดิบ...",
+                                noResultsText: "ไม่พบวัตถุดิบ",
+                              }}
+                            />
+                          </div>
+                          <input
+                            type="number"
+                            min="1"
+                            max={10 - (getTotalQuantity() - ing.quantity)}
+                            value={ing.quantity}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              if (newValue >= 1) {
+                                updateIngredient(index, "quantity", newValue);
+                            }
+                            }}
+                            placeholder="จำนวน"
+                            className="w-24 rounded-md border border-[#14433B]/30 px-4 py-2 text-[#14433B] outline-none focus:ring-2 focus:ring-[#14433B]/50"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeIngredient(index)}
+                            className="bg-red-500 text-white px-3 py-2 rounded-md hover:opacity-90 transition-opacity"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      );
+                    })}
                     {formData.ingredients.length === 0 && (
                       <p className="text-sm text-[#14433B]/70 text-center py-4">
                         No ingredients added. Please add ingredients.
