@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus, X, ArrowUpDown } from "lucide-react";
 import {
   getFruits,
   calculateSmoothy,
@@ -20,6 +20,7 @@ export default function SmoothyCustomPage() {
   const [calculating, setCalculating] = useState(false);
   const [result, setResult] = useState<SmoothyCalcResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<"none" | "price-asc" | "price-desc">("none");
 
   useEffect(() => {
     loadFruits();
@@ -111,28 +112,53 @@ export default function SmoothyCustomPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left: Ingredient Selection */}
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-[#14433B] mb-4">เลือกวัตถุดิบ</h2>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+              <h2 className="text-2xl font-bold text-[#14433B]">เลือกวัตถุดิบ</h2>
+              
+              {/* Sort Dropdown */}
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="w-5 h-5 text-[#14433B]" />
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value as "none" | "price-asc" | "price-desc")}
+                  className="bg-white border-2 border-[#14433B]/30 rounded-lg px-4 py-2 text-[#14433B] font-semibold focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all cursor-pointer text-sm"
+                >
+                  <option value="none">เรียงตามค่าเริ่มต้น</option>
+                  <option value="price-asc">ราคา: น้อย → มาก</option>
+                  <option value="price-desc">ราคา: มาก → น้อย</option>
+                </select>
+              </div>
+            </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
-              {fruits.map((fruit) => (
-                <button
-                  key={fruit.id}
-                  onClick={() => addIngredient(fruit)}
-                  className="bg-[#FFF6F0] rounded-lg p-3 hover:bg-[#C9A78B] transition-colors text-left"
-                >
-                  {fruit.imageUrl && (
-                    <img
-                      src={getImageUrl(fruit.imageUrl)}
-                      alt={fruit.name}
-                      className="w-full h-20 object-cover rounded mb-2"
-                    />
-                  )}
-                  <div className="text-sm font-semibold text-[#14433B]">{fruit.name}</div>
-                  <div className="text-xs text-[#14433B]/70">
-                    {Number(fruit.pricePerUnit).toFixed(2)} ฿
-                  </div>
-                </button>
-              ))}
+              {(() => {
+                // Sort fruits based on sortOrder
+                let sortedFruits = [...fruits];
+                if (sortOrder === "price-asc") {
+                  sortedFruits.sort((a, b) => Number(a.pricePerUnit) - Number(b.pricePerUnit));
+                } else if (sortOrder === "price-desc") {
+                  sortedFruits.sort((a, b) => Number(b.pricePerUnit) - Number(a.pricePerUnit));
+                }
+                return sortedFruits.map((fruit) => (
+                  <button
+                    key={fruit.id}
+                    onClick={() => addIngredient(fruit)}
+                    className="bg-[#FFF6F0] rounded-lg p-3 hover:bg-[#C9A78B] transition-colors text-left"
+                  >
+                    {fruit.imageUrl && (
+                      <img
+                        src={getImageUrl(fruit.imageUrl)}
+                        alt={fruit.name}
+                        className="w-full h-20 object-cover rounded mb-2"
+                      />
+                    )}
+                    <div className="text-sm font-semibold text-[#14433B]">{fruit.name}</div>
+                    <div className="text-xs text-[#14433B]/70">
+                      {Number(fruit.pricePerUnit).toFixed(2)} ฿
+                    </div>
+                  </button>
+                ));
+              })()}
             </div>
 
             {/* Selected Ingredients */}

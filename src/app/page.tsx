@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { getFruits, getPopularDrinks, getCupSizes, addToCart, getSeasonalIngredients, calculateDrinkPrice, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
 
 const MAX_FRUITS = 5;
 
@@ -21,6 +21,7 @@ export default function Home() {
   const [selectedDrink, setSelectedDrink] = useState<PredefinedDrink | null>(null);
   const [modalCupSize, setModalCupSize] = useState<CupSize | null>(null);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"none" | "price-asc" | "price-desc">("none");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   function loadUser() {
@@ -208,7 +209,27 @@ export default function Home() {
   }
 
   // All drinks from API are already popular drinks
-  const popularDrinks = drinks;
+  // Calculate prices for all drinks and sort
+  const drinksWithPrices = drinks.map(drink => {
+    const smallestCupSize = cupSizes.length > 0 
+      ? [...cupSizes].sort((a, b) => 
+          (a.volumeMl || 0) - (b.volumeMl || 0) || 
+          (a.priceExtra || 0) - (b.priceExtra || 0)
+        )[0]
+      : undefined;
+    const price = calculateDrinkPrice(drink, fruits, cupSizes, smallestCupSize);
+    return { drink, price };
+  });
+
+  // Sort drinks based on sortOrder
+  let sortedDrinksWithPrices = [...drinksWithPrices];
+  if (sortOrder === "price-asc") {
+    sortedDrinksWithPrices.sort((a, b) => a.price - b.price);
+  } else if (sortOrder === "price-desc") {
+    sortedDrinksWithPrices.sort((a, b) => b.price - a.price);
+  }
+
+  const popularDrinks = sortedDrinksWithPrices.map(item => item.drink);
 
   function scrollLeft() {
     if (scrollContainerRef.current) {
@@ -277,8 +298,22 @@ export default function Home() {
         <section className="bg-[#FFF6F0] py-8 sm:py-12 md:py-16 px-4 sm:px-6">
           <div className="mx-auto max-w-7xl">
             <div className="mb-6 sm:mb-8">
-              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 sm:mb-6">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#14433B]" style={{ fontFamily: "'Cooper Black', serif" }}>Popular Smoothies</h2>
+                
+                {/* Sort Dropdown */}
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="w-5 h-5 text-[#14433B]" />
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as "none" | "price-asc" | "price-desc")}
+                    className="bg-white border-2 border-[#14433B]/30 rounded-lg px-4 py-2 text-[#14433B] font-semibold focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all cursor-pointer"
+                  >
+                    <option value="none">เรียงตามค่าเริ่มต้น</option>
+                    <option value="price-asc">ราคา: น้อย → มาก</option>
+                    <option value="price-desc">ราคา: มาก → น้อย</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -305,14 +340,17 @@ export default function Home() {
                   <div className="w-full text-center text-[#14433B]/60 py-8">ไม่มีเมนู Popular ในขณะนี้</div>
                 ) : (
                 popularDrinks.map((drink, index) => {
-                  // ใช้ฟังก์ชันคำนวณราคาร่วมกัน - ใช้ cup size ที่เล็กที่สุดสำหรับราคาเริ่มต้น
-                  const smallestCupSize = cupSizes.length > 0 
-                    ? [...cupSizes].sort((a, b) => 
-                        (a.volumeMl || 0) - (b.volumeMl || 0) || 
-                        (a.priceExtra || 0) - (b.priceExtra || 0)
-                      )[0]
-                    : undefined;
-                  const price = calculateDrinkPrice(drink, fruits, cupSizes, smallestCupSize);
+                  // ใช้ราคาที่คำนวณไว้แล้วจากการ sort
+                  const drinkWithPrice = sortedDrinksWithPrices.find(item => item.drink.id === drink.id);
+                  const price = drinkWithPrice?.price || (() => {
+                    const smallestCupSize = cupSizes.length > 0 
+                      ? [...cupSizes].sort((a, b) => 
+                          (a.volumeMl || 0) - (b.volumeMl || 0) || 
+                          (a.priceExtra || 0) - (b.priceExtra || 0)
+                        )[0]
+                      : undefined;
+                    return calculateDrinkPrice(drink, fruits, cupSizes, smallestCupSize);
+                  })();
 
                   // Get ingredients with images for hover display
                   const drinkIngredients = drink.ingredients

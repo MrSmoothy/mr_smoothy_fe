@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { getFruits, getDrinks, getCupSizes, addToCart, calculateDrinkPrice, type Fruit, type PredefinedDrink, type CupSize, type FruitCategory } from "@/lib/api";
 import { addToGuestCart } from "@/lib/guestCart";
 import { getImageUrl } from "@/lib/image";
+import { ArrowUpDown } from "lucide-react";
 
 function MenuContent() {
   const searchParams = useSearchParams();
@@ -22,6 +23,7 @@ function MenuContent() {
   const [quantity, setQuantity] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<"ALL" | "SIGNATURE" | "CLASSIC" | "GREEN_BOOSTER" | "HIGH_PROTEIN" | "SUPERFRUIT">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState<"none" | "price-asc" | "price-desc">("none");
 
   function loadUser() {
     try {
@@ -239,6 +241,28 @@ function MenuContent() {
         return nameMatch || descMatch || ingredientMatch;
       })
     : categoryFilteredDrinks;
+
+  // Calculate prices for all filtered drinks
+  const drinksWithPrices = filteredDrinks.map(drink => {
+    const smallestCupSize = cupSizes.length > 0 
+      ? [...cupSizes].sort((a, b) => 
+          (a.volumeMl || 0) - (b.volumeMl || 0) || 
+          (a.priceExtra || 0) - (b.priceExtra || 0)
+        )[0]
+      : undefined;
+    const price = calculateDrinkPrice(drink, fruits, cupSizes, smallestCupSize);
+    return { drink, price };
+  });
+
+  // Sort drinks based on sortOrder
+  let sortedDrinksWithPrices = [...drinksWithPrices];
+  if (sortOrder === "price-asc") {
+    sortedDrinksWithPrices.sort((a, b) => a.price - b.price);
+  } else if (sortOrder === "price-desc") {
+    sortedDrinksWithPrices.sort((a, b) => b.price - a.price);
+  }
+
+  const sortedFilteredDrinks = sortedDrinksWithPrices.map(item => item.drink);
 
   function renderDrinkCard(drink: PredefinedDrink) {
     // ใช้ฟังก์ชันคำนวณราคาร่วมกัน
@@ -482,19 +506,35 @@ function MenuContent() {
               {selectedCategory === "HIGH_PROTEIN" && "High-Protein Smoothies"}
               {selectedCategory === "SUPERFRUIT" && "Superfruit Smoothies"}
             </h2>
-            <p className="text-base sm:text-lg text-[#14433B]/80 font-sans">
-              {searchQuery 
-                ? filteredDrinks.length > 0 
-                  ? `Found ${filteredDrinks.length} items matching "${searchQuery}"` 
-                  : `No results found for "${searchQuery}"`
-                : filteredDrinks.length > 0 
-                  ? `Found ${filteredDrinks.length} items` 
-                  : "No smoothies in this category"}
-            </p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <p className="text-base sm:text-lg text-[#14433B]/80 font-sans">
+                {searchQuery 
+                  ? sortedFilteredDrinks.length > 0 
+                    ? `Found ${sortedFilteredDrinks.length} items matching "${searchQuery}"` 
+                    : `No results found for "${searchQuery}"`
+                  : sortedFilteredDrinks.length > 0 
+                    ? `Found ${sortedFilteredDrinks.length} items` 
+                    : "No smoothies in this category"}
+              </p>
+              
+              {/* Sort Dropdown */}
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="w-5 h-5 text-[#14433B]" />
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value as "none" | "price-asc" | "price-desc")}
+                  className="bg-white border-2 border-[#14433B]/30 rounded-lg px-4 py-2 text-[#14433B] font-semibold focus:outline-none focus:border-[#14433B] focus:ring-2 focus:ring-[#14433B]/20 transition-all cursor-pointer font-sans text-sm sm:text-base"
+                >
+                  <option value="none">เรียงตามค่าเริ่มต้น</option>
+                  <option value="price-asc">ราคา: น้อย → มาก</option>
+                  <option value="price-desc">ราคา: มาก → น้อย</option>
+                </select>
+              </div>
+            </div>
           </div>
           {loading ? (
             <div className="text-center text-[#14433B]/60 py-8">Loading...</div>
-          ) : filteredDrinks.length === 0 ? (
+          ) : sortedFilteredDrinks.length === 0 ? (
             <div className="text-center text-[#14433B]/60 py-8 bg-white rounded-lg shadow-md p-12">
               <p className="text-xl mb-4">
                 {searchQuery 
@@ -521,7 +561,7 @@ function MenuContent() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredDrinks.map(renderDrinkCard)}
+              {sortedFilteredDrinks.map(renderDrinkCard)}
             </div>
           )}
         </section>
