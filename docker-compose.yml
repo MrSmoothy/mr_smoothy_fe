@@ -1,41 +1,56 @@
-version: "3.9"
+# services:
+#   app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#       args:
+       
+#         NEXT_PUBLIC_API_BASE_URL: http://mr_smoothy_api:8080
+#         NEXT_PUBLIC_MINIO_URL: https://minio.thanonchai.site
+#     container_name: mr_smoothy_app
+#     restart: unless-stopped
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       NEXT_PUBLIC_API_BASE_URL: https://web.thanonchai.site  
+#       NEXT_PUBLIC_MINIO_URL: https://minio.thanonchai.site
+
+#     networks:
+#       - gateway-network
+    
+#     extra_hosts:
+#       - "host.docker.internal:host-gateway"
+    
+#     healthcheck:
+#       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+#       start_period: 40s
+
+# networks:
+#   gateway-network:
+#     external: true
 
 services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-      # Pass environment variables at build time (สำคัญ!)
       args:
-        # Localhost (สำหรับ development)
-        # NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
-        # NEXT_PUBLIC_MINIO_URL: http://localhost:9000
-        # Server (สำหรับ production - uncomment เมื่อ deploy บน server)
-        NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
-        NEXT_PUBLIC_MINIO_URL: http://localhost:9000
+        # ใช้ URL ที่จดใน Cloudflare เพื่อให้ Browser รู้จัก
+        NEXT_PUBLIC_API_BASE_URL: https://mr-smoothy-api.thanonchai.site
+        NEXT_PUBLIC_MINIO_URL: https://minio.thanonchai.site
     container_name: mr_smoothy_app
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      # ใส่ค่าตรงๆ ไม่ต้องใช้ .env
-      # Localhost (สำหรับ development)
-      # NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
-      # NEXT_PUBLIC_MINIO_URL: http://localhost:9000
-      # Server (สำหรับ production - uncomment เมื่อ deploy บน server)
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
-      NEXT_PUBLIC_MINIO_URL: http://localhost:9000
-    # Network configuration - allow container to access external IPs
-    network_mode: bridge
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    # Health check
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      # ต้องใส่ตรงนี้ด้วยเพื่อให้ Runtime มองเห็นค่าเดียวกัน
+      NEXT_PUBLIC_API_BASE_URL: https://mr-smoothy-api.thanonchai.site
+      NEXT_PUBLIC_MINIO_URL: https://minio.thanonchai.site
+    networks:
+      - gateway-network
 
-
-
+networks:
+  gateway-network:
+    external: true
